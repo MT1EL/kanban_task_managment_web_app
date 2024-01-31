@@ -1,4 +1,4 @@
-import { extendTheme } from "@chakra-ui/react";
+import { background, extendTheme } from "@chakra-ui/react";
 import myfont from "./assets/font/PlusJakartaSans-Regular.ttf";
 const theme = extendTheme({
   config: {
@@ -98,6 +98,11 @@ const theme = extendTheme({
       }),
     },
     Button: {
+      defaultProps: {
+        // Then here we set the base variant as the default
+        variant: "primary",
+        size: "xl",
+      },
       baseStyle: {
         variant: "primary",
       },
@@ -110,6 +115,7 @@ const theme = extendTheme({
           fontWeight: "bold",
           fontSize: "md",
           color: "white",
+          w: "100%",
         },
         sm: {
           h: "2.5rem",
@@ -120,6 +126,11 @@ const theme = extendTheme({
           fontWeight: "bold",
           fontSize: "0.8125rem",
           color: "white",
+        },
+        xs: {
+          h: "2rem",
+          w: "3rem",
+          borderRadius: "1.5rem",
         },
       },
       variants: {
@@ -176,6 +187,17 @@ const theme = extendTheme({
         },
       }),
     },
+    Drawer: {
+      baseStyle: ({ colorMode }: { colorMode: "light" | "dark" }) => ({
+        dialog: {
+          background: colorMode === "dark" ? "dark_Grey" : "white",
+        },
+      }),
+    },
+  },
+  breakpoints: {
+    sm: "48rem",
+    md: "62.5rem",
   },
 });
 

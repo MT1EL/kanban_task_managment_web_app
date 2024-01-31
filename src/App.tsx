@@ -1,12 +1,18 @@
-import { useEffect } from "react";
-import { useColorMode } from "@chakra-ui/react";
+import Navbar from "./layouts/Navbar";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Home from "./screens/Home";
 
 function App() {
-  const { setColorMode } = useColorMode();
-  useEffect(() => {
-    setColorMode("dark");
-  }, []);
-  return <div></div>;
+  return (
+    <>
+      <Navbar />
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home />} />
+        </Routes>
+      </Router>
+    </>
+  );
 }
 
 export default App;
