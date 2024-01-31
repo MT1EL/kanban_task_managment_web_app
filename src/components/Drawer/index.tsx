@@ -24,22 +24,20 @@ function CustomDrawer({ isOpen, onClose, setIsOpen }: any) {
     <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
       <DrawerContent
         display={["none", "flex"]}
-        maxW={["260px", "260px", "300px"]}
+        maxW={["260px", "260px", "301px"]}
         borderRight={"1px solid"}
         borderColor={colorMode === "dark" ? "lines_dark" : "lines_light"}
+        height={"calc(100% - 88px)"}
+        boxShadow={"none"}
+        mt="90px"
       >
-        <DrawerHeader p="0">
-          <Stack justifyContent={"center"} h="90px">
-            <Logo />
-          </Stack>
-        </DrawerHeader>
-
         <DrawerBody
           p="0"
           gap="1.125rem"
           display={"flex"}
           flexDir={"column"}
           pr="1.5rem"
+          mt="1rem"
         >
           <Text
             fontSize={"sm"}

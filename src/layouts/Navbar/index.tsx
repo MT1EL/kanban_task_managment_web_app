@@ -11,6 +11,7 @@ import elipsis from "../../assets/icon-vertical-ellipsis.svg";
 import Logo from "../../components/Logo";
 import CustomDrawer from "../../components/Drawer";
 import addTask from "../../assets/icon-add-task-mobile.svg";
+import eye from "../../assets/icon-show-sidebar.svg";
 import { useState } from "react";
 function index() {
   const [isOpen, setIsOpen] = useState(true);
@@ -31,9 +32,6 @@ function index() {
       <Divider
         bg={colorMode === "dark" ? "lines_dark" : "lines_light"}
         orientation="vertical"
-        h="100%"
-        w="1px"
-        display={["none", "block"]}
       />
       <Flex
         pl={["1rem", "1.5rem"]}
@@ -53,6 +51,20 @@ function index() {
           </Button>
           <Img src={elipsis} alt="elipsis" />
         </Flex>
+      </Flex>
+      <Flex
+        position={"absolute"}
+        top="90vh"
+        w="3.5rem"
+        h="3rem"
+        justifyContent={"center"}
+        alignItems={"center"}
+        bg="main_purple"
+        borderRightRadius={"2rem"}
+        cursor={"pointer"}
+        onClick={() => setIsOpen(true)}
+      >
+        <Img src={eye} alt="show sidebar" />
       </Flex>
       <CustomDrawer isOpen={isOpen} onClose={onClose} setIsOpen={setIsOpen} />
     </Flex>
