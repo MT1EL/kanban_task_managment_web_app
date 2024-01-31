@@ -6,14 +6,14 @@ import { Box, Flex } from "@chakra-ui/react";
 
 function App() {
   return (
-    <>
+    <Box height={"100vh"}>
       <Navbar />
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
         </Routes>
       </Router>
-    </>
+    </Box>
   );
 }
 
