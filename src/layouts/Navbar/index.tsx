@@ -5,18 +5,12 @@ import {
   useColorMode,
   Text,
   Button,
-  useDisclosure,
 } from "@chakra-ui/react";
 import elipsis from "../../assets/icon-vertical-ellipsis.svg";
 import Logo from "../../components/Logo";
-import CustomDrawer from "../../components/Drawer";
 import addTask from "../../assets/icon-add-task-mobile.svg";
-import eye from "../../assets/icon-show-sidebar.svg";
-import { useState } from "react";
 function index() {
-  const [isOpen, setIsOpen] = useState(true);
   const { colorMode } = useColorMode();
-  const { onOpen, onClose } = useDisclosure();
 
   return (
     <Flex
@@ -45,28 +39,13 @@ function index() {
           Platform Launch
         </Text>
         <Flex alignItems={"center"} gap={["1rem", "1.5rem"]}>
-          <Button variant={"primary"} size={["xs", "xl"]} onClick={onOpen}>
+          <Button variant={"primary"} size={["xs", "xl"]}>
             <Img src={addTask} alt="add task" display={["block", "none"]} />
             <Text display={["none", "block"]}>+Add New Task</Text>
           </Button>
           <Img src={elipsis} alt="elipsis" />
         </Flex>
       </Flex>
-      <Flex
-        position={"absolute"}
-        top="90vh"
-        w="3.5rem"
-        h="3rem"
-        justifyContent={"center"}
-        alignItems={"center"}
-        bg="main_purple"
-        borderRightRadius={"2rem"}
-        cursor={"pointer"}
-        onClick={() => setIsOpen(true)}
-      >
-        <Img src={eye} alt="show sidebar" />
-      </Flex>
-      <CustomDrawer isOpen={isOpen} onClose={onClose} setIsOpen={setIsOpen} />
     </Flex>
   );
 }

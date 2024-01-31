@@ -58,6 +58,9 @@ const theme = extendTheme({
             ? theme.colors.dark.background
             : theme.colors.light.background,
       },
+      root: {
+        innerHeight: "100%",
+      },
     }),
   },
   components: {
