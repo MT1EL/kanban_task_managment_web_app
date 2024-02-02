@@ -58,6 +58,9 @@ const theme = extendTheme({
             ? theme.colors.dark.background
             : theme.colors.light.background,
       },
+      root: {
+        innerHeight: "100%",
+      },
     }),
   },
   components: {
@@ -69,8 +72,6 @@ const theme = extendTheme({
             colorMode === "dark"
               ? "very_dark_grey_dark_bg"
               : "light_grey_light_bg",
-          height: "2.5rem",
-          maxWidth: "21.875rem",
           borderRadius: "0.25rem",
           p: "0.75rem",
           _hover: {
@@ -82,6 +83,7 @@ const theme = extendTheme({
         },
         label: {
           marginLeft: "1rem",
+          fontSize: "10px",
         },
         icon: {
           color: "white",

@@ -12,7 +12,9 @@ function index() {
         colorMode === "dark" ? "very_dark_grey_dark_bg" : "light_grey_light_bg"
       }
       h="50px"
-      w="100%"
+      w="calc(100% - 1.5rem)"
+      alignSelf={"center"}
+      ml="1.5rem"
     >
       <Img src={sun} alt="light" />
       <Switch onChange={toggleColorMode} isChecked={colorMode === "dark"} />
