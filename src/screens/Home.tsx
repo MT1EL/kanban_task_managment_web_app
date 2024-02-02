@@ -1,4 +1,4 @@
-import { Flex, Grid, Box, VStack, useDisclosure } from "@chakra-ui/react";
+import { Flex, Grid, VStack, useDisclosure } from "@chakra-ui/react";
 import MyDrawer from "../components/Drawer/MyDrawer";
 import data from "../../data.json";
 import Card from "../components/Card/";
@@ -8,20 +8,6 @@ import { useState } from "react";
 function Home() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedTask, setSelectedTask] = useState<any>();
-
-  const getCompletedCount = ({ subtasks }: any) => {
-    // Initialize a variable to count completed tasks
-    let completedTasks = 0;
-
-    // Iterate over each subtask
-    subtasks.forEach((subtask: { isCompleted: any }) => {
-      // Check if the subtask is completed
-      if (subtask.isCompleted) {
-        // Increment the completedTasks counter
-        completedTasks++;
-      }
-    });
-  };
 
   return (
     <Flex gap="1rem" w="100%" h="calc(100% - 90px)">
