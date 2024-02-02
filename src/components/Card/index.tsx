@@ -10,6 +10,7 @@ function index({
   handleClick: () => void;
 }) {
   const { colorMode } = useColorMode();
+
   return (
     <Card
       w="100%"

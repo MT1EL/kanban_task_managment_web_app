@@ -9,7 +9,7 @@ function MyDrawer() {
   return (
     <Box
       display={["none", "flex"]}
-      w={["260px", "260px", "301px"]}
+      minW={["260px", "260px", "301px"]}
       borderRight={"1px solid"}
       borderColor={colorMode === "dark" ? "lines_dark" : "lines_light"}
       height={"100%"}
