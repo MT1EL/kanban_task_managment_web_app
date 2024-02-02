@@ -1,4 +1,11 @@
-import { Flex, Grid, VStack, useDisclosure } from "@chakra-ui/react";
+import {
+  Flex,
+  Grid,
+  VStack,
+  useDisclosure,
+  Text,
+  useColorMode,
+} from "@chakra-ui/react";
 import MyDrawer from "../components/Drawer/MyDrawer";
 import data from "../../data.json";
 import Card from "../components/Card/";
@@ -7,13 +14,14 @@ import TaskModal from "../components/Modals/TaskModal";
 import { useState } from "react";
 function Home() {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { colorMode } = useColorMode();
   const [selectedTask, setSelectedTask] = useState<any>();
 
   return (
     <Flex gap="1rem" w="100%" h="calc(100% - 90px)">
       <MyDrawer />
       <Grid
-        gridTemplateColumns={`repeat(${data.boards.length}, 280px)`}
+        gridTemplateColumns={`repeat(${data.boards.length + 1}, 280px)`}
         gap="3"
         m="1.5rem"
         overflowX={"scroll"}
@@ -37,6 +45,17 @@ function Home() {
             </VStack>
           </VStack>
         ))}
+        <Flex
+          alignItems={"center"}
+          justifyContent={"center"}
+          bg={colorMode === "dark" ? "#2B2C37" : "#E9EFFA"}
+          borderRadius={"6px"}
+          mt="3.625rem"
+        >
+          <Text fontWeight={"bold"} fontSize={"xl"} color="medium_Grey">
+            + New Column
+          </Text>
+        </Flex>
       </Grid>
       {isOpen && selectedTask && (
         <TaskModal

@@ -33,7 +33,14 @@ function TaskModal({
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent p="2rem" mx="1rem" gap="1.5rem" w="480px" maxW="100%">
+      <ModalContent
+        p="2rem"
+        mx="1rem"
+        gap="1.5rem"
+        w="480px"
+        maxW="100%"
+        my="auto"
+      >
         <ModalHeader p="0">
           <Flex
             gap="1.5rem"

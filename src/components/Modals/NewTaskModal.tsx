@@ -28,7 +28,14 @@ function NewTaskModal({
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent p="2rem" mx="1rem" gap="1.5rem" w="480px" maxW="100%">
+      <ModalContent
+        p="2rem"
+        mx="1rem"
+        gap="1.5rem"
+        w="480px"
+        maxW="100%"
+        my="auto"
+      >
         <ModalHeader p="0">
           <Text fontWeight={"bold"} fontSize={"18px"}>
             {title}
@@ -60,7 +67,7 @@ function NewTaskModal({
               <Input placeholder="e.g Take coffee break" />
               <Img src={xIcon} alt="remove" />
             </Flex>
-            <Button>{buttonLabel}</Button>
+            <Button>+Add New Subtask</Button>
           </Flex>
           <Flex flexDir={"column"} gap="0.5rem">
             <Text color="mediun_Grey" fontWeight={"sm"}>
@@ -75,7 +82,7 @@ function NewTaskModal({
         </ModalBody>
 
         <ModalFooter flexDir={"column"} alignItems={"start"} gap="0.5rem" p="0">
-          <Button>Create Task</Button>
+          <Button>{buttonLabel}</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>
