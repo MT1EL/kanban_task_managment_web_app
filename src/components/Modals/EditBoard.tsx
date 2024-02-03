@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Modal,
   ModalOverlay,
@@ -24,7 +23,6 @@ function EditBoard({
   columns: any;
   name: string;
 }) {
-  console.log(columns);
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -60,7 +58,7 @@ function EditBoard({
               Board Columns
             </Text>
             {columns?.map((subtask: { name: string }) => (
-              <Flex gap="0.5rem" alignItems={"center"}>
+              <Flex gap="0.5rem" alignItems={"center"} key={subtask.name}>
                 <Input
                   placeholder="e.g Take coffee break"
                   value={subtask.name}
