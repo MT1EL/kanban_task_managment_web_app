@@ -12,8 +12,21 @@ import Card from "../components/Card/";
 import ColumnsHeader from "../components/Header/ColumnsHeader";
 import TaskModal from "../components/Modals/TaskModal";
 import { useState } from "react";
+import NewTaskModal from "../components/Modals/NewTaskModal";
+import DeleteModal from "../components/Modals/DeleteModal";
 function Home() {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isEditModalOpen,
+    onOpen: onOpenEditModal,
+    onClose: onCloseEditModal,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenDeleteModal,
+    onOpen: onOpenDeleteModal,
+    onClose: onCloseDeleteModal,
+  } = useDisclosure();
+
   const { colorMode } = useColorMode();
   const [selectedTask, setSelectedTask] = useState<any>();
 
@@ -21,7 +34,7 @@ function Home() {
     <Flex gap="1rem" w="100%" h="calc(100% - 90px)">
       <MyDrawer />
       <Grid
-        gridTemplateColumns={`repeat(${data.boards.length + 1}, 280px)`}
+        gridTemplateColumns={`repeat(${data?.boards?.length + 1}, 280px)`}
         gap="3"
         m="1.5rem"
         overflowX={"scroll"}
@@ -57,16 +70,28 @@ function Home() {
           </Text>
         </Flex>
       </Grid>
-      {isOpen && selectedTask && (
-        <TaskModal
-          isOpen={isOpen}
-          onClose={onClose}
-          title={selectedTask.title}
-          description={selectedTask.description}
-          subtasks={selectedTask.subtasks}
-          status={selectedTask.status}
-        />
-      )}
+      <TaskModal
+        isOpen={isOpen}
+        onClose={onClose}
+        title={selectedTask?.title}
+        description={selectedTask?.description}
+        subtasks={selectedTask?.subtasks}
+        status={selectedTask?.status}
+        onEditClick={onOpenEditModal}
+        onDeleteClick={onOpenDeleteModal}
+      />
+      <NewTaskModal
+        isOpen={isEditModalOpen}
+        onClose={onCloseEditModal}
+        title={"Edit Task"}
+        buttonLabel={"Save Changes"}
+        taskTitle={selectedTask?.title}
+        description={selectedTask?.descritpion}
+        subtasks={selectedTask?.subtasks}
+        status={selectedTask?.status}
+      />
+
+      <DeleteModal isOpen={isOpenDeleteModal} onClose={onCloseDeleteModal} />
     </Flex>
   );
 }
