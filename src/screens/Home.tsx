@@ -124,7 +124,7 @@ function Home() {
                     alignItems={"start"}
                     {...provided.droppableProps}
                     ref={provided.innerRef}
-                    minH="80px"
+                    h="100%"
                     w={"280px"}
                   >
                     {board.tasks.map((todo, index) => (
