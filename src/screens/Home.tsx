@@ -14,6 +14,7 @@ import TaskModal from "../components/Modals/TaskModal";
 import { useState } from "react";
 import NewTaskModal from "../components/Modals/NewTaskModal";
 import DeleteModal from "../components/Modals/DeleteModal";
+import EditBoard from "../components/Modals/EditBoard";
 function Home() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -25,6 +26,11 @@ function Home() {
     isOpen: isOpenDeleteModal,
     onOpen: onOpenDeleteModal,
     onClose: onCloseDeleteModal,
+  } = useDisclosure();
+  const {
+    isOpen: isEditBoardOpen,
+    onOpen: onEditBoardOpen,
+    onClose: onEditBoardClose,
   } = useDisclosure();
 
   const { colorMode } = useColorMode();
@@ -64,6 +70,7 @@ function Home() {
           bg={colorMode === "dark" ? "#2B2C37" : "#E9EFFA"}
           borderRadius={"6px"}
           mt="3.625rem"
+          onClick={onEditBoardOpen}
         >
           <Text fontWeight={"bold"} fontSize={"xl"} color="medium_Grey">
             + New Column
@@ -90,7 +97,12 @@ function Home() {
         subtasks={selectedTask?.subtasks}
         status={selectedTask?.status}
       />
-
+      <EditBoard
+        isOpen={isEditBoardOpen}
+        onClose={onEditBoardClose}
+        columns={data.boards[0].columns}
+        name={data.boards[0].name}
+      />
       <DeleteModal isOpen={isOpenDeleteModal} onClose={onCloseDeleteModal} />
     </Flex>
   );
