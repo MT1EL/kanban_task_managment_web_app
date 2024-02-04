@@ -2,10 +2,20 @@ import { useState } from "react";
 import { Text, VStack, Img, Flex, Box } from "@chakra-ui/react";
 import board from "../../assets/icon-board.svg";
 
-function DrawerBody() {
-  const [activeLink, setActiveLink] = useState("Platform Launch");
-
-  const drawerLinks = ["Platform Launch", "Marketing Plan", "RoadMap"];
+function DrawerBody({
+  handleNewBoard,
+  boards,
+  setColumns,
+  currentBoard,
+  setrCurrentBoard,
+}: {
+  handleNewBoard: () => void;
+  boards: any[];
+  setColumns: any;
+  currentBoard: any;
+  setrCurrentBoard: any;
+}) {
+  const [activeLink, setActiveLink] = useState(currentBoard.name);
 
   return (
     <Box
@@ -23,30 +33,33 @@ function DrawerBody() {
         color="medium_Grey"
         ml="2rem"
       >
-        ALL BOARDS (8)
+        ALL BOARDS ({boards.length})
       </Text>
       <VStack>
-        {drawerLinks.map((item) => (
+        {boards.map((item) => (
           <Flex
             gap="1rem"
-            bg={activeLink === item ? "main_purple" : "transparent"}
+            bg={activeLink === item.name ? "main_purple" : "transparent"}
             w="100%"
             h="48px"
             alignItems={"center"}
             borderTopRightRadius={"100px"}
             borderBottomRightRadius={"100px"}
             pl="2rem"
-            key={item}
+            key={item.name}
             cursor={"pointer"}
-            onClick={() => setActiveLink(item)}
-            color={activeLink === item ? "white" : "medium_Grey"}
+            onClick={() => {
+              setActiveLink(item.name), setColumns(item.columns);
+              setrCurrentBoard(item);
+            }}
+            color={activeLink === item.name ? "white" : "medium_Grey"}
             _hover={{
               bg: "main_purple",
               color: "white",
             }}
           >
             <Img src={board} alt="board" />
-            <Text fontSize={"md"}>{item}</Text>
+            <Text fontSize={"md"}>{item.name}</Text>
           </Flex>
         ))}
         <Flex
@@ -63,6 +76,7 @@ function DrawerBody() {
             bg: "main_purple",
             color: "white",
           }}
+          onClick={handleNewBoard}
         >
           <Img src={board} alt="board" />
           <Text fontWeight={"bold"} fontSize={"md"}>

@@ -1,11 +1,14 @@
-import { useColorMode, Box } from "@chakra-ui/react";
+import { useColorMode, Box, useDisclosure } from "@chakra-ui/react";
 import ShowDrawer from "./ShowDrawer";
 import DrawerFooter from "./DrawerFooter";
 import { useState } from "react";
 import DrawerBody from "./DrawerBody";
-function MyDrawer() {
+import EditBoard from "../Modals/EditBoard";
+function MyDrawer({ setColumns, currentBoard, setrCurrentBoard, boards }: any) {
+  const { isOpen: isBoardOpen, onOpen, onClose } = useDisclosure();
   const [isOpen, setIsOpen] = useState(true);
   const { colorMode } = useColorMode();
+
   return (
     <Box
       display={["none", "flex"]}
@@ -21,9 +24,21 @@ function MyDrawer() {
       transform={isOpen ? "translateX(0%)" : "translateX(-100%)"}
       transition={"300ms ease-in-out"}
     >
-      <DrawerBody />
+      <DrawerBody
+        handleNewBoard={onOpen}
+        setColumns={setColumns}
+        boards={boards}
+        currentBoard={currentBoard}
+        setrCurrentBoard={setrCurrentBoard}
+      />
       <DrawerFooter closeDrawer={() => setIsOpen(false)} />
       <ShowDrawer isOpen={isOpen} setOpen={() => setIsOpen(true)} />
+      <EditBoard
+        isOpen={isBoardOpen}
+        onClose={onClose}
+        columns={undefined}
+        name={"Add Board"}
+      />
     </Box>
   );
 }

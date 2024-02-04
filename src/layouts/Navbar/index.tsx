@@ -5,13 +5,15 @@ import {
   useColorMode,
   Text,
   Button,
+  useDisclosure,
 } from "@chakra-ui/react";
 import elipsis from "../../assets/icon-vertical-ellipsis.svg";
 import Logo from "../../components/Logo";
 import addTask from "../../assets/icon-add-task-mobile.svg";
-function index() {
+import NewTaskModal from "../../components/Modals/NewTaskModal";
+function index({ currentBoard }: any) {
   const { colorMode } = useColorMode();
-
+  const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <Flex
       alignItems={"center"}
@@ -22,6 +24,12 @@ function index() {
       borderBottomStyle={"solid"}
       px={["1rem", "0"]}
     >
+      <NewTaskModal
+        isOpen={isOpen}
+        onClose={onClose}
+        title={"Add New Task"}
+        buttonLabel={"Create Task"}
+      />
       <Logo />
       <Divider
         bg={colorMode === "dark" ? "lines_dark" : "lines_light"}
@@ -36,10 +44,10 @@ function index() {
         h="100%"
       >
         <Text fontSize={["lg", "xl"]} fontWeight={"bold"}>
-          Platform Launch
+          {currentBoard.name}
         </Text>
         <Flex alignItems={"center"} gap={["1rem", "1.5rem"]}>
-          <Button variant={"primary"} size={["xs", "xl"]}>
+          <Button variant={"primary"} size={["xs", "xl"]} onClick={onOpen}>
             <Img src={addTask} alt="add task" display={["block", "none"]} />
             <Text display={["none", "block"]}>+Add New Task</Text>
           </Button>
