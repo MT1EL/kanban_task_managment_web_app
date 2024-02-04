@@ -11,14 +11,9 @@ import {
   Select,
   VStack,
   Flex,
-  Img,
-  PopoverTrigger,
-  PopoverContent,
-  Popover,
-  PopoverBody,
 } from "@chakra-ui/react";
-import ellipsis from "../../assets/icon-vertical-ellipsis.svg";
 import { TaskModalInterface } from "../../types";
+import Popover from "../Popover/";
 function TaskModal({
   isOpen,
   onClose,
@@ -49,48 +44,7 @@ function TaskModal({
             <Text fontWeight={"bold"} fontSize={"18px"}>
               {title}
             </Text>
-            <Popover>
-              <PopoverTrigger>
-                <Img src={ellipsis} alt="elipsis" cursor={"pointer"} />
-              </PopoverTrigger>
-              <PopoverContent
-                maxW="192px"
-                border="none"
-                dropShadow={"0px 10px 20px 0px rgba(54, 78, 126, 0.25)"}
-              >
-                <PopoverBody
-                  p="1rem"
-                  gap="1rem"
-                  display={"flex"}
-                  flexDir={"column"}
-                >
-                  <Text
-                    color="mediun_Grey"
-                    fontWeight={"medium"}
-                    fontSize="13px"
-                    cursor={"pointer"}
-                    onClick={() => {
-                      onClose();
-                      onEditClick();
-                    }}
-                  >
-                    Edit Task
-                  </Text>
-                  <Text
-                    color="red"
-                    cursor={"pointer"}
-                    fontWeight={"medium"}
-                    fontSize="13px"
-                    onClick={() => {
-                      onClose();
-                      onDeleteClick();
-                    }}
-                  >
-                    Delete Task
-                  </Text>
-                </PopoverBody>
-              </PopoverContent>
-            </Popover>
+            <Popover onClose={onClose} onDeleteClick={onDeleteClick} />
           </Flex>
         </ModalHeader>
         <ModalBody gap="1.5rem" display={"flex"} flexDir={"column"} p="0">

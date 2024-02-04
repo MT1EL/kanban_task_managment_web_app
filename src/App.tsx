@@ -26,7 +26,12 @@ function App() {
   }
   return (
     <Box height={"100vh"}>
-      <Navbar currentBoard={currentBoard} />
+      <Navbar
+        currentBoard={currentBoard}
+        setBoards={setBoards}
+        setrCurrentBoard={setrCurrentBoard}
+        boards={boards}
+      />
       <Router>
         <Routes>
           <Route

@@ -1,8 +1,9 @@
-import { BoardInterface } from "../types";
+import { BoardInterface, columnType } from "../types";
 import { database } from "./../../firebase";
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDocs,
   updateDoc,
@@ -21,30 +22,32 @@ function getTables() {
     .catch((err) => console.log(err));
 }
 
-function addTable(table: any) {
+function addBoard(board: any) {
   const ref = collection(database, "boards");
-  return addDoc(ref, table)
+  return addDoc(ref, board)
     .then((res) => console.log(res))
     .catch((err) => console.log(err));
 }
 
-// interface Task {
-//   title: string;
-//   description: string;
-//   status: string;
-//   subtasks: Subtask[];
-// }
+function updateBoard(board: BoardInterface, boardId: string) {
+  const ref = doc(database, "boards", boardId);
+  return updateDoc(ref, board)
+    .then((res) => console.log(res))
+    .catch((err) => console.log(err));
+}
 
-// interface Subtask {
-//   title: string;
-//   isCompleted: boolean;
-// }
-
-function addNewTask(boardId: string, updatedColumns: columnType) {
+function updateColumn(boardId: string, updatedColumns: columnType) {
   const ref = doc(database, "boards", boardId);
   updateDoc(ref, { columns: updatedColumns })
     .then((res) => console.log("response:" + res))
     .catch((err) => console.log("error: " + err));
 }
 
-export { getTables, addTable, addNewTask };
+function deleteBoard(id: string) {
+  const ref = doc(database, "boards", id);
+  deleteDoc(ref)
+    .then((res) => console.log(res))
+    .catch((err) => console.log(err));
+}
+
+export { getTables, addBoard, updateBoard, updateColumn, deleteBoard };

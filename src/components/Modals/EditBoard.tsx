@@ -14,26 +14,43 @@ import {
 import xIcon from "../../assets/icon-cross.svg";
 import { useState } from "react";
 import { useFormik } from "formik";
-import { addTable } from "../../firebaseFunctions/table";
+import { addBoard, updateBoard } from "../../firebaseFunctions/table";
+import { BoardInterface } from "../../types";
 interface InitialValuesInterface {
   [key: string]: string;
 }
-const initialValuesObject: InitialValuesInterface = {
-  "Board Name": "",
-  // Add other fields as needed
-};
+
 function EditBoard({
   isOpen,
   onClose,
   columns,
   name,
+  id,
 }: {
   isOpen: boolean;
   onClose: () => void;
-  columns: any;
-  name: string;
+  columns?: any;
+  name?: string;
+  id?: string;
 }) {
   const [isDisabled, setIsDisabled] = useState(false);
+  const getInitialValues = () => {
+    let objToRerutn: InitialValuesInterface = {};
+    if (columns) {
+      columns.map((item: any, index: number) => {
+        objToRerutn[`col${index}`] = item.name;
+      });
+    } else {
+      objToRerutn.col0 = "";
+      objToRerutn.col1 = "";
+    }
+    return objToRerutn;
+  };
+  const initialValuesObject: InitialValuesInterface = {
+    "Board Name": name ? name : "",
+    // Add other fields as needed
+    ...getInitialValues(),
+  };
   const formik = useFormik({
     initialValues: initialValuesObject,
     onSubmit: (values) => {
@@ -44,7 +61,12 @@ function EditBoard({
           newColumnsArr.push({ name: values[key], tasks: [] });
         }
       });
-      addTable(boardObject);
+      if (name) {
+        updateBoard(boardObject as BoardInterface, id);
+      } else {
+        addBoard(boardObject);
+      }
+      onClose();
     },
   });
   const handleNewColumn = () => {

@@ -22,6 +22,7 @@ import {
   DropResult,
   Droppable,
 } from "react-beautiful-dnd";
+import { updateColumn } from "../firebaseFunctions/table";
 
 function Home({ setrCurrentBoard, currentBoard, boards }: any) {
   const [columns, setColumns] = useState(currentBoard.columns);
@@ -103,9 +104,21 @@ function Home({ setrCurrentBoard, currentBoard, boards }: any) {
     }
   };
 
-  console.log(columns);
+  const handleTaskDelete = () => {
+    let newColumns = [...columns];
+    newColumns.map((column) => {
+      if (column.name === selectedTask.status) {
+        const index = column.tasks.indexOf(selectedTask);
+        column.tasks.splice(index, 1);
+      }
+    });
+    setColumns(newColumns);
+    onCloseDeleteModal();
+    updateColumn(currentBoard.id, newColumns as any);
+  };
+  console.log(currentBoard);
   return (
-    <Flex gap="1rem" w="100%" h="calc(100% - 90px)">
+    <Flex gap="1rem" minW="100%" h="calc(100% - 90px)">
       <MyDrawer
         boards={boards}
         setColumns={setColumns}
@@ -207,10 +220,16 @@ function Home({ setrCurrentBoard, currentBoard, boards }: any) {
       <EditBoard
         isOpen={isEditBoardOpen}
         onClose={onEditBoardClose}
-        columns={data.boards[0].columns}
-        name={data.boards[0].name}
+        columns={currentBoard.columns}
+        name={currentBoard.name}
+        id={currentBoard.id}
       />
-      <DeleteModal isOpen={isOpenDeleteModal} onClose={onCloseDeleteModal} />
+      <DeleteModal
+        isOpen={isOpenDeleteModal}
+        onClose={onCloseDeleteModal}
+        onDeleteClick={handleTaskDelete}
+        title={"Delete this task?"}
+      />
     </Flex>
   );
 }

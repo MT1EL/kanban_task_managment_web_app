@@ -49,8 +49,9 @@ function DrawerBody({
             key={item.name}
             cursor={"pointer"}
             onClick={() => {
-              setActiveLink(item.name), setColumns(item.columns);
               setrCurrentBoard(item);
+              setActiveLink(item.name);
+              setColumns(item.columns);
             }}
             color={activeLink === item.name ? "white" : "medium_Grey"}
             _hover={{

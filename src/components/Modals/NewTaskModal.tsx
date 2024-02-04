@@ -12,11 +12,14 @@ import {
   Button,
   Img,
   Textarea,
+  useDisclosure,
 } from "@chakra-ui/react";
 import xIcon from "../../assets/icon-cross.svg";
 import { useFormik } from "formik";
-import { addNewTask } from "../../firebaseFunctions/table";
+import { updateColumn } from "../../firebaseFunctions/table";
 import { NewTaskModalInterface, columnType } from "../../types";
+import { ReactElement, JSXElementConstructor, ReactNode, Key } from "react";
+import DeleteModal from "./DeleteModal";
 interface InitialValuesInterface {
   [key: string]: string;
   title: string;
@@ -44,12 +47,13 @@ function NewTaskModal({
   const initialValuesObject: InitialValuesInterface = {
     title: taskTitle ? taskTitle : "",
     description: description ? description : "",
-    status: status ? status : "Todo",
+    status: status ? status : columns[0].name,
   };
   const formik = useFormik({
     initialValues: initialValuesObject,
     onSubmit: (values) => {
       let taskObj: taskObjectInterface = { ...values };
+      console.log(taskObj);
       let subtaskArr: { title: any; isCompleted: boolean }[] = [];
       const taskObj_keys = Object.keys(taskObj);
       taskObj_keys?.map((key) => {
@@ -62,10 +66,10 @@ function NewTaskModal({
       let newColumns: columnType[] = [...columns];
       newColumns?.map((column) => {
         if (column.name === values.status) {
-          column.tasks = [...column.tasks, taskObj];
+          column.tasks = [...column.tasks, taskObj] as any;
         }
       });
-      addNewTask(board_id, newColumns);
+      updateColumn(board_id, newColumns as any);
       onClose();
     },
   });
@@ -164,14 +168,16 @@ function NewTaskModal({
               Status
             </Text>
             <Select
-              value={formik.values.status}
+              defaultValue={formik.values.status}
               name="status"
               onChange={formik.handleChange}
               cursor={"pointer"}
             >
-              <option value="Todo">Todo</option>
-              <option value="Doing">Doing</option>
-              <option value="Done">Done</option>
+              {columns.map((item: { name: string }) => (
+                <option key={item.name} value={item.name}>
+                  {item.name}
+                </option>
+              ))}
             </Select>
           </Flex>
         </ModalBody>

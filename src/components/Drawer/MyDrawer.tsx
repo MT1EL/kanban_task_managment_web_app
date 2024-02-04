@@ -33,12 +33,7 @@ function MyDrawer({ setColumns, currentBoard, setrCurrentBoard, boards }: any) {
       />
       <DrawerFooter closeDrawer={() => setIsOpen(false)} />
       <ShowDrawer isOpen={isOpen} setOpen={() => setIsOpen(true)} />
-      <EditBoard
-        isOpen={isBoardOpen}
-        onClose={onClose}
-        columns={undefined}
-        name={"Add Board"}
-      />
+      <EditBoard isOpen={isBoardOpen} onClose={onClose} />
     </Box>
   );
 }

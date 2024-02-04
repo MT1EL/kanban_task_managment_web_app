@@ -7,13 +7,21 @@ import {
   Button,
   useDisclosure,
 } from "@chakra-ui/react";
-import elipsis from "../../assets/icon-vertical-ellipsis.svg";
 import Logo from "../../components/Logo";
 import addTask from "../../assets/icon-add-task-mobile.svg";
 import NewTaskModal from "../../components/Modals/NewTaskModal";
-function index({ currentBoard }: any) {
+import Popover from "../../components/Popover/";
+import DeleteModal from "../../components/Modals/DeleteModal";
+import { deleteBoard } from "../../firebaseFunctions/table";
+import { BoardInterface } from "../../types";
+function index({ currentBoard, setBoards, setrCurrentBoard, boards }: any) {
   const { colorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isDeleteModalOpen,
+    onOpen: onDeleteModalOpen,
+    onClose: onDeleteModalClose,
+  } = useDisclosure();
   return (
     <Flex
       alignItems={"center"}
@@ -53,9 +61,25 @@ function index({ currentBoard }: any) {
             <Img src={addTask} alt="add task" display={["block", "none"]} />
             <Text display={["none", "block"]}>+Add New Task</Text>
           </Button>
-          <Img src={elipsis} alt="elipsis" />
+          <Popover
+            onClose={() => console.log("clicked")}
+            onDeleteClick={onDeleteModalOpen}
+          />
         </Flex>
       </Flex>
+      <DeleteModal
+        isOpen={isDeleteModalOpen}
+        onClose={onDeleteModalClose}
+        onDeleteClick={() => {
+          deleteBoard(currentBoard.id);
+          onDeleteModalClose();
+          setBoards((prev: any) =>
+            prev.filter((board: BoardInterface) => board.id !== currentBoard.id)
+          );
+          setrCurrentBoard(boards[0]);
+        }}
+        title={"Delete this board?"}
+      />
     </Flex>
   );
 }
