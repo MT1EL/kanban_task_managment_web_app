@@ -23,8 +23,8 @@ import {
   Droppable,
 } from "react-beautiful-dnd";
 
-function Home() {
-  const [columns, setColumns] = useState(data.boards[0].columns);
+function Home({ setrCurrentBoard, currentBoard, boards }: any) {
+  const [columns, setColumns] = useState(currentBoard.columns);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
     isOpen: isEditModalOpen,
@@ -54,7 +54,9 @@ function Home() {
 
     if (source.droppableId === destination.droppableId) {
       // Reordering within the same column
-      const column = columns.find((col) => col.name === source.droppableId);
+      const column = columns.find(
+        (col: { name: string }) => col.name === source.droppableId
+      );
       if (!column) {
         return; // Column not found
       }
@@ -63,7 +65,7 @@ function Home() {
       const [removed] = newTasks.splice(source.index, 1);
       newTasks.splice(destination.index, 0, removed);
 
-      const newColumns = columns.map((col) =>
+      const newColumns = columns.map((col: { name: string }) =>
         col.name === source.droppableId ? { ...col, tasks: newTasks } : col
       );
 
@@ -71,10 +73,10 @@ function Home() {
     } else {
       // Moving between columns
       const sourceColumn = columns.find(
-        (col) => col.name === source.droppableId
+        (col: { name: string }) => col.name === source.droppableId
       );
       const destinationColumn = columns.find(
-        (col) => col.name === destination.droppableId
+        (col: { name: string }) => col.name === destination.droppableId
       );
 
       if (!sourceColumn || !destinationColumn) {
@@ -87,7 +89,7 @@ function Home() {
       const [removed] = sourceTasks.splice(source.index, 1);
       destinationTasks.splice(destination.index, 0, removed);
 
-      const newColumns = columns.map((col) => {
+      const newColumns = columns.map((col: { name: string }) => {
         if (col.name === source.droppableId) {
           return { ...col, tasks: sourceTasks };
         }
@@ -102,16 +104,22 @@ function Home() {
   };
   return (
     <Flex gap="1rem" w="100%" h="calc(100% - 90px)">
-      <MyDrawer />
+      <MyDrawer
+        boards={boards}
+        setColumns={setColumns}
+        currentBoard={currentBoard}
+        setrCurrentBoard={setrCurrentBoard}
+      />
       <Grid
         gridTemplateColumns={`repeat(${data?.boards?.length + 1}, 280px)`}
         gap="3"
         m="1.5rem"
         overflowX={"scroll"}
         h="fit-content"
+        minH={"100%"}
       >
         <DragDropContext onDragEnd={handleDragEnd}>
-          {columns.map((board) => (
+          {columns.map((board: any) => (
             <VStack gap="2.5rem" key={board.name} alignItems={"start"}>
               <ColumnsHeader
                 name={board.name}
@@ -127,7 +135,7 @@ function Home() {
                     h="100%"
                     w={"280px"}
                   >
-                    {board.tasks.map((todo, index) => (
+                    {board.tasks.map((todo: any, index: number) => (
                       <Draggable
                         key={todo.title}
                         draggableId={todo.title}

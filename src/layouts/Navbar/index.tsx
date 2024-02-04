@@ -11,10 +11,9 @@ import elipsis from "../../assets/icon-vertical-ellipsis.svg";
 import Logo from "../../components/Logo";
 import addTask from "../../assets/icon-add-task-mobile.svg";
 import NewTaskModal from "../../components/Modals/NewTaskModal";
-function index() {
+function index({ currentBoard }: any) {
   const { colorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
-
   return (
     <Flex
       alignItems={"center"}
@@ -45,7 +44,7 @@ function index() {
         h="100%"
       >
         <Text fontSize={["lg", "xl"]} fontWeight={"bold"}>
-          Platform Launch
+          {currentBoard.name}
         </Text>
         <Flex alignItems={"center"} gap={["1rem", "1.5rem"]}>
           <Button variant={"primary"} size={["xs", "xl"]} onClick={onOpen}>
