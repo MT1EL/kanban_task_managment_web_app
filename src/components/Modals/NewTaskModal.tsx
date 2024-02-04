@@ -14,6 +14,21 @@ import {
   Textarea,
 } from "@chakra-ui/react";
 import xIcon from "../../assets/icon-cross.svg";
+import { useFormik } from "formik";
+import { addNewTask } from "../../firebaseFunctions/table";
+import { NewTaskModalInterface, columnType } from "../../types";
+interface InitialValuesInterface {
+  [key: string]: string;
+  title: string;
+  description: string;
+  status: string;
+}
+interface taskObjectInterface {
+  [x: string]: any;
+  title: string;
+  description: string;
+  status: string;
+}
 function NewTaskModal({
   isOpen,
   onClose,
@@ -23,16 +38,57 @@ function NewTaskModal({
   description,
   subtasks,
   status,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-  title: string;
-  buttonLabel: string;
-  taskTitle?: string;
-  description?: string;
-  subtasks?: { title: string; isCompleted: boolean }[];
-  status?: string;
-}) {
+  columns,
+  board_id,
+}: NewTaskModalInterface) {
+  const initialValuesObject: InitialValuesInterface = {
+    title: taskTitle ? taskTitle : "",
+    description: description ? description : "",
+    status: status ? status : "Todo",
+  };
+  const formik = useFormik({
+    initialValues: initialValuesObject,
+    onSubmit: (values) => {
+      let taskObj: taskObjectInterface = { ...values };
+      let subtaskArr: { title: any; isCompleted: boolean }[] = [];
+      const taskObj_keys = Object.keys(taskObj);
+      taskObj_keys?.map((key) => {
+        if (key.includes("subtask")) {
+          subtaskArr.push({ title: values[key], isCompleted: false });
+          delete taskObj[key];
+        }
+      });
+      taskObj.subtasks = subtaskArr;
+      let newColumns: columnType[] = [...columns];
+      newColumns?.map((column) => {
+        if (column.name === values.status) {
+          column.tasks = [...column.tasks, taskObj];
+        }
+      });
+      addNewTask(board_id, newColumns);
+      onClose();
+    },
+  });
+  const handleNewSubtask = () => {
+    const formik_values_keys = Object.keys(formik.values);
+    if (formik_values_keys.length > 0) {
+      const newInitialValueName = `subtask${
+        Object.keys(formik.values).length - 1
+      }`;
+      formik.setFieldValue(
+        newInitialValueName,
+        formik.values[newInitialValueName]
+          ? formik.values[newInitialValueName]
+          : ""
+      );
+    }
+  };
+  const handleDeleteSubtask = (key: string) => {
+    const newValues = { ...formik.values };
+    delete newValues[key];
+    formik.setValues(newValues);
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -56,8 +112,9 @@ function NewTaskModal({
             </Text>
             <Input
               placeholder="e.g Take coffee break"
-              value={taskTitle ? taskTitle : ""}
-              onChange={(e) => console.log(e.target.value)}
+              name={"title"}
+              value={formik.values.title}
+              onChange={formik.handleChange}
             />
           </Flex>
 
@@ -67,55 +124,52 @@ function NewTaskModal({
             </Text>
             <Textarea
               placeholder="e.g Take coffee break"
-              value={description ? description : ""}
-              onChange={(e) => console.log(e.target.value)}
+              name="description"
+              value={formik.values.description}
+              onChange={formik.handleChange}
             />
           </Flex>
           <Flex flexDir={"column"} gap="11px">
             <Text color="mediun_Grey" fontWeight={"sm"}>
               Description
             </Text>
-            {subtasks?.map((subtask) => (
-              <Flex gap="0.5rem" alignItems={"center"}>
+            {Object.keys(formik.values)?.map((key, index) => (
+              <Flex
+                gap="0.5rem"
+                alignItems={"center"}
+                display={key.includes("subtask") ? "flex" : "none"}
+                key={key}
+              >
                 <Input
                   placeholder="e.g Take coffee break"
-                  value={subtask.title}
-                  onChange={(e) => console.log(e.target.value)}
+                  defaultValue={formik.values[key]}
+                  onChange={formik.handleChange}
+                  id={key}
+                  name={key}
                 />
-                <Img src={xIcon} alt="remove" />
+                <Img
+                  src={xIcon}
+                  alt="remove"
+                  cursor={"pointer"}
+                  onClick={() => handleDeleteSubtask(key)}
+                />
               </Flex>
             ))}
-            {!subtasks && (
-              <>
-                <Flex gap="0.5rem" alignItems={"center"}>
-                  <Input
-                    placeholder="e.g Take coffee break"
-                    onChange={(e) => console.log(e.target.value)}
-                  />
-                  <Img src={xIcon} alt="remove" />
-                </Flex>
-                <Flex gap="0.5rem" alignItems={"center"}>
-                  <Input
-                    placeholder="e.g Take coffee break"
-                    onChange={(e) => console.log(e.target.value)}
-                  />
-                  <Img src={xIcon} alt="remove" />
-                </Flex>
-              </>
-            )}
-            <Button variant={"secondary"}>+Add New Subtask</Button>
+            <Button variant={"secondary"} onClick={handleNewSubtask}>
+              +Add New Subtask
+            </Button>
           </Flex>
           <Flex flexDir={"column"} gap="0.5rem">
             <Text color="mediun_Grey" fontWeight={"sm"}>
               Status
             </Text>
             <Select
-              placeholder={"Todo"}
-              value={status ? status : ""}
-              onChange={(e) => console.log(e.target.value)}
+              value={formik.values.status}
+              name="status"
+              onChange={formik.handleChange}
               cursor={"pointer"}
             >
-              <option value="to do">To do</option>
+              <option value="Todo">Todo</option>
               <option value="Doing">Doing</option>
               <option value="Done">Done</option>
             </Select>
@@ -123,7 +177,7 @@ function NewTaskModal({
         </ModalBody>
 
         <ModalFooter flexDir={"column"} alignItems={"start"} gap="0.5rem" p="0">
-          <Button>{buttonLabel}</Button>
+          <Button onClick={() => formik.handleSubmit()}>{buttonLabel}</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

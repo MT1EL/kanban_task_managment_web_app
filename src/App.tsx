@@ -4,18 +4,23 @@ import Home from "./screens/Home";
 import { Box, Spinner } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { getTables } from "./firebaseFunctions/table";
+import { BoardInterface } from "./types";
 
 function App() {
-  const [boards, setBoards] = useState<any>();
-  const [currentBoard, setrCurrentBoard] = useState<any>(false);
+  const [boards, setBoards] = useState<BoardInterface[]>();
+  const [currentBoard, setrCurrentBoard] = useState<BoardInterface | Boolean>(
+    false
+  );
   useEffect(() => {
     getTables()
       .then((res) => {
-        setBoards(res), setrCurrentBoard(res[0]);
+        if (res) {
+          setBoards(res);
+          setrCurrentBoard(res[0]);
+        }
       })
       .catch((err) => console.log(err));
   }, []);
-
   if (!currentBoard) {
     return <Spinner />;
   }

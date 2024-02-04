@@ -36,7 +36,7 @@ function DrawerBody({
         ALL BOARDS ({boards.length})
       </Text>
       <VStack>
-        {boards.map((item) => (
+        {boards?.map((item) => (
           <Flex
             gap="1rem"
             bg={activeLink === item.name ? "main_purple" : "transparent"}

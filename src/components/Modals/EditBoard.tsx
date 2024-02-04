@@ -12,13 +12,16 @@ import {
   Img,
 } from "@chakra-ui/react";
 import xIcon from "../../assets/icon-cross.svg";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useFormik } from "formik";
 import { addTable } from "../../firebaseFunctions/table";
-interface InitialValues {
-  [key: string]: any;
+interface InitialValuesInterface {
+  [key: string]: string;
 }
-
+const initialValuesObject: InitialValuesInterface = {
+  "Board Name": "",
+  // Add other fields as needed
+};
 function EditBoard({
   isOpen,
   onClose,
@@ -32,13 +35,11 @@ function EditBoard({
 }) {
   const [isDisabled, setIsDisabled] = useState(false);
   const formik = useFormik({
-    initialValues: {
-      "Board Name": "",
-    },
+    initialValues: initialValuesObject,
     onSubmit: (values) => {
       let newColumnsArr: any = [];
       let boardObject = { name: values["Board Name"], columns: newColumnsArr };
-      Object.keys(values).map((key: string) => {
+      Object.keys(values)?.map((key: string) => {
         if (key !== "Board Name") {
           newColumnsArr.push({ name: values[key], tasks: [] });
         }
@@ -62,7 +63,6 @@ function EditBoard({
   };
   const handleColumnDelete = (key: string) => {
     const formik_values_keys = Object.keys(formik.values);
-    console.log(formik_values_keys.length);
     if (formik_values_keys.length < 7) {
       setIsDisabled(false);
     }
@@ -139,7 +139,7 @@ function EditBoard({
         </ModalBody>
 
         <ModalFooter p="0" gap="1rem">
-          <Button onClick={formik.handleSubmit}>Save Changes</Button>
+          <Button onClick={() => formik.handleSubmit()}>Save Changes</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>
@@ -147,41 +147,3 @@ function EditBoard({
 }
 
 export default EditBoard;
-
-// const handleNewColumn = () => {
-//   setMyColumns([...myColumns, { name: "", tasks: [] }]);
-//   const newInitialValueName = `col${Object.keys(formik.values).length - 1}`;
-//   formik.setFieldValue(
-//     newInitialValueName,
-//     formik.values[newInitialValueName]
-//       ? formik.values[newInitialValueName]
-//       : ""
-//   );
-// };
-// const handleColumnDelete = (columnIndex: number) => {
-//   const newValues = { ...formik.values };
-//   const formik_values_keys_arr = Object.keys(formik.values);
-//   const lengt_of_formik_values_keys_array = formik_values_keys_arr.length;
-//   const to_remove_item_name = Object.keys(formik.values)[
-//     lengt_of_formik_values_keys_array
-//   ];
-//   delete newValues[to_remove_item_name];
-//   formik.setValues(newValues);
-//   const newColumns = myColumns.filter(
-//     (_: any, index: number) => columnIndex !== index
-//   );
-//   setMyColumns(newColumns);
-// };
-// const handleColumnDelete = (colToDelete: string) => {
-//   const newColumns = myColumns.filter(
-//     (_: any, index: number) => columnIndex !== index
-//   );
-//   setMyColumns(newColumns);
-
-//   const newValues = { ...formik.values };
-//   const columnToRemove = Object.keys(newValues)[columnIndex]; // Get the key corresponding to the column index
-//   if (columnToRemove) {
-//     delete newValues[columnToRemove]; // Remove the column from formik values
-//     formik.setValues(newValues); // Update formik values
-//   }
-// };

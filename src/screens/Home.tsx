@@ -102,6 +102,8 @@ function Home({ setrCurrentBoard, currentBoard, boards }: any) {
       setColumns(newColumns);
     }
   };
+
+  console.log(columns);
   return (
     <Flex gap="1rem" w="100%" h="calc(100% - 90px)">
       <MyDrawer
@@ -119,13 +121,13 @@ function Home({ setrCurrentBoard, currentBoard, boards }: any) {
         minH={"100%"}
       >
         <DragDropContext onDragEnd={handleDragEnd}>
-          {columns.map((board: any) => (
-            <VStack gap="2.5rem" key={board.name} alignItems={"start"}>
+          {columns?.map((column: any) => (
+            <VStack gap="2.5rem" key={column.name} alignItems={"start"}>
               <ColumnsHeader
-                name={board.name}
-                taskLength={board.tasks.length}
+                name={column.name}
+                taskLength={column.tasks.length}
               />
-              <Droppable droppableId={board.name} key={board.name}>
+              <Droppable droppableId={column.name} key={column.name}>
                 {(provided) => (
                   <VStack
                     gap="1.25rem"
@@ -135,7 +137,7 @@ function Home({ setrCurrentBoard, currentBoard, boards }: any) {
                     h="100%"
                     w={"280px"}
                   >
-                    {board.tasks.map((todo: any, index: number) => (
+                    {column?.tasks?.map((todo: any, index: number) => (
                       <Draggable
                         key={todo.title}
                         draggableId={todo.title}
@@ -150,7 +152,7 @@ function Home({ setrCurrentBoard, currentBoard, boards }: any) {
                           >
                             <Card
                               title={todo.title}
-                              subTasks_title={`0 of ${todo.subtasks.length} subtasks`}
+                              subTasks_title={`0 of ${todo?.subtasks?.length} subtasks`}
                               handleClick={() => {
                                 setSelectedTask(todo);
                                 onOpen();
@@ -199,6 +201,8 @@ function Home({ setrCurrentBoard, currentBoard, boards }: any) {
         description={selectedTask?.descritpion}
         subtasks={selectedTask?.subtasks}
         status={selectedTask?.status}
+        columns={columns}
+        board_id={currentBoard.id}
       />
       <EditBoard
         isOpen={isEditBoardOpen}

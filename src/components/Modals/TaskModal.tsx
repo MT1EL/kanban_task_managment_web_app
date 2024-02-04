@@ -18,6 +18,7 @@ import {
   PopoverBody,
 } from "@chakra-ui/react";
 import ellipsis from "../../assets/icon-vertical-ellipsis.svg";
+import { TaskModalInterface } from "../../types";
 function TaskModal({
   isOpen,
   onClose,
@@ -27,16 +28,7 @@ function TaskModal({
   status,
   onEditClick,
   onDeleteClick,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-  title: string;
-  description: string;
-  subtasks: { title: string; isCompleted: boolean }[];
-  status: string;
-  onEditClick: () => void;
-  onDeleteClick: () => void;
-}) {
+}: TaskModalInterface) {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />

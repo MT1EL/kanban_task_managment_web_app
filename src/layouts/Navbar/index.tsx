@@ -29,6 +29,8 @@ function index({ currentBoard }: any) {
         onClose={onClose}
         title={"Add New Task"}
         buttonLabel={"Create Task"}
+        columns={currentBoard.columns}
+        board_id={currentBoard.id}
       />
       <Logo />
       <Divider
