@@ -33,6 +33,8 @@ interface NewTaskModalInterface {
   board_id: string;
   selectedIndex?: number;
   selectedTask?: any;
+  board_name?: string;
+  setCurrentBoard?: any;
 }
 
 interface TaskModalInterface {

@@ -46,6 +46,8 @@ function NewTaskModal({
   columns,
   board_id,
   selectedTask,
+  setCurrentBoard,
+  board_name,
 }: NewTaskModalInterface) {
   const getInitialValues = () => {
     let objToRerutn: { [x: string]: any } = {};
@@ -102,7 +104,14 @@ function NewTaskModal({
           }
         }
       });
-
+      const updateBoard = {
+        id: board_id,
+        name: board_name,
+        columns: newColumns,
+      };
+      if (setCurrentBoard) {
+        setCurrentBoard(updateBoard);
+      }
       updateColumn(board_id, newColumns as any);
       onClose();
     },

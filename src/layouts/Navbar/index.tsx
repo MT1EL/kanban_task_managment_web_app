@@ -14,7 +14,7 @@ import Popover from "../../components/Popover/";
 import DeleteModal from "../../components/Modals/DeleteModal";
 import { deleteBoard } from "../../firebaseFunctions/table";
 import { BoardInterface } from "../../types";
-function index({ currentBoard, setBoards, setrCurrentBoard, boards }: any) {
+function index({ currentBoard, setBoards, setCurrentBoard, boards }: any) {
   const { colorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -39,6 +39,8 @@ function index({ currentBoard, setBoards, setrCurrentBoard, boards }: any) {
         buttonLabel={"Create Task"}
         columns={currentBoard.columns}
         board_id={currentBoard.id}
+        board_name={currentBoard.name}
+        setCurrentBoard={setCurrentBoard}
       />
       <Logo />
       <Divider

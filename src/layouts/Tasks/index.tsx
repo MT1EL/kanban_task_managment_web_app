@@ -67,7 +67,6 @@ function index({
     onCloseDeleteModal();
     updateColumn(currentBoard.id, newColumns as any);
   };
-
   return (
     <Grid
       gridTemplateColumns={`repeat(${columns?.length + 1}, 280px)`}

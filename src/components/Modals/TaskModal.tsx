@@ -63,7 +63,11 @@ function TaskModal({
               {description}
             </Text>
           </Box>
-          <Flex flexDir={"column"} gap="1rem">
+          <Flex
+            flexDir={"column"}
+            gap="1rem"
+            display={subtasks.length > 0 ? "flex" : "none"}
+          >
             <Text fontSize={"sm"} color="medium_Grey" fontWeight={"bold"}>
               Subtasks (0 of {subtasks?.length})
             </Text>
@@ -84,7 +88,7 @@ function TaskModal({
           <Text color="medium_Grey" fontSize={"sm"} fontWeight={"bold"}>
             Current Status
           </Text>
-          <Select placeholder={status} cursor={"pointer"}>
+          <Select placeholder={status} cursor={"pointer"} disabled>
             <option value="to do">To do</option>
             <option value="Doing">Doing</option>
             <option value="Done">Done</option>
