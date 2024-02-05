@@ -26,12 +26,14 @@ function EditBoard({
   columns,
   name,
   id,
+  setBoards,
 }: {
   isOpen: boolean;
   onClose: () => void;
   columns?: any;
   name?: string;
   id?: string;
+  setBoards: any;
 }) {
   const [isDisabled, setIsDisabled] = useState(false);
   const getInitialValues = () => {
@@ -54,21 +56,32 @@ function EditBoard({
   const formik = useFormik({
     initialValues: initialValuesObject,
     onSubmit: (values) => {
-      let newColumnsArr: any = [];
+      let newColumnsArr: any = columns ? [...columns] : [];
       let boardObject = { name: values["Board Name"], columns: newColumnsArr };
-      Object.keys(values)?.map((key: string) => {
-        if (key !== "Board Name") {
-          newColumnsArr.push({ name: values[key], tasks: [] });
+      const formik_keys_arr = Object.keys(values).slice(1);
+      const formik_columns_quantity = formik_keys_arr?.length;
+      formik_keys_arr.map((key: string, index: number) => {
+        if (formik_columns_quantity < columns?.length) {
+          console.log("formik values is less");
+          newColumnsArr.splice(index, 1);
+        } else {
+          console.log("formik values is more");
+          if (newColumnsArr.length < index + 1) {
+            console.log("newColumnsArr length is more than current index + 1");
+            newColumnsArr.push({ name: values[key], tasks: [] });
+          }
         }
       });
       if (name) {
-        updateBoard(boardObject as BoardInterface, id);
+        updateBoard(boardObject as BoardInterface, id as string);
       } else {
         addBoard(boardObject);
+        setBoards((prev: any) => [...prev, boardObject]);
       }
       onClose();
     },
   });
+
   const handleNewColumn = () => {
     const formik_values_keys = Object.keys(formik.values);
     if (formik_values_keys.length > 0 && formik_values_keys.length < 5) {

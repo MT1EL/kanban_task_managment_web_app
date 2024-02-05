@@ -1,3 +1,5 @@
+import { Dispatch } from "react";
+
 interface BoardInterface {
   name: string;
   id: string;
@@ -25,10 +27,12 @@ interface NewTaskModalInterface {
   buttonLabel: string;
   taskTitle?: string;
   description?: string;
-  subtasks?: { title: string; isCompleted: boolean }[];
+  subtasks?: subtaskType[];
   status?: string;
   columns: any;
   board_id: string;
+  selectedIndex?: number;
+  selectedTask?: any;
 }
 
 interface TaskModalInterface {
@@ -36,7 +40,7 @@ interface TaskModalInterface {
   onClose: () => void;
   title: string;
   description: string;
-  subtasks: { title: string; isCompleted: boolean }[];
+  subtasks: subtaskType[];
   status: string;
   onEditClick: () => void;
   onDeleteClick: () => void;
@@ -48,4 +52,5 @@ export type {
   taskType,
   NewTaskModalInterface,
   TaskModalInterface,
+  subtaskType,
 };

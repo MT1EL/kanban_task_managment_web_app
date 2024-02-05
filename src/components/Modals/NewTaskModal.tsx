@@ -12,14 +12,16 @@ import {
   Button,
   Img,
   Textarea,
-  useDisclosure,
 } from "@chakra-ui/react";
 import xIcon from "../../assets/icon-cross.svg";
 import { useFormik } from "formik";
 import { updateColumn } from "../../firebaseFunctions/table";
-import { NewTaskModalInterface, columnType } from "../../types";
-import { ReactElement, JSXElementConstructor, ReactNode, Key } from "react";
-import DeleteModal from "./DeleteModal";
+import {
+  NewTaskModalInterface,
+  columnType,
+  subtaskType,
+  taskType,
+} from "../../types";
 interface InitialValuesInterface {
   [key: string]: string;
   title: string;
@@ -43,32 +45,64 @@ function NewTaskModal({
   status,
   columns,
   board_id,
+  selectedTask,
 }: NewTaskModalInterface) {
+  const getInitialValues = () => {
+    let objToRerutn: { [x: string]: any } = {};
+    if (subtasks) {
+      subtasks.map((subtask: subtaskType, index: number) => {
+        objToRerutn[`subtask${index}`] = subtask.description;
+      });
+    } else {
+      objToRerutn.subtask0 = "";
+      objToRerutn.subtask1 = "";
+    }
+    return objToRerutn;
+  };
   const initialValuesObject: InitialValuesInterface = {
     title: taskTitle ? taskTitle : "",
     description: description ? description : "",
     status: status ? status : columns[0].name,
   };
   const formik = useFormik({
-    initialValues: initialValuesObject,
+    initialValues: { ...initialValuesObject, ...getInitialValues() },
     onSubmit: (values) => {
-      let taskObj: taskObjectInterface = { ...values };
-      console.log(taskObj);
-      let subtaskArr: { title: any; isCompleted: boolean }[] = [];
-      const taskObj_keys = Object.keys(taskObj);
+      let taskObj: any = { ...values };
+      let subtaskArr: subtaskType[] = [];
+      const taskObj_keys = Object.keys(taskObj).splice(3);
+
       taskObj_keys?.map((key) => {
-        if (key.includes("subtask")) {
-          subtaskArr.push({ title: values[key], isCompleted: false });
-          delete taskObj[key];
-        }
+        subtaskArr.push({ description: values[key], isCompleted: false });
+        delete taskObj[key];
       });
       taskObj.subtasks = subtaskArr;
       let newColumns: columnType[] = [...columns];
       newColumns?.map((column) => {
-        if (column.name === values.status) {
-          column.tasks = [...column.tasks, taskObj] as any;
+        if (column.name === taskObj.status) {
+          if (
+            column.tasks.some(
+              (item) => JSON.stringify(item) === JSON.stringify(selectedTask)
+            )
+          ) {
+            const taskIndex = column.tasks.indexOf(selectedTask);
+            column.tasks[taskIndex] = taskObj;
+          } else {
+            column.tasks = [taskObj, ...column.tasks];
+          }
+        }
+        if (selectedTask && selectedTask.status !== taskObj.status) {
+          if (column.name === selectedTask.status) {
+            // console.log(column.tasks[0] === selectedTask);
+            if (column.tasks.length === 1) {
+              column.tasks = [];
+            } else {
+              const indexToRemove = column.tasks.indexOf(selectedTask);
+              column.tasks.splice(indexToRemove, 1);
+            }
+          }
         }
       });
+
       updateColumn(board_id, newColumns as any);
       onClose();
     },

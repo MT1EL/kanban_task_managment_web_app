@@ -5,18 +5,20 @@ import { Box, Spinner } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { getTables } from "./firebaseFunctions/table";
 import { BoardInterface } from "./types";
+import { useQuery } from "react-query";
 
 function App() {
   const [boards, setBoards] = useState<BoardInterface[]>();
-  const [currentBoard, setrCurrentBoard] = useState<BoardInterface | Boolean>(
+  const [currentBoard, setCurrentBoard] = useState<BoardInterface | Boolean>(
     false
   );
+
   useEffect(() => {
     getTables()
       .then((res) => {
         if (res) {
           setBoards(res);
-          setrCurrentBoard(res[0]);
+          setCurrentBoard(res[0]);
         }
       })
       .catch((err) => console.log(err));
@@ -28,8 +30,7 @@ function App() {
     <Box height={"100vh"}>
       <Navbar
         currentBoard={currentBoard}
-        setBoards={setBoards}
-        setrCurrentBoard={setrCurrentBoard}
+        setCurrentBoard={setCurrentBoard}
         boards={boards}
       />
       <Router>
@@ -38,8 +39,9 @@ function App() {
             path="/"
             element={
               <Home
-                setrCurrentBoard={setrCurrentBoard}
+                setCurrentBoard={setCurrentBoard}
                 currentBoard={currentBoard}
+                setBoards={setBoards}
                 boards={boards}
               />
             }

@@ -7,13 +7,13 @@ function DrawerBody({
   boards,
   setColumns,
   currentBoard,
-  setrCurrentBoard,
+  setCurrentBoard,
 }: {
   handleNewBoard: () => void;
   boards: any[];
   setColumns: any;
   currentBoard: any;
-  setrCurrentBoard: any;
+  setCurrentBoard: any;
 }) {
   const [activeLink, setActiveLink] = useState(currentBoard.name);
 
@@ -49,7 +49,7 @@ function DrawerBody({
             key={item.name}
             cursor={"pointer"}
             onClick={() => {
-              setrCurrentBoard(item);
+              setCurrentBoard(item);
               setActiveLink(item.name);
               setColumns(item.columns);
             }}

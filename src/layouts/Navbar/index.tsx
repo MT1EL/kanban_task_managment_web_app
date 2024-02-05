@@ -64,6 +64,7 @@ function index({ currentBoard, setBoards, setrCurrentBoard, boards }: any) {
           <Popover
             onClose={() => console.log("clicked")}
             onDeleteClick={onDeleteModalOpen}
+            onEditClick={() => console.log("clicked")}
           />
         </Flex>
       </Flex>

@@ -12,9 +12,11 @@ import ellipsis from "../../assets/icon-vertical-ellipsis.svg";
 function index({
   onClose,
   onDeleteClick,
+  onEditClick,
 }: {
   onClose: () => void;
   onDeleteClick: () => void;
+  onEditClick: () => void;
 }) {
   return (
     <Popover>

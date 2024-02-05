@@ -24,6 +24,7 @@ function TaskModal({
   onEditClick,
   onDeleteClick,
 }: TaskModalInterface) {
+  console.log(subtasks);
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -44,7 +45,11 @@ function TaskModal({
             <Text fontWeight={"bold"} fontSize={"18px"}>
               {title}
             </Text>
-            <Popover onClose={onClose} onDeleteClick={onDeleteClick} />
+            <Popover
+              onEditClick={onEditClick}
+              onClose={onClose}
+              onDeleteClick={onDeleteClick}
+            />
           </Flex>
         </ModalHeader>
         <ModalBody gap="1.5rem" display={"flex"} flexDir={"column"} p="0">
@@ -65,10 +70,10 @@ function TaskModal({
             <VStack gap="0.5rem" alignItems={"start"}>
               {subtasks?.map((subTask) => (
                 <Checkbox
-                  key={subTask.title}
+                  key={subTask.description}
                   defaultChecked={subTask.isCompleted}
                 >
-                  {subTask.title}
+                  {subTask.description}
                 </Checkbox>
               ))}
             </VStack>
