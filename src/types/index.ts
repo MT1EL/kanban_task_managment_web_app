@@ -11,7 +11,7 @@ type columnType = {
 };
 type taskType = {
   title: string;
-  status: string;
+  status: number;
   description: string;
   subtasks: subtaskType[];
 };
@@ -25,25 +25,16 @@ interface NewTaskModalInterface {
   onClose: () => void;
   title: string;
   buttonLabel: string;
-  taskTitle?: string;
-  description?: string;
-  subtasks?: subtaskType[];
-  status?: string;
-  columns: any;
-  board_id: string;
-  selectedIndex?: number;
-  selectedTask?: any;
-  board_name?: string;
-  setCurrentBoard?: any;
+  selectedTask?: taskType;
+  currentBoard: BoardInterface;
 }
-
 interface TaskModalInterface {
   isOpen: boolean;
   onClose: () => void;
   title: string;
   description: string;
   subtasks: subtaskType[];
-  status: string;
+  status: number;
   onEditClick: () => void;
   onDeleteClick: () => void;
 }

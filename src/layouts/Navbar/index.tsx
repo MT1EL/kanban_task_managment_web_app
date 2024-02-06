@@ -13,7 +13,7 @@ import NewTaskModal from "../../components/Modals/NewTaskModal";
 import Popover from "../../components/Popover/";
 import DeleteModal from "../../components/Modals/DeleteModal";
 import { deleteBoard } from "../../firebaseFunctions/table";
-function index({ currentBoard, setCurrentBoard, boards, getTables }: any) {
+function index({ currentBoard, setCurrentBoard, boards }: any) {
   const { colorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -36,10 +36,7 @@ function index({ currentBoard, setCurrentBoard, boards, getTables }: any) {
         onClose={onClose}
         title={"Add New Task"}
         buttonLabel={"Create Task"}
-        columns={currentBoard.columns}
-        board_id={currentBoard.id}
-        board_name={currentBoard.name}
-        setCurrentBoard={setCurrentBoard}
+        currentBoard={currentBoard}
       />
       <Logo />
       <Divider
@@ -75,11 +72,7 @@ function index({ currentBoard, setCurrentBoard, boards, getTables }: any) {
         onDeleteClick={() => {
           deleteBoard(currentBoard.id);
           onDeleteModalClose();
-          // setBoards((prev: any) =>
-          //   prev.filter((board: BoardInterface) => board.id !== currentBoard.id)
-          // );
           setCurrentBoard(boards[0]);
-          getTables();
         }}
         title={"Delete this board?"}
       />

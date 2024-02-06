@@ -16,43 +16,20 @@ import {
 import xIcon from "../../assets/icon-cross.svg";
 import { useFormik } from "formik";
 import { updateColumn } from "../../firebaseFunctions/table";
-import {
-  NewTaskModalInterface,
-  columnType,
-  subtaskType,
-  taskType,
-} from "../../types";
-interface InitialValuesInterface {
-  [key: string]: string;
-  title: string;
-  description: string;
-  status: string;
-}
-interface taskObjectInterface {
-  [x: string]: any;
-  title: string;
-  description: string;
-  status: string;
-}
+import { NewTaskModalInterface, columnType, subtaskType } from "../../types";
+
 function NewTaskModal({
   isOpen,
   onClose,
   title,
   buttonLabel,
-  taskTitle,
-  description,
-  subtasks,
-  status,
-  columns,
-  board_id,
   selectedTask,
-  setCurrentBoard,
-  board_name,
+  currentBoard,
 }: NewTaskModalInterface) {
   const getInitialValues = () => {
     let objToRerutn: { [x: string]: any } = {};
-    if (subtasks) {
-      subtasks.map((subtask: subtaskType, index: number) => {
+    if (selectedTask?.subtasks) {
+      selectedTask?.subtasks.map((subtask: subtaskType, index: number) => {
         objToRerutn[`subtask${index}`] = subtask.description;
       });
     } else {
@@ -61,10 +38,10 @@ function NewTaskModal({
     }
     return objToRerutn;
   };
-  const initialValuesObject: InitialValuesInterface = {
-    title: taskTitle ? taskTitle : "",
-    description: description ? description : "",
-    status: status ? status : columns[0].name,
+  const initialValuesObject: any = {
+    title: selectedTask?.title ? selectedTask.title : "",
+    description: selectedTask?.description ? selectedTask?.description : "",
+    status: selectedTask?.status ? selectedTask?.status : 0,
   };
   const formik = useFormik({
     initialValues: { ...initialValuesObject, ...getInitialValues() },
@@ -78,13 +55,14 @@ function NewTaskModal({
         delete taskObj[key];
       });
       taskObj.subtasks = subtaskArr;
-      let newColumns: columnType[] = [...columns];
+      let newColumns: columnType[] = [...currentBoard?.columns];
       newColumns?.map((column) => {
-        if (column.name === taskObj.status) {
+        if (column.name === currentBoard.columns[values.status].name) {
           if (
             column.tasks.some(
               (item) => JSON.stringify(item) === JSON.stringify(selectedTask)
-            )
+            ) &&
+            selectedTask
           ) {
             const taskIndex = column.tasks.indexOf(selectedTask);
             column.tasks[taskIndex] = taskObj;
@@ -93,7 +71,7 @@ function NewTaskModal({
           }
         }
         if (selectedTask && selectedTask.status !== taskObj.status) {
-          if (column.name === selectedTask.status) {
+          if (column.name === currentBoard.columns[selectedTask.status].name) {
             if (column.tasks.length === 1) {
               column.tasks = [];
             } else {
@@ -103,15 +81,7 @@ function NewTaskModal({
           }
         }
       });
-      const updateBoard = {
-        id: board_id,
-        name: board_name,
-        columns: newColumns,
-      };
-      if (setCurrentBoard) {
-        setCurrentBoard(updateBoard);
-      }
-      updateColumn(board_id, newColumns as any);
+      updateColumn(currentBoard?.id, newColumns as any);
       onClose();
     },
   });
@@ -134,7 +104,6 @@ function NewTaskModal({
     delete newValues[key];
     formik.setValues(newValues);
   };
-
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -179,7 +148,7 @@ function NewTaskModal({
             <Text color="mediun_Grey" fontWeight={"sm"}>
               Description
             </Text>
-            {Object.keys(formik.values)?.map((key, index) => (
+            {Object.keys(formik.values)?.map((key) => (
               <Flex
                 gap="0.5rem"
                 alignItems={"center"}
@@ -210,16 +179,18 @@ function NewTaskModal({
               Status
             </Text>
             <Select
-              defaultValue={formik.values.status}
+              value={formik.values.status}
               name="status"
               onChange={formik.handleChange}
               cursor={"pointer"}
             >
-              {columns.map((item: { name: string }) => (
-                <option key={item.name} value={item.name}>
-                  {item.name}
-                </option>
-              ))}
+              {currentBoard.columns.map(
+                (item: { name: string }, index: number) => (
+                  <option key={item.name} value={Number(index)}>
+                    {item.name}
+                  </option>
+                )
+              )}
             </Select>
           </Flex>
         </ModalBody>

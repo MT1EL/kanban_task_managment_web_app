@@ -1,4 +1,4 @@
-import React, { Dispatch, useState } from "react";
+import { Dispatch, useState } from "react";
 import {
   Flex,
   Grid,
@@ -18,11 +18,7 @@ import { BoardInterface, columnType, taskType } from "../../types";
 import ColumnsHeader from "../../components/Header/ColumnsHeader";
 import EditBoard from "../../components/Modals/EditBoard";
 import Card from "../../components/Card/";
-import {
-  getTables,
-  updateBoard,
-  updateColumn,
-} from "../../firebaseFunctions/table";
+import { updateBoard, updateColumn } from "../../firebaseFunctions/table";
 import TaskModal from "../../components/Modals/TaskModal";
 import DeleteModal from "../../components/Modals/DeleteModal";
 import NewTaskModal from "../../components/Modals/NewTaskModal";
@@ -56,7 +52,10 @@ function index({
   const handleTaskDelete = () => {
     let newColumns = [...currentBoard.columns];
     newColumns.map((column) => {
-      if (selectedTask && column.name === selectedTask.status) {
+      if (
+        selectedTask &&
+        column.name === currentBoard.columns[selectedTask.status].name
+      ) {
         const index = column.tasks.indexOf(selectedTask);
         column.tasks.splice(index, 1);
       }
@@ -104,7 +103,7 @@ function index({
                       draggableId={task.title}
                       index={index}
                     >
-                      {(provided, snapshot) => (
+                      {(provided) => (
                         <Box
                           ref={provided.innerRef}
                           {...provided.draggableProps}
@@ -161,12 +160,7 @@ function index({
             title={"Edit Task"}
             buttonLabel={"Save Changes"}
             selectedTask={selectedTask}
-            taskTitle={selectedTask?.title}
-            description={selectedTask?.description}
-            subtasks={selectedTask?.subtasks}
-            status={selectedTask?.status}
-            columns={currentBoard.columns}
-            board_id={currentBoard.id}
+            currentBoard={currentBoard}
           />
         </>
       )}
