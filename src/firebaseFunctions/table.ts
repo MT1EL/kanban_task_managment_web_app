@@ -1,22 +1,53 @@
+import { BoardInterface, columnType } from "../types";
 import { database } from "./../../firebase";
-import { addDoc, collection, getDocs } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  updateDoc,
+} from "firebase/firestore";
 
 function getTables() {
   const ref = collection(database, "boards");
   return getDocs(ref)
     .then((res) => {
-      let newArr: any[] = [];
-      res.forEach((doc) => newArr.push(doc.data()));
+      let newArr: BoardInterface[] = [];
+      res.forEach((doc) =>
+        newArr.push({ ...doc.data(), id: doc.id } as BoardInterface)
+      );
       return newArr;
     })
     .catch((err) => console.log(err));
 }
 
-function addTable(table: any) {
+function addBoard(board: any) {
   const ref = collection(database, "boards");
-  return addDoc(ref, table)
+  return addDoc(ref, board)
     .then((res) => console.log(res))
     .catch((err) => console.log(err));
 }
 
-export { getTables, addTable };
+function updateBoard(board: BoardInterface, boardId: string) {
+  const ref = doc(database, "boards", boardId);
+  return updateDoc(ref, board)
+    .then((res) => console.log(res))
+    .catch((err) => console.log(err));
+}
+
+function updateColumn(boardId: string, updatedColumns: columnType) {
+  const ref = doc(database, "boards", boardId);
+  updateDoc(ref, { columns: updatedColumns })
+    .then((res) => console.log("response:" + res))
+    .catch((err) => console.log("error: " + err));
+}
+
+function deleteBoard(id: string) {
+  const ref = doc(database, "boards", id);
+  deleteDoc(ref)
+    .then((res) => console.log(res))
+    .catch((err) => console.log(err));
+}
+
+export { getTables, addBoard, updateBoard, updateColumn, deleteBoard };

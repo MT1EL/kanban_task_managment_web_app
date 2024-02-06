@@ -11,13 +11,9 @@ import {
   Select,
   VStack,
   Flex,
-  Img,
-  PopoverTrigger,
-  PopoverContent,
-  Popover,
-  PopoverBody,
 } from "@chakra-ui/react";
-import ellipsis from "../../assets/icon-vertical-ellipsis.svg";
+import { TaskModalInterface } from "../../types";
+import Popover from "../Popover/";
 function TaskModal({
   isOpen,
   onClose,
@@ -27,16 +23,7 @@ function TaskModal({
   status,
   onEditClick,
   onDeleteClick,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-  title: string;
-  description: string;
-  subtasks: { title: string; isCompleted: boolean }[];
-  status: string;
-  onEditClick: () => void;
-  onDeleteClick: () => void;
-}) {
+}: TaskModalInterface) {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -57,48 +44,11 @@ function TaskModal({
             <Text fontWeight={"bold"} fontSize={"18px"}>
               {title}
             </Text>
-            <Popover>
-              <PopoverTrigger>
-                <Img src={ellipsis} alt="elipsis" cursor={"pointer"} />
-              </PopoverTrigger>
-              <PopoverContent
-                maxW="192px"
-                border="none"
-                dropShadow={"0px 10px 20px 0px rgba(54, 78, 126, 0.25)"}
-              >
-                <PopoverBody
-                  p="1rem"
-                  gap="1rem"
-                  display={"flex"}
-                  flexDir={"column"}
-                >
-                  <Text
-                    color="mediun_Grey"
-                    fontWeight={"medium"}
-                    fontSize="13px"
-                    cursor={"pointer"}
-                    onClick={() => {
-                      onClose();
-                      onEditClick();
-                    }}
-                  >
-                    Edit Task
-                  </Text>
-                  <Text
-                    color="red"
-                    cursor={"pointer"}
-                    fontWeight={"medium"}
-                    fontSize="13px"
-                    onClick={() => {
-                      onClose();
-                      onDeleteClick();
-                    }}
-                  >
-                    Delete Task
-                  </Text>
-                </PopoverBody>
-              </PopoverContent>
-            </Popover>
+            <Popover
+              onEditClick={onEditClick}
+              onClose={onClose}
+              onDeleteClick={onDeleteClick}
+            />
           </Flex>
         </ModalHeader>
         <ModalBody gap="1.5rem" display={"flex"} flexDir={"column"} p="0">
@@ -112,17 +62,21 @@ function TaskModal({
               {description}
             </Text>
           </Box>
-          <Flex flexDir={"column"} gap="1rem">
+          <Flex
+            flexDir={"column"}
+            gap="1rem"
+            display={subtasks.length > 0 ? "flex" : "none"}
+          >
             <Text fontSize={"sm"} color="medium_Grey" fontWeight={"bold"}>
               Subtasks (0 of {subtasks?.length})
             </Text>
             <VStack gap="0.5rem" alignItems={"start"}>
               {subtasks?.map((subTask) => (
                 <Checkbox
-                  key={subTask.title}
+                  key={subTask.description}
                   defaultChecked={subTask.isCompleted}
                 >
-                  {subTask.title}
+                  {subTask.description}
                 </Checkbox>
               ))}
             </VStack>
@@ -133,7 +87,7 @@ function TaskModal({
           <Text color="medium_Grey" fontSize={"sm"} fontWeight={"bold"}>
             Current Status
           </Text>
-          <Select placeholder={status} cursor={"pointer"}>
+          <Select placeholder={status} cursor={"pointer"} disabled>
             <option value="to do">To do</option>
             <option value="Doing">Doing</option>
             <option value="Done">Done</option>

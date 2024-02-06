@@ -11,9 +11,13 @@ import {
 function DeleteModal({
   isOpen,
   onClose,
+  onDeleteClick,
+  title,
 }: {
   isOpen: boolean;
   onClose: () => void;
+  onDeleteClick: () => void;
+  title: string;
 }) {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -28,7 +32,7 @@ function DeleteModal({
       >
         <ModalHeader p="0">
           <Text fontWeight={"bold"} fontSize={"18px"} color="red">
-            Delete this board?
+            {title}
           </Text>
         </ModalHeader>
         <ModalBody gap="1.5rem" display={"flex"} flexDir={"column"} p="0">
@@ -39,8 +43,12 @@ function DeleteModal({
         </ModalBody>
 
         <ModalFooter p="0" gap="1rem">
-          <Button variant={"destructive"}>Delete</Button>
-          <Button variant="secondary">Cancel</Button>
+          <Button variant={"destructive"} onClick={onDeleteClick}>
+            Delete
+          </Button>
+          <Button variant="secondary" onClick={onClose}>
+            Cancel
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>
