@@ -94,7 +94,6 @@ function NewTaskModal({
         }
         if (selectedTask && selectedTask.status !== taskObj.status) {
           if (column.name === selectedTask.status) {
-            // console.log(column.tasks[0] === selectedTask);
             if (column.tasks.length === 1) {
               column.tasks = [];
             } else {

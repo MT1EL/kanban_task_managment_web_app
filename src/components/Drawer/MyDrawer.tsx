@@ -4,13 +4,7 @@ import DrawerFooter from "./DrawerFooter";
 import { useState } from "react";
 import DrawerBody from "./DrawerBody";
 import EditBoard from "../Modals/EditBoard";
-function MyDrawer({
-  setColumns,
-  currentBoard,
-  setCurrentBoard,
-  boards,
-  setBoards,
-}: any) {
+function MyDrawer({ setColumns, currentBoard, setCurrentBoard, boards }: any) {
   const { isOpen: isBoardOpen, onOpen, onClose } = useDisclosure();
   const [isOpen, setIsOpen] = useState(true);
   const { colorMode } = useColorMode();
@@ -39,7 +33,7 @@ function MyDrawer({
       />
       <DrawerFooter closeDrawer={() => setIsOpen(false)} />
       <ShowDrawer isOpen={isOpen} setOpen={() => setIsOpen(true)} />
-      <EditBoard isOpen={isBoardOpen} onClose={onClose} setBoards={setBoards} />
+      <EditBoard isOpen={isBoardOpen} onClose={onClose} />
     </Box>
   );
 }

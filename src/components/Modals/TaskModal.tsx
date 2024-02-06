@@ -24,7 +24,6 @@ function TaskModal({
   onEditClick,
   onDeleteClick,
 }: TaskModalInterface) {
-  console.log(subtasks);
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />

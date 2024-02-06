@@ -23,23 +23,17 @@ interface InitialValuesInterface {
 function EditBoard({
   isOpen,
   onClose,
-  columns,
-  name,
-  id,
-  setBoards,
+  currentBoard,
 }: {
   isOpen: boolean;
   onClose: () => void;
-  columns?: any;
-  name?: string;
-  id?: string;
-  setBoards: any;
+  currentBoard?: BoardInterface;
 }) {
   const [isDisabled, setIsDisabled] = useState(false);
   const getInitialValues = () => {
     let objToRerutn: InitialValuesInterface = {};
-    if (columns) {
-      columns.map((item: any, index: number) => {
+    if (currentBoard) {
+      currentBoard.columns.map((item: any, index: number) => {
         objToRerutn[`col${index}`] = item.name;
       });
     } else {
@@ -49,35 +43,38 @@ function EditBoard({
     return objToRerutn;
   };
   const initialValuesObject: InitialValuesInterface = {
-    "Board Name": name ? name : "",
+    "Board Name": currentBoard?.name ? currentBoard?.name : "",
     // Add other fields as needed
     ...getInitialValues(),
   };
   const formik = useFormik({
     initialValues: initialValuesObject,
     onSubmit: (values) => {
-      let newColumnsArr: any = columns ? [...columns] : [];
+      let newColumnsArr: any = currentBoard?.columns
+        ? [...currentBoard?.columns]
+        : [];
       let boardObject = { name: values["Board Name"], columns: newColumnsArr };
       const formik_keys_arr = Object.keys(values).slice(1);
       const formik_columns_quantity = formik_keys_arr?.length;
       formik_keys_arr.map((key: string, index: number) => {
-        if (formik_columns_quantity < columns?.length) {
-          console.log("formik values is less");
+        if (
+          currentBoard &&
+          formik_columns_quantity < currentBoard?.columns?.length
+        ) {
           newColumnsArr.splice(index, 1);
         } else {
-          console.log("formik values is more");
           if (newColumnsArr.length < index + 1) {
-            console.log("newColumnsArr length is more than current index + 1");
             newColumnsArr.push({ name: values[key], tasks: [] });
           }
         }
       });
-      if (name) {
-        updateBoard(boardObject as BoardInterface, id as string);
+      if (currentBoard?.name) {
+        updateBoard(boardObject as BoardInterface, currentBoard.id as string);
       } else {
         addBoard(boardObject);
-        setBoards((prev: any) => [...prev, boardObject]);
+        // setBoards((prev: any) => [boardObject, ...prev]);
       }
+      formik.setValues(formik.initialValues);
       onClose();
     },
   });
@@ -103,6 +100,7 @@ function EditBoard({
     }
     const newValues = { ...formik.values };
     delete newValues[key];
+    console.log(newValues);
     formik.setValues(newValues);
   };
   return (

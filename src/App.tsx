@@ -5,15 +5,15 @@ import { Box, Spinner } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { getTables } from "./firebaseFunctions/table";
 import { BoardInterface } from "./types";
-import { useQuery } from "react-query";
+import { database } from "../firebase";
+import { collection, onSnapshot, query } from "firebase/firestore";
 
 function App() {
   const [boards, setBoards] = useState<BoardInterface[]>();
   const [currentBoard, setCurrentBoard] = useState<BoardInterface | Boolean>(
     false
   );
-
-  useEffect(() => {
+  const getData = () => {
     getTables()
       .then((res) => {
         if (res) {
@@ -21,7 +21,28 @@ function App() {
           setCurrentBoard(res[0]);
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err: any) => console.log(err));
+  };
+  useEffect(() => {
+    getData();
+    const boardRef = collection(database, "boards");
+    const boardQuery = query(boardRef);
+    const unsubscribe = onSnapshot(boardQuery, (snapshot) => {
+      const updatedBoards = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      console.log("here");
+      if (currentBoard) {
+        console.log("currentBoard exists");
+      } else {
+        console.log("currentBoard does not exists");
+      }
+      setBoards(updatedBoards as any);
+      setCurrentBoard(updatedBoards[0] as any);
+    });
+
+    return () => unsubscribe();
   }, []);
   if (!currentBoard) {
     return <Spinner />;
@@ -32,6 +53,8 @@ function App() {
         currentBoard={currentBoard}
         setCurrentBoard={setCurrentBoard}
         boards={boards}
+        getTables={getData}
+        setBoards={setBoards}
       />
       <Router>
         <Routes>
@@ -41,8 +64,8 @@ function App() {
               <Home
                 setCurrentBoard={setCurrentBoard}
                 currentBoard={currentBoard}
-                setBoards={setBoards}
                 boards={boards}
+                getTables={getData}
               />
             }
           />

@@ -13,8 +13,7 @@ import NewTaskModal from "../../components/Modals/NewTaskModal";
 import Popover from "../../components/Popover/";
 import DeleteModal from "../../components/Modals/DeleteModal";
 import { deleteBoard } from "../../firebaseFunctions/table";
-import { BoardInterface } from "../../types";
-function index({ currentBoard, setBoards, setCurrentBoard, boards }: any) {
+function index({ currentBoard, setCurrentBoard, boards, getTables }: any) {
   const { colorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -76,10 +75,11 @@ function index({ currentBoard, setBoards, setCurrentBoard, boards }: any) {
         onDeleteClick={() => {
           deleteBoard(currentBoard.id);
           onDeleteModalClose();
-          setBoards((prev: any) =>
-            prev.filter((board: BoardInterface) => board.id !== currentBoard.id)
-          );
-          setrCurrentBoard(boards[0]);
+          // setBoards((prev: any) =>
+          //   prev.filter((board: BoardInterface) => board.id !== currentBoard.id)
+          // );
+          setCurrentBoard(boards[0]);
+          getTables();
         }}
         title={"Delete this board?"}
       />
