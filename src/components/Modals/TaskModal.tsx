@@ -23,6 +23,7 @@ function TaskModal({
   status,
   onEditClick,
   onDeleteClick,
+  columns,
 }: TaskModalInterface) {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -48,6 +49,8 @@ function TaskModal({
               onEditClick={onEditClick}
               onClose={onClose}
               onDeleteClick={onDeleteClick}
+              editTitle={"Edit Task"}
+              deleteTitle={"Delete Task"}
             />
           </Flex>
         </ModalHeader>
@@ -87,11 +90,11 @@ function TaskModal({
           <Text color="medium_Grey" fontSize={"sm"} fontWeight={"bold"}>
             Current Status
           </Text>
-          <Select placeholder={status} cursor={"pointer"} disabled>
-            <option value="to do">To do</option>
-            <option value="Doing">Doing</option>
-            <option value="Done">Done</option>
-          </Select>
+          <Select
+            placeholder={columns[status].name}
+            cursor={"pointer"}
+            disabled
+          ></Select>
         </ModalFooter>
       </ModalContent>
     </Modal>

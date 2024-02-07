@@ -72,7 +72,6 @@ function EditBoard({
       } else {
         formik_columns.map((key, index) => {
           if (values[key] !== newColumns[index]?.name) {
-            console.log("new col name is equal to old columns name");
             newColumns.push({ name: values[key], tasks: [] });
           }
         });

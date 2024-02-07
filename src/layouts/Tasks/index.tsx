@@ -1,4 +1,4 @@
-import { Dispatch, useState } from "react";
+import { useState } from "react";
 import {
   Flex,
   Grid,
@@ -145,6 +145,7 @@ function index({ currentBoard }: { currentBoard: BoardInterface }) {
             status={selectedTask?.status}
             onEditClick={onOpenEditModal}
             onDeleteClick={onOpenDeleteModal}
+            columns={currentBoard.columns}
           />
 
           <NewTaskModal
@@ -214,6 +215,7 @@ const handleDragEnd = (result: DropResult, currentBoard: BoardInterface) => {
     const destinationTasks = [...destinationColumn.tasks];
 
     const [removed] = sourceTasks.splice(source.index, 1);
+    removed.status = currentBoard.columns.indexOf(destinationColumn);
     destinationTasks.splice(destination.index, 0, removed);
 
     const newColumns: columnType[] = currentBoard.columns.map(

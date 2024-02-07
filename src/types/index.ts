@@ -1,5 +1,3 @@
-import { Dispatch } from "react";
-
 interface BoardInterface {
   name: string;
   id: string;
@@ -37,6 +35,7 @@ interface TaskModalInterface {
   status: number;
   onEditClick: () => void;
   onDeleteClick: () => void;
+  columns: columnType[];
 }
 
 export type {
