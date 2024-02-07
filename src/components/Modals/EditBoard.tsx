@@ -12,10 +12,10 @@ import {
   Img,
 } from "@chakra-ui/react";
 import xIcon from "../../assets/icon-cross.svg";
-import { useState } from "react";
+import { Dispatch, useEffect, useState } from "react";
 import { useFormik } from "formik";
 import { addBoard, updateBoard } from "../../firebaseFunctions/table";
-import { BoardInterface } from "../../types";
+import { BoardInterface, columnType } from "../../types";
 interface InitialValuesInterface {
   [key: string]: string;
 }
@@ -31,54 +31,70 @@ function EditBoard({
 }) {
   const [isDisabled, setIsDisabled] = useState(false);
   const getInitialValues = () => {
-    let objToRerutn: InitialValuesInterface = {};
     if (currentBoard) {
+      formik.setValues({});
+      formik.setFieldValue("Board Name", currentBoard.name);
       currentBoard.columns.map((item: any, index: number) => {
-        objToRerutn[`col${index}`] = item.name;
+        formik.setFieldValue(`col${index}`, item.name);
       });
     } else {
-      objToRerutn.col0 = "";
-      objToRerutn.col1 = "";
+      formik.setFieldValue(`col0`, "");
+      formik.setFieldValue(`col1`, "");
     }
-    return objToRerutn;
   };
   const initialValuesObject: InitialValuesInterface = {
     "Board Name": currentBoard?.name ? currentBoard?.name : "",
     // Add other fields as needed
-    ...getInitialValues(),
   };
   const formik = useFormik({
     initialValues: initialValuesObject,
     onSubmit: (values) => {
-      let newColumnsArr: any = currentBoard?.columns
+      const newColumns: columnType[] = currentBoard
         ? [...currentBoard?.columns]
         : [];
-      let boardObject = { name: values["Board Name"], columns: newColumnsArr };
-      const formik_keys_arr = Object.keys(values).slice(1);
-      const formik_columns_quantity = formik_keys_arr?.length;
-      formik_keys_arr.map((key: string, index: number) => {
-        if (
-          currentBoard &&
-          formik_columns_quantity < currentBoard?.columns?.length
-        ) {
-          newColumnsArr.splice(index, 1);
-        } else {
-          if (newColumnsArr.length < index + 1) {
-            newColumnsArr.push({ name: values[key], tasks: [] });
+      const formik_keys_arr = Object.keys(values);
+      const formik_values_arr = Object.values(values);
+      const formik_columns = formik_keys_arr.splice(1);
+      const formik_columns_values = formik_values_arr.splice(1);
+      const task_value_changed = newColumns.length === formik_columns.length;
+      const task_deleted = newColumns.length > formik_columns.length;
+
+      if (task_value_changed) {
+        formik_columns.map((key: string, index) => {
+          newColumns[index].name = values[key];
+        });
+      } else if (task_deleted) {
+        newColumns.map((column: columnType, index) => {
+          if (!formik_columns_values.includes(column.name)) {
+            newColumns.splice(index, 1);
           }
-        }
-      });
-      if (currentBoard?.name) {
-        updateBoard(boardObject as BoardInterface, currentBoard.id as string);
+        });
       } else {
-        addBoard(boardObject);
-        // setBoards((prev: any) => [boardObject, ...prev]);
+        formik_columns.map((key, index) => {
+          if (values[key] !== newColumns[index]?.name) {
+            console.log("new col name is equal to old columns name");
+            newColumns.push({ name: values[key], tasks: [] });
+          }
+        });
       }
-      formik.setValues(formik.initialValues);
+
+      if (currentBoard) {
+        const newCurrentBoard = {
+          ...currentBoard,
+          name: values["Board Name"],
+          columns: newColumns,
+        };
+        updateBoard(newCurrentBoard, currentBoard?.id);
+      } else {
+        const newBoard = { name: values["Board Name"], columns: newColumns };
+        addBoard(newBoard);
+      }
       onClose();
     },
   });
-
+  useEffect(() => {
+    getInitialValues();
+  }, [currentBoard]);
   const handleNewColumn = () => {
     const formik_values_keys = Object.keys(formik.values);
     if (formik_values_keys.length > 0 && formik_values_keys.length < 5) {
@@ -100,7 +116,6 @@ function EditBoard({
     }
     const newValues = { ...formik.values };
     delete newValues[key];
-    console.log(newValues);
     formik.setValues(newValues);
   };
   return (

@@ -13,6 +13,7 @@ import NewTaskModal from "../../components/Modals/NewTaskModal";
 import Popover from "../../components/Popover/";
 import DeleteModal from "../../components/Modals/DeleteModal";
 import { deleteBoard } from "../../firebaseFunctions/table";
+import EditBoard from "../../components/Modals/EditBoard";
 function index({ currentBoard, setCurrentBoard, boards }: any) {
   const { colorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -20,6 +21,11 @@ function index({ currentBoard, setCurrentBoard, boards }: any) {
     isOpen: isDeleteModalOpen,
     onOpen: onDeleteModalOpen,
     onClose: onDeleteModalClose,
+  } = useDisclosure();
+  const {
+    isOpen: isEditBoardOpen,
+    onOpen: onEditBoardOpen,
+    onClose: onEditBoardClose,
   } = useDisclosure();
   return (
     <Flex
@@ -60,12 +66,19 @@ function index({ currentBoard, setCurrentBoard, boards }: any) {
             <Text display={["none", "block"]}>+Add New Task</Text>
           </Button>
           <Popover
+            editTitle="Edit Board"
+            deleteTitle="Delete Board"
             onClose={() => console.log("clicked")}
             onDeleteClick={onDeleteModalOpen}
-            onEditClick={() => console.log("clicked")}
+            onEditClick={onEditBoardOpen}
           />
         </Flex>
       </Flex>
+      <EditBoard
+        isOpen={isEditBoardOpen}
+        onClose={onEditBoardClose}
+        currentBoard={currentBoard}
+      />
       <DeleteModal
         isOpen={isDeleteModalOpen}
         onClose={onDeleteModalClose}

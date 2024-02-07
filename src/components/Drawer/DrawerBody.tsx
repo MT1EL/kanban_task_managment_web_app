@@ -4,13 +4,11 @@ import board from "../../assets/icon-board.svg";
 function DrawerBody({
   handleNewBoard,
   boards,
-  setColumns,
   currentBoard,
   setCurrentBoard,
 }: {
   handleNewBoard: () => void;
   boards: any[];
-  setColumns: any;
   currentBoard: any;
   setCurrentBoard: any;
 }) {
@@ -47,7 +45,6 @@ function DrawerBody({
             cursor={"pointer"}
             onClick={() => {
               setCurrentBoard(item);
-              setColumns(item.columns);
             }}
             color={currentBoard.name === item.name ? "white" : "medium_Grey"}
             _hover={{

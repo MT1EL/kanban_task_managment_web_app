@@ -13,10 +13,14 @@ function index({
   onClose,
   onDeleteClick,
   onEditClick,
+  editTitle,
+  deleteTitle,
 }: {
   onClose: () => void;
   onDeleteClick: () => void;
   onEditClick: () => void;
+  editTitle: string;
+  deleteTitle: string;
 }) {
   return (
     <Popover>
@@ -39,7 +43,7 @@ function index({
               onEditClick();
             }}
           >
-            Edit Task
+            {editTitle}
           </Text>
           <Text
             color="red"
@@ -51,7 +55,7 @@ function index({
               onDeleteClick();
             }}
           >
-            Delete Task
+            {deleteTitle}
           </Text>
         </PopoverBody>
       </PopoverContent>

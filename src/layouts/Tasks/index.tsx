@@ -22,13 +22,7 @@ import { updateBoard, updateColumn } from "../../firebaseFunctions/table";
 import TaskModal from "../../components/Modals/TaskModal";
 import DeleteModal from "../../components/Modals/DeleteModal";
 import NewTaskModal from "../../components/Modals/NewTaskModal";
-function index({
-  currentBoard,
-  setColumns,
-}: {
-  currentBoard: BoardInterface;
-  setColumns: Dispatch<any>;
-}) {
+function index({ currentBoard }: { currentBoard: BoardInterface }) {
   const [selectedTask, setSelectedTask] = useState<taskType | null>(null);
   const { colorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -60,7 +54,6 @@ function index({
         column.tasks.splice(index, 1);
       }
     });
-    setColumns(newColumns);
     onCloseDeleteModal();
     updateColumn(currentBoard.id, newColumns as any);
   };
@@ -79,7 +72,7 @@ function index({
         currentBoard={currentBoard}
       />
       <DragDropContext
-        onDragEnd={(result) => handleDragEnd(result, setColumns, currentBoard)}
+        onDragEnd={(result) => handleDragEnd(result, currentBoard)}
       >
         {currentBoard.columns?.map((column: any) => (
           <VStack gap="2.5rem" key={column.name} alignItems={"start"}>
@@ -177,11 +170,7 @@ function index({
 
 export default index;
 
-const handleDragEnd = (
-  result: DropResult,
-  setColumns: Dispatch<columnType[]>,
-  currentBoard: BoardInterface
-) => {
+const handleDragEnd = (result: DropResult, currentBoard: BoardInterface) => {
   if (!result.destination) {
     return;
   }
@@ -208,7 +197,6 @@ const handleDragEnd = (
 
     const newBoard = { name: currentBoard.name, columns: newColumns };
     updateBoard(newBoard as BoardInterface, currentBoard.id);
-    setColumns(newColumns);
   } else {
     // Moving between columns
     const sourceColumn = currentBoard.columns.find(
@@ -241,6 +229,5 @@ const handleDragEnd = (
     );
     const newBoard = { name: currentBoard.name, columns: newColumns };
     updateBoard(newBoard as BoardInterface, currentBoard.id);
-    setColumns(newColumns);
   }
 };

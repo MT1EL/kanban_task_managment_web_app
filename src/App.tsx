@@ -11,14 +11,17 @@ import { collection, onSnapshot, query } from "firebase/firestore";
 function App() {
   const [boards, setBoards] = useState<BoardInterface[]>();
   const [currentBoard, setCurrentBoard] = useState<BoardInterface | Boolean>(
-    false
+    boards ? boards[0] : false
   );
   const getData = () => {
     getTables()
       .then((res) => {
         if (res) {
           setBoards(res);
-          setCurrentBoard(res[0]);
+          if (currentBoard) {
+          } else {
+            setCurrentBoard(res[0]);
+          }
         }
       })
       .catch((err: any) => console.log(err));
@@ -32,14 +35,12 @@ function App() {
         id: doc.id,
         ...doc.data(),
       }));
-      console.log("here");
+      setBoards(updatedBoards as any);
       if (currentBoard) {
         console.log("currentBoard exists");
       } else {
-        console.log("currentBoard does not exists");
+        setCurrentBoard(updatedBoards[0] as any);
       }
-      setBoards(updatedBoards as any);
-      setCurrentBoard(updatedBoards[0] as any);
     });
 
     return () => unsubscribe();
