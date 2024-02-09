@@ -184,7 +184,7 @@ function NewTaskModal({
               onChange={formik.handleChange}
               cursor={"pointer"}
             >
-              {currentBoard.columns.map(
+              {currentBoard.columns?.map(
                 (item: { name: string }, index: number) => (
                   <option key={item.name} value={Number(index)}>
                     {item.name}

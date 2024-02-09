@@ -24,17 +24,19 @@ function EditBoard({
   isOpen,
   onClose,
   currentBoard,
+  setRefetch,
 }: {
   isOpen: boolean;
   onClose: () => void;
   currentBoard?: BoardInterface;
+  setRefetch?: any;
 }) {
   const [isDisabled, setIsDisabled] = useState(false);
   const getInitialValues = () => {
     if (currentBoard) {
       formik.setValues({});
       formik.setFieldValue("Board Name", currentBoard.name);
-      currentBoard.columns.map((item: any, index: number) => {
+      currentBoard.columns?.map((item: any, index: number) => {
         formik.setFieldValue(`col${index}`, item.name);
       });
     } else {
@@ -89,6 +91,7 @@ function EditBoard({
         addBoard(newBoard);
       }
       onClose();
+      setRefetch((prev: boolean) => !prev);
     },
   });
   useEffect(() => {
