@@ -17,6 +17,7 @@ import xIcon from "../../assets/icon-cross.svg";
 import { useFormik } from "formik";
 import { updateColumn } from "../../firebaseFunctions/table";
 import { NewTaskModalInterface, columnType, subtaskType } from "../../types";
+import { useEffect } from "react";
 
 function NewTaskModal({
   isOpen,
@@ -38,13 +39,22 @@ function NewTaskModal({
     }
     return objToRerutn;
   };
-  const initialValuesObject: any = {
-    title: selectedTask?.title ? selectedTask.title : "",
-    description: selectedTask?.description ? selectedTask?.description : "",
-    status: selectedTask?.status ? selectedTask?.status : 0,
+  const getDefaultInitialValues = () => {
+    let initialValuesObject: any = {
+      title: selectedTask?.title ? selectedTask.title : "",
+      description: selectedTask?.description ? selectedTask?.description : "",
+      status: selectedTask?.status ? selectedTask?.status : 0,
+      ...getInitialValues(),
+    };
+    formik.setValues(initialValuesObject);
+    return initialValuesObject;
   };
+
+  useEffect(() => {
+    getDefaultInitialValues();
+  }, [selectedTask]);
   const formik = useFormik({
-    initialValues: { ...initialValuesObject, ...getInitialValues() },
+    initialValues: { ...getInitialValues() },
     onSubmit: (values) => {
       let taskObj: any = { ...values };
       let subtaskArr: subtaskType[] = [];

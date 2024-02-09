@@ -7,7 +7,6 @@ import { database } from "../../firebase";
 function Home({ boards, setCurrentBoard }: any) {
   const [refetch, setRefetch] = useState(false);
   const [localCurrentBoard, setLocalCurrentBoard] = useState(boards[0]);
-  console.log(localCurrentBoard);
   const previousBoardsRef = useRef([]);
   useEffect(() => {
     const boardRef = doc(database, "boards", localCurrentBoard.id);
