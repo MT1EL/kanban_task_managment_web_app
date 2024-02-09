@@ -100,7 +100,7 @@ function index({ currentBoard }: { currentBoard: BoardInterface }) {
                         >
                           <Card
                             title={task.title}
-                            subTasks_title={`0 of ${task?.subtasks?.length} subtasks`}
+                            subTasks_title={`${task.completedCount} of ${task?.subtasks?.length} subtasks`}
                             handleClick={() => {
                               setSelectedTask(task);
                               onOpen();
@@ -139,9 +139,10 @@ function index({ currentBoard }: { currentBoard: BoardInterface }) {
             description={selectedTask?.description}
             subtasks={selectedTask?.subtasks}
             status={selectedTask?.status}
+            selectedTask={selectedTask}
             onEditClick={onOpenEditModal}
             onDeleteClick={onOpenDeleteModal}
-            columns={currentBoard.columns}
+            currentBoard={currentBoard}
           />
 
           <NewTaskModal

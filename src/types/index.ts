@@ -13,6 +13,7 @@ type taskType = {
   status: number;
   description: string;
   subtasks: subtaskType[];
+  completedCount: number;
 };
 type subtaskType = {
   isCompleted: boolean;
@@ -36,7 +37,8 @@ interface TaskModalInterface {
   status: number;
   onEditClick: () => void;
   onDeleteClick: () => void;
-  columns: columnType[];
+  currentBoard: BoardInterface;
+  selectedTask: taskType;
 }
 
 export type {
