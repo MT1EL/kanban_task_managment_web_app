@@ -22,13 +22,7 @@ import { updateBoard, updateColumn } from "../../firebaseFunctions/table";
 import TaskModal from "../../components/Modals/TaskModal";
 import DeleteModal from "../../components/Modals/DeleteModal";
 import NewTaskModal from "../../components/Modals/NewTaskModal";
-function index({
-  currentBoard,
-  isDrawerOpen,
-}: {
-  isDrawerOpen: boolean;
-  currentBoard: BoardInterface;
-}) {
+function index({ currentBoard }: { currentBoard: BoardInterface }) {
   const [selectedTask, setSelectedTask] = useState<taskType | null>(null);
   const { colorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -80,10 +74,7 @@ function index({
       >
         {currentBoard.columns?.map((column: any) => (
           <VStack gap="2.5rem" key={column.name} alignItems={"start"}>
-            <ColumnsHeader
-              name={column.name}
-              taskLength={column.tasks.length}
-            />
+            <ColumnsHeader column={column} />
             <Droppable droppableId={column.name} key={column.name}>
               {(provided) => (
                 <VStack
@@ -133,6 +124,7 @@ function index({
         borderRadius={"6px"}
         mt="3.625rem"
         onClick={onEditBoardOpen}
+        minH="calc(100vh - 90px - 6.6rem)"
       >
         <Text fontWeight={"bold"} fontSize={"xl"} color="medium_Grey">
           + New Column

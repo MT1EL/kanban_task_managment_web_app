@@ -37,9 +37,9 @@ function Home({ boards, setCurrentBoard }: any) {
   }
   return (
     <Flex
-      pl={isOpen ? "300px" : "unset"}
+      pl={["unset", isOpen ? "300px" : "unset"]}
       gap="1rem"
-      minW="100%"
+      maxW="100vw"
       mt="90px"
       transition={"300ms ease-in-out"}
     >
@@ -52,7 +52,7 @@ function Home({ boards, setCurrentBoard }: any) {
         setIsOpen={setIsOpen}
         isOpen={isOpen}
       />
-      <TaskLayout currentBoard={localCurrentBoard} isDrawerOpen={isOpen} />
+      <TaskLayout currentBoard={localCurrentBoard} />
     </Flex>
   );
 }

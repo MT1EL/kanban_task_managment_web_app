@@ -6,6 +6,7 @@ interface BoardInterface {
 type columnType = {
   name: string;
   tasks: taskType[];
+  dotColor: string;
 };
 type taskType = {
   title: string;

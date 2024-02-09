@@ -32,6 +32,21 @@ function EditBoard({
   setRefetch?: any;
 }) {
   const [isDisabled, setIsDisabled] = useState(false);
+  const getRandomColor = (alreadyUsedColors: string[]) => {
+    const colors = [
+      "#635FC7",
+      "#FFFFFF",
+      "#EA5555",
+      "#49C4E5",
+      "#8471F2",
+      "#67E2AE",
+    ];
+    const filteredColors = colors.filter(
+      (color) => alreadyUsedColors.includes(color) === false
+    );
+    const colorIndex = Math.floor(Math.random() * filteredColors.length + 1);
+    return filteredColors[colorIndex];
+  };
   const getInitialValues = () => {
     if (currentBoard) {
       formik.setValues({});
@@ -58,10 +73,10 @@ function EditBoard({
       const formik_values_arr = Object.values(values);
       const formik_columns = formik_keys_arr.splice(1);
       const formik_columns_values = formik_values_arr.splice(1);
-      const task_value_changed = newColumns.length === formik_columns.length;
+      const col_value_changed = newColumns.length === formik_columns.length;
       const task_deleted = newColumns.length > formik_columns.length;
 
-      if (task_value_changed) {
+      if (col_value_changed) {
         formik_columns.map((key: string, index) => {
           newColumns[index].name = values[key];
         });
@@ -72,9 +87,18 @@ function EditBoard({
           }
         });
       } else {
+        let alreadyUsedColors: string[] = [];
         formik_columns.map((key, index) => {
           if (values[key] !== newColumns[index]?.name) {
-            newColumns.push({ name: values[key], tasks: [] });
+            let newDotColor = getRandomColor(alreadyUsedColors);
+            alreadyUsedColors.push(newDotColor);
+            newColumns.push({
+              name: values[key],
+              tasks: [],
+              dotColor: newDotColor,
+            });
+          } else {
+            alreadyUsedColors.push(newColumns[index].dotColor);
           }
         });
       }
@@ -92,7 +116,9 @@ function EditBoard({
         formik.setValues({});
       }
       onClose();
-      setRefetch((prev: boolean) => !prev);
+      if (setRefetch) {
+        setRefetch((prev: boolean) => !prev);
+      }
     },
   });
   useEffect(() => {
