@@ -52,7 +52,7 @@ function NewTaskModal({
 
   useEffect(() => {
     getDefaultInitialValues();
-  }, [selectedTask]);
+  }, [isOpen]);
   const formik = useFormik({
     initialValues: { ...getInitialValues() },
     onSubmit: (values) => {
@@ -92,6 +92,7 @@ function NewTaskModal({
         }
       });
       updateColumn(currentBoard?.id, newColumns as any);
+      formik.setValues({});
       onClose();
     },
   });
@@ -156,30 +157,50 @@ function NewTaskModal({
           </Flex>
           <Flex flexDir={"column"} gap="11px">
             <Text color="mediun_Grey" fontWeight={"sm"}>
-              Description
+              Subtasks
             </Text>
-            {Object.keys(formik.values)?.map((key) => (
-              <Flex
-                gap="0.5rem"
-                alignItems={"center"}
-                display={key.includes("subtask") ? "flex" : "none"}
-                key={key}
-              >
-                <Input
-                  placeholder="e.g Take coffee break"
-                  defaultValue={formik.values[key]}
-                  onChange={formik.handleChange}
-                  id={key}
-                  name={key}
-                />
-                <Img
-                  src={xIcon}
-                  alt="remove"
-                  cursor={"pointer"}
-                  onClick={() => handleDeleteSubtask(key)}
-                />
-              </Flex>
-            ))}
+            <Flex
+              flexDir={"column"}
+              gap={"11px"}
+              maxH="91px"
+              overflowY={"scroll"}
+              css={{
+                "&::-webkit-scrollbar": {
+                  width: Object.keys(formik.values).length > 5 ? "4px" : "0px",
+                },
+                "&::-webkit-scrollbar-track": {
+                  width: "6px",
+                },
+                "&::-webkit-scrollbar-thumb": {
+                  background: "white",
+                  borderRadius: "24px",
+                },
+              }}
+              pr={Object.keys(formik.values).length > 5 ? "8px" : "0px"}
+            >
+              {Object.keys(formik.values)?.map((key) => (
+                <Flex
+                  gap="0.5rem"
+                  alignItems={"center"}
+                  display={key.includes("subtask") ? "flex" : "none"}
+                  key={key}
+                >
+                  <Input
+                    placeholder="e.g Take coffee break"
+                    defaultValue={formik.values[key]}
+                    onChange={formik.handleChange}
+                    id={key}
+                    name={key}
+                  />
+                  <Img
+                    src={xIcon}
+                    alt="remove"
+                    cursor={"pointer"}
+                    onClick={() => handleDeleteSubtask(key)}
+                  />
+                </Flex>
+              ))}
+            </Flex>
             <Button variant={"secondary"} onClick={handleNewSubtask}>
               +Add New Subtask
             </Button>

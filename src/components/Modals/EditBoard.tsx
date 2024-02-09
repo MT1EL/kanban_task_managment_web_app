@@ -12,7 +12,7 @@ import {
   Img,
 } from "@chakra-ui/react";
 import xIcon from "../../assets/icon-cross.svg";
-import { Dispatch, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import { addBoard, updateBoard } from "../../firebaseFunctions/table";
 import { BoardInterface, columnType } from "../../types";
@@ -89,6 +89,7 @@ function EditBoard({
       } else {
         const newBoard = { name: values["Board Name"], columns: newColumns };
         addBoard(newBoard);
+        formik.setValues({});
       }
       onClose();
       setRefetch((prev: boolean) => !prev);
@@ -96,7 +97,7 @@ function EditBoard({
   });
   useEffect(() => {
     getInitialValues();
-  }, [currentBoard]);
+  }, [isOpen]);
   const handleNewColumn = () => {
     const formik_values_keys = Object.keys(formik.values);
     if (formik_values_keys.length > 0 && formik_values_keys.length < 5) {

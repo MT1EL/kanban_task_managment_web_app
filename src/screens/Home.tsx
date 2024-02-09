@@ -43,7 +43,9 @@ function Home({ boards, setCurrentBoard }: any) {
         setLocalCurrentBoard={setLocalCurrentBoard}
         setRefetch={setRefetch}
       />
-      <TaskLayout currentBoard={localCurrentBoard} />
+      <Flex h="100%" w="100%" overflowY={"scroll"}>
+        <TaskLayout currentBoard={localCurrentBoard} />
+      </Flex>
     </Flex>
   );
 }
