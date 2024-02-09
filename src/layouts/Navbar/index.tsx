@@ -36,6 +36,10 @@ function index({ currentBoard, setCurrentBoard, boards }: any) {
       borderBottomWidth={"1px"}
       borderBottomStyle={"solid"}
       px={["1rem", "0"]}
+      position={"fixed"}
+      top="0"
+      w="100%"
+      zIndex={"10"}
     >
       <NewTaskModal
         isOpen={isOpen}

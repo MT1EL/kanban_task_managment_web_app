@@ -10,9 +10,10 @@ function MyDrawer({
   setCurrentBoard,
   setLocalCurrentBoard,
   setRefetch,
+  setIsOpen,
+  isOpen,
 }: any) {
   const { isOpen: isBoardOpen, onOpen, onClose } = useDisclosure();
-  const [isOpen, setIsOpen] = useState(true);
   const { colorMode } = useColorMode();
 
   return (
@@ -21,7 +22,7 @@ function MyDrawer({
       minW={["260px", "260px", "301px"]}
       borderRight={"1px solid"}
       borderColor={colorMode === "dark" ? "lines_dark" : "lines_light"}
-      height={"100%"}
+      height={"calc(100% - 90px)"}
       boxShadow={"none"}
       flexDir={"column"}
       justifyContent={"space-between"}
@@ -29,6 +30,10 @@ function MyDrawer({
       bg={colorMode === "dark" ? "dark_Grey" : "white"}
       transform={isOpen ? "translateX(0%)" : "translateX(-100%)"}
       transition={"300ms ease-in-out"}
+      position={"fixed"}
+      top="90px"
+      left="0"
+      zIndex={"100"}
     >
       <DrawerBody
         handleNewBoard={onOpen}

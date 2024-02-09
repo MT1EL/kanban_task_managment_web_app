@@ -1,4 +1,3 @@
-import React from "react";
 import { HStack, Box, Text } from "@chakra-ui/react";
 function ColumnsHeader({
   name,

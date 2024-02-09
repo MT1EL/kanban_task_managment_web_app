@@ -1,10 +1,11 @@
-import { Flex, Spinner } from "@chakra-ui/react";
+import { Box, Flex, Spinner } from "@chakra-ui/react";
 import MyDrawer from "../components/Drawer/MyDrawer";
 import TaskLayout from "../layouts/Tasks/";
 import { useEffect, useRef, useState } from "react";
 import { doc, onSnapshot } from "firebase/firestore";
 import { database } from "../../firebase";
 function Home({ boards, setCurrentBoard }: any) {
+  const [isOpen, setIsOpen] = useState(true);
   const [refetch, setRefetch] = useState(false);
   const [localCurrentBoard, setLocalCurrentBoard] = useState(boards[0]);
   const previousBoardsRef = useRef([]);
@@ -35,17 +36,23 @@ function Home({ boards, setCurrentBoard }: any) {
     return <Spinner />;
   }
   return (
-    <Flex gap="1rem" minW="100%" h="calc(100% - 90px)">
+    <Flex
+      pl={isOpen ? "300px" : "unset"}
+      gap="1rem"
+      minW="100%"
+      mt="90px"
+      transition={"300ms ease-in-out"}
+    >
       <MyDrawer
         boards={boards}
         currentBoard={localCurrentBoard}
         setCurrentBoard={setCurrentBoard}
         setLocalCurrentBoard={setLocalCurrentBoard}
         setRefetch={setRefetch}
+        setIsOpen={setIsOpen}
+        isOpen={isOpen}
       />
-      <Flex h="100%" w="100%" overflowY={"scroll"}>
-        <TaskLayout currentBoard={localCurrentBoard} />
-      </Flex>
+      <TaskLayout currentBoard={localCurrentBoard} isDrawerOpen={isOpen} />
     </Flex>
   );
 }

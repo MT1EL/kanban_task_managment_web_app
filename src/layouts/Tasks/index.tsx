@@ -22,7 +22,13 @@ import { updateBoard, updateColumn } from "../../firebaseFunctions/table";
 import TaskModal from "../../components/Modals/TaskModal";
 import DeleteModal from "../../components/Modals/DeleteModal";
 import NewTaskModal from "../../components/Modals/NewTaskModal";
-function index({ currentBoard }: { currentBoard: BoardInterface }) {
+function index({
+  currentBoard,
+  isDrawerOpen,
+}: {
+  isDrawerOpen: boolean;
+  currentBoard: BoardInterface;
+}) {
   const [selectedTask, setSelectedTask] = useState<taskType | null>(null);
   const { colorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -62,9 +68,7 @@ function index({ currentBoard }: { currentBoard: BoardInterface }) {
       gridTemplateColumns={`repeat(${currentBoard.columns?.length + 1}, 280px)`}
       gap="3"
       m="1.5rem"
-      overflowX={"scroll"}
       h="fit-content"
-      minH={"100%"}
     >
       <EditBoard
         isOpen={isEditBoardOpen}
