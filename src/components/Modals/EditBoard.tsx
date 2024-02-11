@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import { addBoard, updateBoard } from "../../firebaseFunctions/table";
 import { BoardInterface, columnType } from "../../types";
+import { serverTimestamp } from "firebase/firestore";
 interface InitialValuesInterface {
   [key: string]: string;
 }
@@ -111,7 +112,13 @@ function EditBoard({
         };
         updateBoard(newCurrentBoard, currentBoard?.id);
       } else {
-        const newBoard = { name: values["Board Name"], columns: newColumns };
+        const currentTime = serverTimestamp();
+        const newBoard = {
+          name: values["Board Name"],
+          columns: newColumns,
+          updatedAt: currentTime,
+        };
+        console.log(newBoard);
         addBoard(newBoard);
         formik.setValues({});
       }

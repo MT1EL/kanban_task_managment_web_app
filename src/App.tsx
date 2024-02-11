@@ -5,8 +5,10 @@ import { Box, Spinner } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { BoardInterface } from "./types";
 import { database } from "../firebase";
-import { collection, onSnapshot, query } from "firebase/firestore";
+import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import { getTables } from "./firebaseFunctions/table";
+import Register from "./screens/Register";
+import Login from "./screens/Login";
 
 function App() {
   const [boards, setBoards] = useState<BoardInterface[]>();
@@ -16,7 +18,7 @@ function App() {
 
   useEffect(() => {
     const boardRef = collection(database, "boards");
-    const boardQuery = query(boardRef);
+    const boardQuery = query(boardRef, orderBy("updatedAt", "desc"));
     const unsubscribe = onSnapshot(boardQuery, (snapshot) => {
       const updatedBoards = snapshot.docs.map((doc) => ({
         id: doc.id,
@@ -44,6 +46,8 @@ function App() {
       />
       <Router>
         <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route
             path="/"
             element={<Home setCurrentBoard={setCurrentBoard} boards={boards} />}

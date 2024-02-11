@@ -8,20 +8,16 @@ import {
   useColorMode,
   Box,
 } from "@chakra-ui/react";
-import {
-  DragDropContext,
-  Draggable,
-  DropResult,
-  Droppable,
-} from "react-beautiful-dnd";
-import { BoardInterface, columnType, taskType } from "../../types";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { BoardInterface, taskType } from "../../types";
 import ColumnsHeader from "../../components/Header/ColumnsHeader";
 import EditBoard from "../../components/Modals/EditBoard";
 import Card from "../../components/Card/";
-import { updateBoard, updateColumn } from "../../firebaseFunctions/table";
+import { updateColumn } from "../../firebaseFunctions/table";
 import TaskModal from "../../components/Modals/TaskModal";
 import DeleteModal from "../../components/Modals/DeleteModal";
 import NewTaskModal from "../../components/Modals/NewTaskModal";
+import useDragEndTasks from "../../components/hooks/useDragEndTasks";
 function index({ currentBoard }: { currentBoard: BoardInterface }) {
   const [selectedTask, setSelectedTask] = useState<taskType | null>(null);
   const { colorMode } = useColorMode();
@@ -70,7 +66,7 @@ function index({ currentBoard }: { currentBoard: BoardInterface }) {
         currentBoard={currentBoard}
       />
       <DragDropContext
-        onDragEnd={(result) => handleDragEnd(result, currentBoard)}
+        onDragEnd={(result) => useDragEndTasks(result, currentBoard)}
       >
         {currentBoard.columns?.map((column: any) => (
           <VStack gap="2.5rem" key={column.name} alignItems={"start"}>
@@ -167,66 +163,3 @@ function index({ currentBoard }: { currentBoard: BoardInterface }) {
 }
 
 export default index;
-
-const handleDragEnd = (result: DropResult, currentBoard: BoardInterface) => {
-  if (!result.destination) {
-    return;
-  }
-
-  const { source, destination } = result;
-
-  if (source.droppableId === destination.droppableId) {
-    // Reordering within the same column
-    const column = currentBoard.columns.find(
-      (col: { name: string }) => col.name === source.droppableId
-    );
-    if (!column) {
-      return; // Column not found
-    }
-
-    const newTasks = [...column.tasks];
-    const [removed] = newTasks.splice(source.index, 1);
-    newTasks.splice(destination.index, 0, removed);
-
-    const newColumns: columnType[] = currentBoard.columns.map(
-      (col: columnType) =>
-        col.name === source.droppableId ? { ...col, tasks: newTasks } : col
-    );
-
-    const newBoard = { name: currentBoard.name, columns: newColumns };
-    updateBoard(newBoard as BoardInterface, currentBoard.id);
-  } else {
-    // Moving between columns
-    const sourceColumn = currentBoard.columns.find(
-      (col: { name: string }) => col.name === source.droppableId
-    );
-    const destinationColumn = currentBoard.columns.find(
-      (col: { name: string }) => col.name === destination.droppableId
-    );
-
-    if (!sourceColumn || !destinationColumn) {
-      return; // Source or destination column not found
-    }
-
-    const sourceTasks = [...sourceColumn.tasks];
-    const destinationTasks = [...destinationColumn.tasks];
-
-    const [removed] = sourceTasks.splice(source.index, 1);
-    removed.status = currentBoard.columns.indexOf(destinationColumn);
-    destinationTasks.splice(destination.index, 0, removed);
-
-    const newColumns: columnType[] = currentBoard.columns.map(
-      (col: columnType) => {
-        if (col.name === source.droppableId) {
-          return { ...col, tasks: sourceTasks };
-        }
-        if (col.name === destination.droppableId) {
-          return { ...col, tasks: destinationTasks };
-        }
-        return col;
-      }
-    );
-    const newBoard = { name: currentBoard.name, columns: newColumns };
-    updateBoard(newBoard as BoardInterface, currentBoard.id);
-  }
-};

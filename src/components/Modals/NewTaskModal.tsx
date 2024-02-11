@@ -56,9 +56,9 @@ function NewTaskModal({
   const formik = useFormik({
     initialValues: { ...getInitialValues() },
     onSubmit: (values) => {
-      let taskObj: any = { ...values };
+      let taskObj: any = { completedCount: 0, ...values };
       let subtaskArr: subtaskType[] = [];
-      const taskObj_keys = Object.keys(taskObj).splice(3);
+      const taskObj_keys = Object.keys(taskObj).splice(4);
 
       taskObj_keys?.map((key) => {
         subtaskArr.push({ description: values[key], isCompleted: false });

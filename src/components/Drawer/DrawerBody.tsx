@@ -1,5 +1,7 @@
 import { Text, VStack, Img, Flex, Box } from "@chakra-ui/react";
 import board from "../../assets/icon-board.svg";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import useDragEndBoards from "../hooks/useDragEndBoards";
 
 function DrawerBody({
   handleNewBoard,
@@ -35,33 +37,66 @@ function DrawerBody({
         ALL BOARDS ({boards.length})
       </Text>
       <VStack>
-        {boards?.map((item) => (
-          <Flex
-            gap="1rem"
-            bg={currentBoard.name === item.name ? "main_purple" : "transparent"}
-            w="100%"
-            h="48px"
-            alignItems={"center"}
-            borderTopRightRadius={"100px"}
-            borderBottomRightRadius={"100px"}
-            pl="2rem"
-            key={item.name}
-            cursor={"pointer"}
-            onClick={() => {
-              setRefetch((prev: boolean) => !prev);
-              setCurrentBoard(item);
-              setLocalCurrentBoard(item);
-            }}
-            color={currentBoard.name === item.name ? "white" : "medium_Grey"}
-            _hover={{
-              bg: "main_purple",
-              color: "white",
-            }}
-          >
-            <Img src={board} alt="board" />
-            <Text fontSize={"md"}>{item.name}</Text>
-          </Flex>
-        ))}
+        <DragDropContext
+          onDragEnd={(result) => useDragEndBoards(result, boards)}
+        >
+          <Droppable droppableId={"BOARDSCOL"}>
+            {(provided) => (
+              <VStack
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+                w="100%"
+              >
+                {boards?.map((item, index) => (
+                  <Draggable
+                    key={item.name}
+                    draggableId={item.name}
+                    index={index}
+                  >
+                    {(provided) => (
+                      <Flex
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        gap="1rem"
+                        bg={
+                          currentBoard.name === item.name
+                            ? "main_purple"
+                            : "transparent"
+                        }
+                        w="100%"
+                        h="48px"
+                        alignItems={"center"}
+                        borderTopRightRadius={"100px"}
+                        borderBottomRightRadius={"100px"}
+                        pl="2rem"
+                        cursor={"pointer"}
+                        onClick={() => {
+                          setRefetch((prev: boolean) => !prev);
+                          setCurrentBoard(item);
+                          setLocalCurrentBoard(item);
+                        }}
+                        color={
+                          currentBoard.name === item.name
+                            ? "white"
+                            : "medium_Grey"
+                        }
+                        _hover={{
+                          bg: "main_purple",
+                          color: "white",
+                        }}
+                      >
+                        <Img src={board} alt="board" />
+                        <Text fontSize={"md"}>{item.name}</Text>
+                      </Flex>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </VStack>
+            )}
+          </Droppable>
+        </DragDropContext>
         <Flex
           gap="1rem"
           w="100%"

@@ -1,4 +1,4 @@
-import { Box, Flex, Spinner } from "@chakra-ui/react";
+import { Flex, Spinner } from "@chakra-ui/react";
 import MyDrawer from "../components/Drawer/MyDrawer";
 import TaskLayout from "../layouts/Tasks/";
 import { useEffect, useRef, useState } from "react";

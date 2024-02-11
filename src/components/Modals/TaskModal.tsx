@@ -16,7 +16,7 @@ import { TaskModalInterface } from "../../types";
 import Popover from "../Popover/";
 import { useFormik } from "formik";
 import { useEffect } from "react";
-import { updateBoard } from "../../firebaseFunctions/table";
+import { updateBoard, updateColumn } from "../../firebaseFunctions/table";
 function TaskModal({
   isOpen,
   onClose,
@@ -49,14 +49,13 @@ function TaskModal({
         ...updatedColumns[status],
         tasks: updatedTasks,
       };
-      let updatedBoard = { ...currentBoard, columns: updatedColumns };
-      updateBoard(updatedBoard, currentBoard.id);
+      updateColumn(currentBoard.id, updatedColumns as any);
       formik.setValues({});
       onClose();
     },
   });
   const getInitialValues = () => {
-    subtasks.map((subtasks, index) => {
+    subtasks?.map((subtasks, index) => {
       formik.setFieldValue(`isCompleted${index}`, subtasks.isCompleted);
     });
   };
@@ -121,7 +120,7 @@ function TaskModal({
                   name={subTask}
                   id={subTask}
                 >
-                  {subtasks[index].description}
+                  {subtasks[index]?.description}
                 </Checkbox>
               ))}
             </VStack>

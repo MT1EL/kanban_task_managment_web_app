@@ -28,7 +28,7 @@ function MyDrawer({
       justifyContent={"space-between"}
       pb="1rem"
       bg={colorMode === "dark" ? "dark_Grey" : "white"}
-      transform={isOpen ? "translateX(0%)" : "translateX(-100%)"}
+      // transform={isOpen ? "translateX(0%)" : "translateX(-100%)"}
       transition={"300ms ease-in-out"}
       position={"fixed"}
       top="90px"

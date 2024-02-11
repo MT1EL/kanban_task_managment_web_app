@@ -6,12 +6,15 @@ import {
   deleteDoc,
   doc,
   getDocs,
+  orderBy,
+  query,
   updateDoc,
 } from "firebase/firestore";
 
 function getTables() {
   const ref = collection(database, "boards");
-  return getDocs(ref)
+  const boardsQuery = query(ref, orderBy("updatedAt", "desc"));
+  return getDocs(boardsQuery)
     .then((res) => {
       let newArr: BoardInterface[] = [];
       res.forEach((doc) =>
