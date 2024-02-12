@@ -40,22 +40,24 @@ function index({ currentBoard }: { currentBoard: BoardInterface }) {
   } = useDisclosure();
 
   const handleTaskDelete = () => {
-    let newColumns = [...currentBoard.columns];
+    let newColumns = [...currentBoard?.columns];
     newColumns.map((column) => {
       if (
         selectedTask &&
-        column.name === currentBoard.columns[selectedTask.status].name
+        column.name === currentBoard?.columns[selectedTask.status].name
       ) {
         const index = column.tasks.indexOf(selectedTask);
         column.tasks.splice(index, 1);
       }
     });
     onCloseDeleteModal();
-    updateColumn(currentBoard.id, newColumns as any);
+    updateColumn(currentBoard?.id, newColumns as any);
   };
   return (
     <Grid
-      gridTemplateColumns={`repeat(${currentBoard.columns?.length + 1}, 280px)`}
+      gridTemplateColumns={`repeat(${
+        currentBoard?.columns?.length + 1
+      }, 280px)`}
       gap="3"
       m="1.5rem"
       h="fit-content"
@@ -68,7 +70,7 @@ function index({ currentBoard }: { currentBoard: BoardInterface }) {
       <DragDropContext
         onDragEnd={(result) => useDragEndTasks(result, currentBoard)}
       >
-        {currentBoard.columns?.map((column: any) => (
+        {currentBoard?.columns?.map((column: any) => (
           <VStack gap="2.5rem" key={column.name} alignItems={"start"}>
             <ColumnsHeader column={column} />
             <Droppable droppableId={column.name} key={column.name}>

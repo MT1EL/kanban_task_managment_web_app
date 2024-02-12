@@ -27,8 +27,8 @@ const useDragEndTasks = (result: DropResult, currentBoard: BoardInterface) => {
         col.name === source.droppableId ? { ...col, tasks: newTasks } : col
     );
 
-    const newBoard = { name: currentBoard.name, columns: newColumns };
-    updateBoard(newBoard as BoardInterface, currentBoard.id);
+    const newBoard = { name: currentBoard?.name, columns: newColumns };
+    updateBoard(newBoard as BoardInterface, currentBoard?.id);
   } else {
     // Moving between columns
     const sourceColumn = currentBoard.columns.find(
@@ -60,7 +60,7 @@ const useDragEndTasks = (result: DropResult, currentBoard: BoardInterface) => {
         return col;
       }
     );
-    const newBoard = { name: currentBoard.name, columns: newColumns };
+    const newBoard = { name: currentBoard?.name, columns: newColumns };
     updateBoard(newBoard as BoardInterface, currentBoard.id);
   }
 };

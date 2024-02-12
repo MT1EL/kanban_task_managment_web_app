@@ -28,7 +28,7 @@ function getTables() {
 function addBoard(board: any) {
   const ref = collection(database, "boards");
   return addDoc(ref, board)
-    .then((res) => console.log(res))
+    .then((res) => res)
     .catch((err) => console.log(err));
 }
 

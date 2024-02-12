@@ -2,7 +2,7 @@ interface BoardInterface {
   name: string;
   id: string;
   columns: columnType[];
-  updatedAt: any;
+  updatedAt?: any;
 }
 type columnType = {
   name: string;

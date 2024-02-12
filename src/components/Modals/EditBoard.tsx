@@ -12,11 +12,14 @@ import {
   Img,
 } from "@chakra-ui/react";
 import xIcon from "../../assets/icon-cross.svg";
-import { useEffect, useState } from "react";
+import { Dispatch, useEffect, useState } from "react";
 import { useFormik } from "formik";
 import { addBoard, updateBoard } from "../../firebaseFunctions/table";
 import { BoardInterface, columnType } from "../../types";
-import { serverTimestamp } from "firebase/firestore";
+import { doc, serverTimestamp, updateDoc } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+import { getUserData } from "../../firebaseFunctions/user";
+import { database } from "../../../firebase";
 interface InitialValuesInterface {
   [key: string]: string;
 }
@@ -25,12 +28,12 @@ function EditBoard({
   isOpen,
   onClose,
   currentBoard,
-  setRefetch,
+  setCurrentBoard,
 }: {
   isOpen: boolean;
   onClose: () => void;
   currentBoard?: BoardInterface;
-  setRefetch?: any;
+  setCurrentBoard?: Dispatch<BoardInterface>;
 }) {
   const [isDisabled, setIsDisabled] = useState(false);
   const getRandomColor = (alreadyUsedColors: string[]) => {
@@ -51,7 +54,7 @@ function EditBoard({
   const getInitialValues = () => {
     if (currentBoard) {
       formik.setValues({});
-      formik.setFieldValue("Board Name", currentBoard.name);
+      formik.setFieldValue("Board Name", currentBoard?.name);
       currentBoard.columns?.map((item: any, index: number) => {
         formik.setFieldValue(`col${index}`, item.name);
       });
@@ -112,22 +115,40 @@ function EditBoard({
         };
         updateBoard(newCurrentBoard, currentBoard?.id);
       } else {
-        const currentTime = serverTimestamp();
         const newBoard = {
           name: values["Board Name"],
           columns: newColumns,
-          updatedAt: currentTime,
         };
-        console.log(newBoard);
-        addBoard(newBoard);
+        const currentUser = getAuth().currentUser;
+
+        addBoard(newBoard)
+          .then((addedBoard) => {
+            if (currentUser?.uid) {
+              getUserData(currentUser?.uid)
+                .then((res) => {
+                  const updatedBoardIds = [...res?.boards, addedBoard?.id];
+                  updateDoc(doc(database, "users", currentUser?.uid), {
+                    boards: updatedBoardIds,
+                  })
+                    .then((res) => {
+                      if (updatedBoardIds.length === 1 && setCurrentBoard) {
+                        setCurrentBoard({ ...newBoard, id: addedBoard?.id });
+                      }
+                    })
+                    .catch((err) => console.log(err));
+                })
+                .catch((err) => console.log(err));
+            }
+          })
+          .catch((err) => console.log(err));
         formik.setValues({});
       }
       onClose();
-      if (setRefetch) {
-        setRefetch((prev: boolean) => !prev);
-      }
     },
   });
+
+  // q: how to get id of doc i just added to fire
+
   useEffect(() => {
     getInitialValues();
   }, [isOpen]);

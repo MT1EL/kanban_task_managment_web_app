@@ -1,19 +1,18 @@
-import { useColorMode, Box, useDisclosure } from "@chakra-ui/react";
+import { useColorMode, Box } from "@chakra-ui/react";
 import ShowDrawer from "./ShowDrawer";
 import DrawerFooter from "./DrawerFooter";
-import { useState } from "react";
 import DrawerBody from "./DrawerBody";
 import EditBoard from "../Modals/EditBoard";
 function MyDrawer({
   currentBoard,
   boards,
   setCurrentBoard,
-  setLocalCurrentBoard,
-  setRefetch,
   setIsOpen,
   isOpen,
+  isBoardOpen,
+  onOpen,
+  onClose,
 }: any) {
-  const { isOpen: isBoardOpen, onOpen, onClose } = useDisclosure();
   const { colorMode } = useColorMode();
 
   return (
@@ -40,15 +39,13 @@ function MyDrawer({
         boards={boards}
         currentBoard={currentBoard}
         setCurrentBoard={setCurrentBoard}
-        setRefetch={setRefetch}
-        setLocalCurrentBoard={setLocalCurrentBoard}
       />
       <DrawerFooter closeDrawer={() => setIsOpen(false)} />
       <ShowDrawer isOpen={isOpen} setOpen={() => setIsOpen(true)} />
       <EditBoard
         isOpen={isBoardOpen}
         onClose={onClose}
-        setRefetch={setRefetch}
+        setCurrentBoard={setCurrentBoard}
       />
     </Box>
   );

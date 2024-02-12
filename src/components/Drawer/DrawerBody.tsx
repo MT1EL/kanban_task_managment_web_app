@@ -8,15 +8,11 @@ function DrawerBody({
   boards,
   currentBoard,
   setCurrentBoard,
-  setRefetch,
-  setLocalCurrentBoard,
 }: {
   handleNewBoard: () => void;
   boards: any[];
   currentBoard: any;
   setCurrentBoard: any;
-  setRefetch: any;
-  setLocalCurrentBoard: any;
 }) {
   return (
     <Box
@@ -34,7 +30,7 @@ function DrawerBody({
         color="medium_Grey"
         ml="2rem"
       >
-        ALL BOARDS ({boards.length})
+        ALL BOARDS ({boards?.length})
       </Text>
       <VStack>
         <DragDropContext
@@ -60,7 +56,7 @@ function DrawerBody({
                         {...provided.dragHandleProps}
                         gap="1rem"
                         bg={
-                          currentBoard.name === item.name
+                          currentBoard?.name === item.name
                             ? "main_purple"
                             : "transparent"
                         }
@@ -71,13 +67,9 @@ function DrawerBody({
                         borderBottomRightRadius={"100px"}
                         pl="2rem"
                         cursor={"pointer"}
-                        onClick={() => {
-                          setRefetch((prev: boolean) => !prev);
-                          setCurrentBoard(item);
-                          setLocalCurrentBoard(item);
-                        }}
+                        onClick={() => setCurrentBoard(item)}
                         color={
-                          currentBoard.name === item.name
+                          currentBoard?.name === item.name
                             ? "white"
                             : "medium_Grey"
                         }

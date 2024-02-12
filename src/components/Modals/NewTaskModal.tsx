@@ -67,7 +67,7 @@ function NewTaskModal({
       taskObj.subtasks = subtaskArr;
       let newColumns: columnType[] = [...currentBoard?.columns];
       newColumns?.map((column) => {
-        if (column.name === currentBoard.columns[values.status].name) {
+        if (column.name === currentBoard?.columns[values.status].name) {
           if (
             column.tasks.some(
               (item) => JSON.stringify(item) === JSON.stringify(selectedTask)
@@ -81,7 +81,7 @@ function NewTaskModal({
           }
         }
         if (selectedTask && selectedTask.status !== taskObj.status) {
-          if (column.name === currentBoard.columns[selectedTask.status].name) {
+          if (column.name === currentBoard?.columns[selectedTask.status].name) {
             if (column.tasks.length === 1) {
               column.tasks = [];
             } else {
@@ -215,7 +215,7 @@ function NewTaskModal({
               onChange={formik.handleChange}
               cursor={"pointer"}
             >
-              {currentBoard.columns?.map(
+              {currentBoard?.columns?.map(
                 (item: { name: string }, index: number) => (
                   <option key={item.name} value={Number(index)}>
                     {item.name}

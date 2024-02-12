@@ -14,6 +14,9 @@ import Popover from "../../components/Popover/";
 import DeleteModal from "../../components/Modals/DeleteModal";
 import { deleteBoard } from "../../firebaseFunctions/table";
 import EditBoard from "../../components/Modals/EditBoard";
+import { doc, updateDoc } from "firebase/firestore";
+import { database } from "../../../firebase";
+import { getAuth } from "firebase/auth";
 function index({ currentBoard, setCurrentBoard, boards }: any) {
   const { colorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -62,7 +65,7 @@ function index({ currentBoard, setCurrentBoard, boards }: any) {
         h="100%"
       >
         <Text fontSize={["lg", "xl"]} fontWeight={"bold"}>
-          {currentBoard.name}
+          {currentBoard?.name}
         </Text>
         <Flex alignItems={"center"} gap={["1rem", "1.5rem"]}>
           <Button variant={"primary"} size={["xs", "xl"]} onClick={onOpen}>
@@ -89,7 +92,25 @@ function index({ currentBoard, setCurrentBoard, boards }: any) {
         onDeleteClick={() => {
           deleteBoard(currentBoard.id);
           onDeleteModalClose();
-          setCurrentBoard(boards[0]);
+          if (boards.length === 1) {
+            //იდეაში საერთოდ არ არის Boards ები შესაბამისად currentBoard იც არ არსებობს
+            //მაგრამ სანამ currentBoard-ს null ად გავსეტავ
+            //მანამდე უნდა დავწერო handler ი მაგ თუ currentBoard Nullია
+            setCurrentBoard(boards[0]);
+          } else {
+            setCurrentBoard(boards[0]);
+          }
+          const user = getAuth().currentUser;
+          if (user) {
+            const ref = doc(database, "users", user?.uid);
+            const boardIds = boards.map((board: any) => board.id);
+            const filteredBoards = boardIds.filter(
+              (id: any) => id !== currentBoard.id
+            );
+            updateDoc(ref, { boards: filteredBoards }).then(() =>
+              console.log("success")
+            );
+          }
         }}
         title={"Delete this board?"}
       />
