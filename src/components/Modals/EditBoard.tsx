@@ -16,6 +16,10 @@ import { Dispatch, useEffect, useState } from "react";
 import { useFormik } from "formik";
 import { addBoard, updateBoard } from "../../firebaseFunctions/table";
 import { BoardInterface, columnType } from "../../types";
+import { doc, serverTimestamp, updateDoc } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+import { getUserData } from "../../firebaseFunctions/user";
+import { database } from "../../../firebase";
 interface InitialValuesInterface {
   [key: string]: string;
 }
@@ -24,17 +28,34 @@ function EditBoard({
   isOpen,
   onClose,
   currentBoard,
+  setCurrentBoard,
 }: {
   isOpen: boolean;
   onClose: () => void;
   currentBoard?: BoardInterface;
+  setCurrentBoard?: Dispatch<BoardInterface>;
 }) {
   const [isDisabled, setIsDisabled] = useState(false);
+  const getRandomColor = (alreadyUsedColors: string[]) => {
+    const colors = [
+      "#635FC7",
+      "#FFFFFF",
+      "#EA5555",
+      "#49C4E5",
+      "#8471F2",
+      "#67E2AE",
+    ];
+    const filteredColors = colors.filter(
+      (color) => alreadyUsedColors.includes(color) === false
+    );
+    const colorIndex = Math.floor(Math.random() * filteredColors.length + 1);
+    return filteredColors[colorIndex];
+  };
   const getInitialValues = () => {
     if (currentBoard) {
       formik.setValues({});
-      formik.setFieldValue("Board Name", currentBoard.name);
-      currentBoard.columns.map((item: any, index: number) => {
+      formik.setFieldValue("Board Name", currentBoard?.name);
+      currentBoard.columns?.map((item: any, index: number) => {
         formik.setFieldValue(`col${index}`, item.name);
       });
     } else {
@@ -56,10 +77,10 @@ function EditBoard({
       const formik_values_arr = Object.values(values);
       const formik_columns = formik_keys_arr.splice(1);
       const formik_columns_values = formik_values_arr.splice(1);
-      const task_value_changed = newColumns.length === formik_columns.length;
+      const col_value_changed = newColumns.length === formik_columns.length;
       const task_deleted = newColumns.length > formik_columns.length;
 
-      if (task_value_changed) {
+      if (col_value_changed) {
         formik_columns.map((key: string, index) => {
           newColumns[index].name = values[key];
         });
@@ -70,10 +91,18 @@ function EditBoard({
           }
         });
       } else {
+        let alreadyUsedColors: string[] = [];
         formik_columns.map((key, index) => {
           if (values[key] !== newColumns[index]?.name) {
-            console.log("new col name is equal to old columns name");
-            newColumns.push({ name: values[key], tasks: [] });
+            let newDotColor = getRandomColor(alreadyUsedColors);
+            alreadyUsedColors.push(newDotColor);
+            newColumns.push({
+              name: values[key],
+              tasks: [],
+              dotColor: newDotColor,
+            });
+          } else {
+            alreadyUsedColors.push(newColumns[index].dotColor);
           }
         });
       }
@@ -86,15 +115,43 @@ function EditBoard({
         };
         updateBoard(newCurrentBoard, currentBoard?.id);
       } else {
-        const newBoard = { name: values["Board Name"], columns: newColumns };
-        addBoard(newBoard);
+        const newBoard = {
+          name: values["Board Name"],
+          columns: newColumns,
+        };
+        const currentUser = getAuth().currentUser;
+
+        addBoard(newBoard)
+          .then((addedBoard) => {
+            if (currentUser?.uid) {
+              getUserData(currentUser?.uid)
+                .then((res) => {
+                  const updatedBoardIds = [...res?.boards, addedBoard?.id];
+                  updateDoc(doc(database, "users", currentUser?.uid), {
+                    boards: updatedBoardIds,
+                  })
+                    .then((res) => {
+                      if (updatedBoardIds.length === 1 && setCurrentBoard) {
+                        setCurrentBoard({ ...newBoard, id: addedBoard?.id });
+                      }
+                    })
+                    .catch((err) => console.log(err));
+                })
+                .catch((err) => console.log(err));
+            }
+          })
+          .catch((err) => console.log(err));
+        formik.setValues({});
       }
       onClose();
     },
   });
+
+  // q: how to get id of doc i just added to fire
+
   useEffect(() => {
     getInitialValues();
-  }, [currentBoard]);
+  }, [isOpen]);
   const handleNewColumn = () => {
     const formik_values_keys = Object.keys(formik.values);
     if (formik_values_keys.length > 0 && formik_values_keys.length < 5) {

@@ -1,19 +1,20 @@
-import { Dispatch } from "react";
-
 interface BoardInterface {
   name: string;
   id: string;
   columns: columnType[];
+  updatedAt?: any;
 }
 type columnType = {
   name: string;
   tasks: taskType[];
+  dotColor: string;
 };
 type taskType = {
   title: string;
   status: number;
   description: string;
   subtasks: subtaskType[];
+  completedCount: number;
 };
 type subtaskType = {
   isCompleted: boolean;
@@ -37,6 +38,8 @@ interface TaskModalInterface {
   status: number;
   onEditClick: () => void;
   onDeleteClick: () => void;
+  currentBoard: BoardInterface;
+  selectedTask: taskType;
 }
 
 export type {

@@ -1,4 +1,4 @@
-import { Dispatch, useState } from "react";
+import { useState } from "react";
 import {
   Flex,
   Grid,
@@ -8,20 +8,16 @@ import {
   useColorMode,
   Box,
 } from "@chakra-ui/react";
-import {
-  DragDropContext,
-  Draggable,
-  DropResult,
-  Droppable,
-} from "react-beautiful-dnd";
-import { BoardInterface, columnType, taskType } from "../../types";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { BoardInterface, taskType } from "../../types";
 import ColumnsHeader from "../../components/Header/ColumnsHeader";
 import EditBoard from "../../components/Modals/EditBoard";
 import Card from "../../components/Card/";
-import { updateBoard, updateColumn } from "../../firebaseFunctions/table";
+import { updateColumn } from "../../firebaseFunctions/table";
 import TaskModal from "../../components/Modals/TaskModal";
 import DeleteModal from "../../components/Modals/DeleteModal";
 import NewTaskModal from "../../components/Modals/NewTaskModal";
+import useDragEndTasks from "../../components/hooks/useDragEndTasks";
 function index({ currentBoard }: { currentBoard: BoardInterface }) {
   const [selectedTask, setSelectedTask] = useState<taskType | null>(null);
   const { colorMode } = useColorMode();
@@ -44,27 +40,27 @@ function index({ currentBoard }: { currentBoard: BoardInterface }) {
   } = useDisclosure();
 
   const handleTaskDelete = () => {
-    let newColumns = [...currentBoard.columns];
+    let newColumns = [...currentBoard?.columns];
     newColumns.map((column) => {
       if (
         selectedTask &&
-        column.name === currentBoard.columns[selectedTask.status].name
+        column.name === currentBoard?.columns[selectedTask.status].name
       ) {
         const index = column.tasks.indexOf(selectedTask);
         column.tasks.splice(index, 1);
       }
     });
     onCloseDeleteModal();
-    updateColumn(currentBoard.id, newColumns as any);
+    updateColumn(currentBoard?.id, newColumns as any);
   };
   return (
     <Grid
-      gridTemplateColumns={`repeat(${currentBoard.columns?.length + 1}, 280px)`}
+      gridTemplateColumns={`repeat(${
+        currentBoard?.columns?.length + 1
+      }, 280px)`}
       gap="3"
       m="1.5rem"
-      overflowX={"scroll"}
       h="fit-content"
-      minH={"100%"}
     >
       <EditBoard
         isOpen={isEditBoardOpen}
@@ -72,14 +68,11 @@ function index({ currentBoard }: { currentBoard: BoardInterface }) {
         currentBoard={currentBoard}
       />
       <DragDropContext
-        onDragEnd={(result) => handleDragEnd(result, currentBoard)}
+        onDragEnd={(result) => useDragEndTasks(result, currentBoard)}
       >
-        {currentBoard.columns?.map((column: any) => (
+        {currentBoard?.columns?.map((column: any) => (
           <VStack gap="2.5rem" key={column.name} alignItems={"start"}>
-            <ColumnsHeader
-              name={column.name}
-              taskLength={column.tasks.length}
-            />
+            <ColumnsHeader column={column} />
             <Droppable droppableId={column.name} key={column.name}>
               {(provided) => (
                 <VStack
@@ -105,7 +98,7 @@ function index({ currentBoard }: { currentBoard: BoardInterface }) {
                         >
                           <Card
                             title={task.title}
-                            subTasks_title={`0 of ${task?.subtasks?.length} subtasks`}
+                            subTasks_title={`${task.completedCount} of ${task?.subtasks?.length} subtasks`}
                             handleClick={() => {
                               setSelectedTask(task);
                               onOpen();
@@ -129,6 +122,7 @@ function index({ currentBoard }: { currentBoard: BoardInterface }) {
         borderRadius={"6px"}
         mt="3.625rem"
         onClick={onEditBoardOpen}
+        minH="calc(100vh - 90px - 6.6rem)"
       >
         <Text fontWeight={"bold"} fontSize={"xl"} color="medium_Grey">
           + New Column
@@ -143,8 +137,10 @@ function index({ currentBoard }: { currentBoard: BoardInterface }) {
             description={selectedTask?.description}
             subtasks={selectedTask?.subtasks}
             status={selectedTask?.status}
+            selectedTask={selectedTask}
             onEditClick={onOpenEditModal}
             onDeleteClick={onOpenDeleteModal}
+            currentBoard={currentBoard}
           />
 
           <NewTaskModal
@@ -169,65 +165,3 @@ function index({ currentBoard }: { currentBoard: BoardInterface }) {
 }
 
 export default index;
-
-const handleDragEnd = (result: DropResult, currentBoard: BoardInterface) => {
-  if (!result.destination) {
-    return;
-  }
-
-  const { source, destination } = result;
-
-  if (source.droppableId === destination.droppableId) {
-    // Reordering within the same column
-    const column = currentBoard.columns.find(
-      (col: { name: string }) => col.name === source.droppableId
-    );
-    if (!column) {
-      return; // Column not found
-    }
-
-    const newTasks = [...column.tasks];
-    const [removed] = newTasks.splice(source.index, 1);
-    newTasks.splice(destination.index, 0, removed);
-
-    const newColumns: columnType[] = currentBoard.columns.map(
-      (col: columnType) =>
-        col.name === source.droppableId ? { ...col, tasks: newTasks } : col
-    );
-
-    const newBoard = { name: currentBoard.name, columns: newColumns };
-    updateBoard(newBoard as BoardInterface, currentBoard.id);
-  } else {
-    // Moving between columns
-    const sourceColumn = currentBoard.columns.find(
-      (col: { name: string }) => col.name === source.droppableId
-    );
-    const destinationColumn = currentBoard.columns.find(
-      (col: { name: string }) => col.name === destination.droppableId
-    );
-
-    if (!sourceColumn || !destinationColumn) {
-      return; // Source or destination column not found
-    }
-
-    const sourceTasks = [...sourceColumn.tasks];
-    const destinationTasks = [...destinationColumn.tasks];
-
-    const [removed] = sourceTasks.splice(source.index, 1);
-    destinationTasks.splice(destination.index, 0, removed);
-
-    const newColumns: columnType[] = currentBoard.columns.map(
-      (col: columnType) => {
-        if (col.name === source.droppableId) {
-          return { ...col, tasks: sourceTasks };
-        }
-        if (col.name === destination.droppableId) {
-          return { ...col, tasks: destinationTasks };
-        }
-        return col;
-      }
-    );
-    const newBoard = { name: currentBoard.name, columns: newColumns };
-    updateBoard(newBoard as BoardInterface, currentBoard.id);
-  }
-};

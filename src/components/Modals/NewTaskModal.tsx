@@ -17,6 +17,7 @@ import xIcon from "../../assets/icon-cross.svg";
 import { useFormik } from "formik";
 import { updateColumn } from "../../firebaseFunctions/table";
 import { NewTaskModalInterface, columnType, subtaskType } from "../../types";
+import { useEffect } from "react";
 
 function NewTaskModal({
   isOpen,
@@ -38,17 +39,26 @@ function NewTaskModal({
     }
     return objToRerutn;
   };
-  const initialValuesObject: any = {
-    title: selectedTask?.title ? selectedTask.title : "",
-    description: selectedTask?.description ? selectedTask?.description : "",
-    status: selectedTask?.status ? selectedTask?.status : 0,
+  const getDefaultInitialValues = () => {
+    let initialValuesObject: any = {
+      title: selectedTask?.title ? selectedTask.title : "",
+      description: selectedTask?.description ? selectedTask?.description : "",
+      status: selectedTask?.status ? selectedTask?.status : 0,
+      ...getInitialValues(),
+    };
+    formik.setValues(initialValuesObject);
+    return initialValuesObject;
   };
+
+  useEffect(() => {
+    getDefaultInitialValues();
+  }, [isOpen]);
   const formik = useFormik({
-    initialValues: { ...initialValuesObject, ...getInitialValues() },
+    initialValues: { ...getInitialValues() },
     onSubmit: (values) => {
-      let taskObj: any = { ...values };
+      let taskObj: any = { completedCount: 0, ...values };
       let subtaskArr: subtaskType[] = [];
-      const taskObj_keys = Object.keys(taskObj).splice(3);
+      const taskObj_keys = Object.keys(taskObj).splice(4);
 
       taskObj_keys?.map((key) => {
         subtaskArr.push({ description: values[key], isCompleted: false });
@@ -57,7 +67,7 @@ function NewTaskModal({
       taskObj.subtasks = subtaskArr;
       let newColumns: columnType[] = [...currentBoard?.columns];
       newColumns?.map((column) => {
-        if (column.name === currentBoard.columns[values.status].name) {
+        if (column.name === currentBoard?.columns[values.status].name) {
           if (
             column.tasks.some(
               (item) => JSON.stringify(item) === JSON.stringify(selectedTask)
@@ -71,7 +81,7 @@ function NewTaskModal({
           }
         }
         if (selectedTask && selectedTask.status !== taskObj.status) {
-          if (column.name === currentBoard.columns[selectedTask.status].name) {
+          if (column.name === currentBoard?.columns[selectedTask.status].name) {
             if (column.tasks.length === 1) {
               column.tasks = [];
             } else {
@@ -82,6 +92,7 @@ function NewTaskModal({
         }
       });
       updateColumn(currentBoard?.id, newColumns as any);
+      formik.setValues({});
       onClose();
     },
   });
@@ -146,30 +157,50 @@ function NewTaskModal({
           </Flex>
           <Flex flexDir={"column"} gap="11px">
             <Text color="mediun_Grey" fontWeight={"sm"}>
-              Description
+              Subtasks
             </Text>
-            {Object.keys(formik.values)?.map((key) => (
-              <Flex
-                gap="0.5rem"
-                alignItems={"center"}
-                display={key.includes("subtask") ? "flex" : "none"}
-                key={key}
-              >
-                <Input
-                  placeholder="e.g Take coffee break"
-                  defaultValue={formik.values[key]}
-                  onChange={formik.handleChange}
-                  id={key}
-                  name={key}
-                />
-                <Img
-                  src={xIcon}
-                  alt="remove"
-                  cursor={"pointer"}
-                  onClick={() => handleDeleteSubtask(key)}
-                />
-              </Flex>
-            ))}
+            <Flex
+              flexDir={"column"}
+              gap={"11px"}
+              maxH="91px"
+              overflowY={"scroll"}
+              css={{
+                "&::-webkit-scrollbar": {
+                  width: Object.keys(formik.values).length > 5 ? "4px" : "0px",
+                },
+                "&::-webkit-scrollbar-track": {
+                  width: "6px",
+                },
+                "&::-webkit-scrollbar-thumb": {
+                  background: "white",
+                  borderRadius: "24px",
+                },
+              }}
+              pr={Object.keys(formik.values).length > 5 ? "8px" : "0px"}
+            >
+              {Object.keys(formik.values)?.map((key) => (
+                <Flex
+                  gap="0.5rem"
+                  alignItems={"center"}
+                  display={key.includes("subtask") ? "flex" : "none"}
+                  key={key}
+                >
+                  <Input
+                    placeholder="e.g Take coffee break"
+                    defaultValue={formik.values[key]}
+                    onChange={formik.handleChange}
+                    id={key}
+                    name={key}
+                  />
+                  <Img
+                    src={xIcon}
+                    alt="remove"
+                    cursor={"pointer"}
+                    onClick={() => handleDeleteSubtask(key)}
+                  />
+                </Flex>
+              ))}
+            </Flex>
             <Button variant={"secondary"} onClick={handleNewSubtask}>
               +Add New Subtask
             </Button>
@@ -184,7 +215,7 @@ function NewTaskModal({
               onChange={formik.handleChange}
               cursor={"pointer"}
             >
-              {currentBoard.columns.map(
+              {currentBoard?.columns?.map(
                 (item: { name: string }, index: number) => (
                   <option key={item.name} value={Number(index)}>
                     {item.name}

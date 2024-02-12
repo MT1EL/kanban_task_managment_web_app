@@ -14,6 +14,9 @@ import {
 } from "@chakra-ui/react";
 import { TaskModalInterface } from "../../types";
 import Popover from "../Popover/";
+import { useFormik } from "formik";
+import { useEffect } from "react";
+import { updateBoard, updateColumn } from "../../firebaseFunctions/table";
 function TaskModal({
   isOpen,
   onClose,
@@ -23,9 +26,44 @@ function TaskModal({
   status,
   onEditClick,
   onDeleteClick,
+  currentBoard,
+  selectedTask,
 }: TaskModalInterface) {
+  const formik = useFormik({
+    initialValues: {},
+    onSubmit: (values: any) => {
+      let updatedColumns = [...currentBoard.columns];
+      let updatedTasks = [...currentBoard.columns[status].tasks];
+      const indexOfTask = updatedTasks.indexOf(selectedTask);
+      const taskToUpdate = updatedTasks[indexOfTask];
+      let completedCount = taskToUpdate.subtasks.length;
+
+      taskToUpdate.subtasks.map((subtask, index) => {
+        if (!values[`isCompleted${index}`]) {
+          completedCount--;
+        }
+        subtask.isCompleted = values[`isCompleted${index}`];
+      });
+      taskToUpdate.completedCount = completedCount;
+      updatedColumns[status] = {
+        ...updatedColumns[status],
+        tasks: updatedTasks,
+      };
+      updateColumn(currentBoard.id, updatedColumns as any);
+      formik.setValues({});
+      onClose();
+    },
+  });
+  const getInitialValues = () => {
+    subtasks?.map((subtasks, index) => {
+      formik.setFieldValue(`isCompleted${index}`, subtasks.isCompleted);
+    });
+  };
+  useEffect(() => {
+    getInitialValues();
+  }, [selectedTask]);
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={formik.handleSubmit}>
       <ModalOverlay />
       <ModalContent
         p="2rem"
@@ -48,6 +86,8 @@ function TaskModal({
               onEditClick={onEditClick}
               onClose={onClose}
               onDeleteClick={onDeleteClick}
+              editTitle={"Edit Task"}
+              deleteTitle={"Delete Task"}
             />
           </Flex>
         </ModalHeader>
@@ -68,15 +108,19 @@ function TaskModal({
             display={subtasks.length > 0 ? "flex" : "none"}
           >
             <Text fontSize={"sm"} color="medium_Grey" fontWeight={"bold"}>
-              Subtasks (0 of {subtasks?.length})
+              Subtasks ({selectedTask?.completedCount} of {subtasks?.length})
             </Text>
             <VStack gap="0.5rem" alignItems={"start"}>
-              {subtasks?.map((subTask) => (
+              {Object.keys(formik.values)?.map((subTask, index) => (
                 <Checkbox
-                  key={subTask.description}
-                  defaultChecked={subTask.isCompleted}
+                  key={index}
+                  defaultChecked={subtasks && subtasks[index]?.isCompleted}
+                  isChecked={formik.values[subTask]}
+                  onChange={formik.handleChange}
+                  name={subTask}
+                  id={subTask}
                 >
-                  {subTask.description}
+                  {subtasks[index]?.description}
                 </Checkbox>
               ))}
             </VStack>
@@ -87,11 +131,11 @@ function TaskModal({
           <Text color="medium_Grey" fontSize={"sm"} fontWeight={"bold"}>
             Current Status
           </Text>
-          <Select placeholder={status} cursor={"pointer"} disabled>
-            <option value="to do">To do</option>
-            <option value="Doing">Doing</option>
-            <option value="Done">Done</option>
-          </Select>
+          <Select
+            placeholder={currentBoard && currentBoard?.columns[status].name}
+            cursor={"pointer"}
+            disabled
+          ></Select>
         </ModalFooter>
       </ModalContent>
     </Modal>

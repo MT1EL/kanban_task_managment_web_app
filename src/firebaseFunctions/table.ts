@@ -6,12 +6,15 @@ import {
   deleteDoc,
   doc,
   getDocs,
+  orderBy,
+  query,
   updateDoc,
 } from "firebase/firestore";
 
 function getTables() {
   const ref = collection(database, "boards");
-  return getDocs(ref)
+  const boardsQuery = query(ref, orderBy("updatedAt", "desc"));
+  return getDocs(boardsQuery)
     .then((res) => {
       let newArr: BoardInterface[] = [];
       res.forEach((doc) =>
@@ -25,7 +28,7 @@ function getTables() {
 function addBoard(board: any) {
   const ref = collection(database, "boards");
   return addDoc(ref, board)
-    .then((res) => console.log(res))
+    .then((res) => res)
     .catch((err) => console.log(err));
 }
 
