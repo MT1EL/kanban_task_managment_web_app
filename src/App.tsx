@@ -18,7 +18,8 @@ import {
   where,
 } from "firebase/firestore";
 import { database } from "../firebase";
-import Loading from "../src/components/Loading/";
+import useSorting from "./components/hooks/useSorting";
+
 function App() {
   const [boardId, setBoardId] = useState<string>("");
   const [initialLoad, setInitialLoad] = useState(true);
@@ -66,16 +67,16 @@ function App() {
     if (currentUser) {
       const ref = doc(database, "users", currentUser?.uid);
       const subscribe = onSnapshot(ref, (doc: any) => {
-        const updatedBoards = doc?.data()?.boards;
+        const updatedBoardIds = doc?.data()?.boards;
         const boardsRef = collection(database, "boards");
-        if (updatedBoards?.length === 0) {
+        if (updatedBoardIds?.length === 0) {
           setLoading(false);
           setBoards([]);
           return;
         } else {
           const boardQuery = query(
             boardsRef,
-            where(documentId(), "in", updatedBoards)
+            where(documentId(), "in", updatedBoardIds)
           );
           getDocs(boardQuery).then((docs) => {
             const updatedBoards: any = [];
@@ -85,7 +86,8 @@ function App() {
                 ...doc.data(),
               })
             );
-            setBoards(updatedBoards);
+            const sortedBoards = useSorting(updatedBoardIds, updatedBoards);
+            setBoards(sortedBoards);
           });
         }
       });
@@ -112,7 +114,7 @@ function App() {
   if (loading) {
     return <Spinner />;
   }
-
+  console.log(boards);
   return (
     <Box height={"100vh"}>
       <Navbar
@@ -131,6 +133,7 @@ function App() {
                   boards={boards}
                   currentBoard={currentBoard}
                   setBoardId={setBoardId}
+                  setBoards={setBoards}
                 />
               }
             />

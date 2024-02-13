@@ -3,6 +3,7 @@ import board from "../../assets/icon-board.svg";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import useDragEndBoards from "../hooks/useDragEndBoards";
 import { Dispatch } from "react";
+import { BoardInterface } from "../../types";
 
 function DrawerBody({
   handleNewBoard,
@@ -10,12 +11,14 @@ function DrawerBody({
   currentBoard,
   setCurrentBoard,
   setBoardId,
+  setBoards,
 }: {
   handleNewBoard: () => void;
   boards: any[];
   currentBoard: any;
   setCurrentBoard: any;
   setBoardId: Dispatch<string>;
+  setBoards: Dispatch<BoardInterface[]>;
 }) {
   return (
     <Box
@@ -37,7 +40,7 @@ function DrawerBody({
       </Text>
       <VStack>
         <DragDropContext
-          onDragEnd={(result) => useDragEndBoards(result, boards)}
+          onDragEnd={(result) => useDragEndBoards(result, boards, setBoards)}
         >
           <Droppable droppableId={"BOARDSCOL"}>
             {(provided) => (

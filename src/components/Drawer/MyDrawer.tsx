@@ -13,6 +13,7 @@ function MyDrawer({
   onOpen,
   onClose,
   setBoardId,
+  setBoards,
 }: any) {
   const { colorMode } = useColorMode();
   return (
@@ -40,6 +41,7 @@ function MyDrawer({
         currentBoard={currentBoard}
         setCurrentBoard={setCurrentBoard}
         setBoardId={setBoardId}
+        setBoards={setBoards}
       />
       <DrawerFooter closeDrawer={() => setIsOpen(false)} />
       <ShowDrawer isOpen={isOpen} setOpen={() => setIsOpen(true)} />
