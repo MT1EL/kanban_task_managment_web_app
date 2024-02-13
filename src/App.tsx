@@ -18,8 +18,9 @@ import {
   where,
 } from "firebase/firestore";
 import { database } from "../firebase";
-
+import Loading from "../src/components/Loading/";
 function App() {
+  const [boardId, setBoardId] = useState<string>("");
   const [initialLoad, setInitialLoad] = useState(true);
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(getAuth().currentUser);
@@ -30,6 +31,9 @@ function App() {
   useEffect(() => {
     const unsubscribe = getAuth().onAuthStateChanged((user) => {
       setCurrentUser(user);
+      if (!user) {
+        setLoading(false);
+      }
     });
     return () => unsubscribe();
   }, []);
@@ -40,10 +44,15 @@ function App() {
         if (currentUser) {
           const updatedUserBoards = await getUserBoards(currentUser?.uid);
           setBoards(updatedUserBoards);
-          if (currentBoard === false && initialLoad) {
+          if (
+            currentBoard === false &&
+            initialLoad &&
+            updatedUserBoards?.length > 0
+          ) {
             setCurrentBoard(updatedUserBoards[0]);
             setInitialLoad(false);
           }
+          setInitialLoad(false);
         }
       } catch (err) {
         setLoading(false);
@@ -57,22 +66,28 @@ function App() {
     if (currentUser) {
       const ref = doc(database, "users", currentUser?.uid);
       const subscribe = onSnapshot(ref, (doc: any) => {
-        const updatedBoards = doc.data().boards;
+        const updatedBoards = doc?.data()?.boards;
         const boardsRef = collection(database, "boards");
-        const boardQuery = query(
-          boardsRef,
-          where(documentId(), "in", updatedBoards)
-        );
-        getDocs(boardQuery).then((docs) => {
-          const updatedBoards: any = [];
-          docs.forEach((doc) =>
-            updatedBoards.push({
-              id: doc.id,
-              ...doc.data(),
-            })
+        if (updatedBoards?.length === 0) {
+          setLoading(false);
+          setBoards([]);
+          return;
+        } else {
+          const boardQuery = query(
+            boardsRef,
+            where(documentId(), "in", updatedBoards)
           );
-          setBoards(updatedBoards);
-        });
+          getDocs(boardQuery).then((docs) => {
+            const updatedBoards: any = [];
+            docs.forEach((doc) =>
+              updatedBoards.push({
+                id: doc.id,
+                ...doc.data(),
+              })
+            );
+            setBoards(updatedBoards);
+          });
+        }
       });
 
       return () => subscribe();
@@ -80,7 +95,7 @@ function App() {
   }, [currentUser]);
 
   useEffect(() => {
-    if (currentBoard && !initialLoad) {
+    if (currentBoard && !initialLoad && typeof currentBoard !== "boolean") {
       const boardRef = doc(database, "boards", currentBoard.id);
       const unsubscribe = onSnapshot(boardRef, (doc) => {
         const updatedBoards = {
@@ -92,10 +107,8 @@ function App() {
       });
 
       return () => unsubscribe();
-    } else {
-      setLoading(false);
     }
-  }, [initialLoad]);
+  }, [initialLoad, boardId]);
   if (loading) {
     return <Spinner />;
   }
@@ -117,6 +130,7 @@ function App() {
                   setCurrentBoard={setCurrentBoard}
                   boards={boards}
                   currentBoard={currentBoard}
+                  setBoardId={setBoardId}
                 />
               }
             />

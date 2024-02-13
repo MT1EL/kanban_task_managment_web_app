@@ -54,7 +54,7 @@ function EditBoard({
   const getInitialValues = () => {
     if (currentBoard) {
       formik.setValues({});
-      formik.setFieldValue("Board Name", currentBoard?.name);
+      formik.setFieldValue("Board Name", currentBoard ? currentBoard.name : "");
       currentBoard.columns?.map((item: any, index: number) => {
         formik.setFieldValue(`col${index}`, item.name);
       });
@@ -64,7 +64,7 @@ function EditBoard({
     }
   };
   const initialValuesObject: InitialValuesInterface = {
-    "Board Name": currentBoard?.name ? currentBoard?.name : "",
+    "Board Name": currentBoard ? currentBoard?.name : "",
     // Add other fields as needed
   };
   const formik = useFormik({
@@ -131,7 +131,7 @@ function EditBoard({
                     boards: updatedBoardIds,
                   })
                     .then((res) => {
-                      if (updatedBoardIds.length === 1 && setCurrentBoard) {
+                      if (updatedBoardIds.length > 0 && setCurrentBoard) {
                         setCurrentBoard({ ...newBoard, id: addedBoard?.id });
                       }
                     })
@@ -147,11 +147,9 @@ function EditBoard({
     },
   });
 
-  // q: how to get id of doc i just added to fire
-
   useEffect(() => {
     getInitialValues();
-  }, [isOpen]);
+  }, [isOpen, currentBoard]);
   const handleNewColumn = () => {
     const formik_values_keys = Object.keys(formik.values);
     if (formik_values_keys.length > 0 && formik_values_keys.length < 5) {

@@ -132,7 +132,7 @@ function TaskModal({
             Current Status
           </Text>
           <Select
-            placeholder={currentBoard && currentBoard?.columns[status].name}
+            placeholder={currentBoard && currentBoard?.columns[status]?.name}
             cursor={"pointer"}
             disabled
           ></Select>

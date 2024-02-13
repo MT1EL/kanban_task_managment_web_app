@@ -17,6 +17,7 @@ import EditBoard from "../../components/Modals/EditBoard";
 import { doc, updateDoc } from "firebase/firestore";
 import { database } from "../../../firebase";
 import { getAuth } from "firebase/auth";
+import { BoardInterface } from "../../types";
 function index({ currentBoard, setCurrentBoard, boards }: any) {
   const { colorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -30,6 +31,7 @@ function index({ currentBoard, setCurrentBoard, boards }: any) {
     onOpen: onEditBoardOpen,
     onClose: onEditBoardClose,
   } = useDisclosure();
+
   return (
     <Flex
       alignItems={"center"}
@@ -92,14 +94,6 @@ function index({ currentBoard, setCurrentBoard, boards }: any) {
         onDeleteClick={() => {
           deleteBoard(currentBoard.id);
           onDeleteModalClose();
-          if (boards.length === 1) {
-            //იდეაში საერთოდ არ არის Boards ები შესაბამისად currentBoard იც არ არსებობს
-            //მაგრამ სანამ currentBoard-ს null ად გავსეტავ
-            //მანამდე უნდა დავწერო handler ი მაგ თუ currentBoard Nullია
-            setCurrentBoard(boards[0]);
-          } else {
-            setCurrentBoard(boards[0]);
-          }
           const user = getAuth().currentUser;
           if (user) {
             const ref = doc(database, "users", user?.uid);
@@ -107,9 +101,12 @@ function index({ currentBoard, setCurrentBoard, boards }: any) {
             const filteredBoards = boardIds.filter(
               (id: any) => id !== currentBoard.id
             );
-            updateDoc(ref, { boards: filteredBoards }).then(() =>
-              console.log("success")
+
+            let newCurrentBoard = boards.find(
+              (board: BoardInterface) => board.id === filteredBoards[0]
             );
+            setCurrentBoard(newCurrentBoard);
+            updateDoc(ref, { boards: filteredBoards });
           }
         }}
         title={"Delete this board?"}

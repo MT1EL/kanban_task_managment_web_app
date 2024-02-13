@@ -5,10 +5,11 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { auth } from "../../firebase";
+import { auth, database } from "../../firebase";
 import { Spinner, useToast } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import * as yup from "yup";
+import { addDoc, collection, doc, setDoc } from "firebase/firestore";
 function Register() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -29,9 +30,10 @@ function Register() {
     onSubmit: (values) => {
       setLoading(true);
       createUserWithEmailAndPassword(auth, values.email, values.password)
-        .then(() =>
+        .then((res) => {
           signInWithEmailAndPassword(auth, values.email, values.password).then(
             () => {
+              navigate("/");
               toast({
                 status: "success",
                 duration: 3000,
@@ -40,11 +42,15 @@ function Register() {
                 isClosable: true,
                 position: "top",
               });
-              navigate("/");
+              setDoc(doc(database, "users", res.user.uid), {
+                boards: [],
+              })
+                .then((res) => {})
+                .catch((err) => console.log("err", err));
               setLoading(false);
             }
-          )
-        )
+          );
+        })
         .catch((err) => console.log(err));
     },
   });
