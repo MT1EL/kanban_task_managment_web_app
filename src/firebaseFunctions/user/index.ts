@@ -18,27 +18,29 @@ const getUserData = async (user_id: string) => {
 function getUserBoards(user_id: string) {
   return getUserData(user_id)
     .then((res) => {
-      const boardRef = collection(database, "boards");
-      const boardQuery = query(
-        boardRef,
-        where(documentId(), "in", res?.boards)
-      );
-      return getDocs(boardQuery)
-        .then((docs) => {
-          const updatedBoards: any = [];
-          docs.forEach((doc) =>
-            updatedBoards.push({
-              id: doc.id,
-              ...doc.data(),
-            })
-          );
-          return updatedBoards;
-        })
-        .catch((err) => err);
+      if (res?.boards?.length === 0) {
+        return Promise.resolve([]);
+      } else {
+        const boardRef = collection(database, "boards");
+        const boardQuery = query(
+          boardRef,
+          where(documentId(), "in", res?.boards)
+        );
+        return getDocs(boardQuery)
+          .then((docs) => {
+            const updatedBoards: any = [];
+            docs.forEach((doc) =>
+              updatedBoards.push({
+                id: doc.id,
+                ...doc.data(),
+              })
+            );
+            return updatedBoards;
+          })
+          .catch((err) => err);
+      }
     })
     .catch((err) => console.log(err));
 }
 
 export { getUserBoards, getUserData };
-
-// q: what are rules for useState hook in react

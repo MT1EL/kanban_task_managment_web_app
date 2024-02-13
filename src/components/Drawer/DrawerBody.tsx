@@ -2,17 +2,20 @@ import { Text, VStack, Img, Flex, Box } from "@chakra-ui/react";
 import board from "../../assets/icon-board.svg";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import useDragEndBoards from "../hooks/useDragEndBoards";
+import { Dispatch } from "react";
 
 function DrawerBody({
   handleNewBoard,
   boards,
   currentBoard,
   setCurrentBoard,
+  setBoardId,
 }: {
   handleNewBoard: () => void;
   boards: any[];
   currentBoard: any;
   setCurrentBoard: any;
+  setBoardId: Dispatch<string>;
 }) {
   return (
     <Box
@@ -67,7 +70,10 @@ function DrawerBody({
                         borderBottomRightRadius={"100px"}
                         pl="2rem"
                         cursor={"pointer"}
-                        onClick={() => setCurrentBoard(item)}
+                        onClick={() => {
+                          setBoardId(item.id);
+                          setCurrentBoard(item);
+                        }}
                         color={
                           currentBoard?.name === item.name
                             ? "white"
