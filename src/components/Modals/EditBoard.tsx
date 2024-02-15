@@ -16,10 +16,7 @@ import { Dispatch, useEffect, useState } from "react";
 import { useFormik } from "formik";
 import { addBoard, updateBoard } from "../../firebaseFunctions/table";
 import { BoardInterface, columnType } from "../../types";
-import { doc, serverTimestamp, updateDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import { getUserData } from "../../firebaseFunctions/user";
-import { database } from "../../../firebase";
 interface InitialValuesInterface {
   [key: string]: string;
 }
@@ -115,31 +112,15 @@ function EditBoard({
         };
         updateBoard(newCurrentBoard, currentBoard?.id);
       } else {
+        const user_id = getAuth().currentUser?.uid;
         const newBoard = {
           name: values["Board Name"],
           columns: newColumns,
+          createdBy: user_id,
+          collaborators: [user_id],
         };
-        const currentUser = getAuth().currentUser;
-
         addBoard(newBoard)
-          .then((addedBoard) => {
-            if (currentUser?.uid) {
-              getUserData(currentUser?.uid)
-                .then((res) => {
-                  const updatedBoardIds = [...res?.boards, addedBoard?.id];
-                  updateDoc(doc(database, "users", currentUser?.uid), {
-                    boards: updatedBoardIds,
-                  })
-                    .then((res) => {
-                      if (updatedBoardIds.length > 0 && setCurrentBoard) {
-                        setCurrentBoard({ ...newBoard, id: addedBoard?.id });
-                      }
-                    })
-                    .catch((err) => console.log(err));
-                })
-                .catch((err) => console.log(err));
-            }
-          })
+          .then((addedBoard) => console.log(addedBoard))
           .catch((err) => console.log(err));
         formik.setValues({});
       }
@@ -227,6 +208,7 @@ function EditBoard({
                   src={xIcon}
                   alt="remove"
                   onClick={() => handleColumnDelete(key)}
+                  cursor={"pointer"}
                 />
               </Flex>
             ))}

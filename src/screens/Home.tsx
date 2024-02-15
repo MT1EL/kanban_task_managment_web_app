@@ -8,6 +8,7 @@ function Home({
   currentBoard,
   setBoardId,
   setBoards,
+  boardId,
 }: any) {
   const { isOpen: isBoardOpen, onOpen, onClose } = useDisclosure();
   const [isOpen, setIsOpen] = useState(true);
@@ -31,9 +32,14 @@ function Home({
         onClose={onClose}
         setBoardId={setBoardId}
         setBoards={setBoards}
+        boardId={boardId}
       />
-      {boards?.length > 0 ? (
-        <TaskLayout currentBoard={currentBoard} />
+      {currentBoard ? (
+        <TaskLayout
+          currentBoard={currentBoard}
+          setCurrentBoard={setCurrentBoard}
+          boardId={boardId}
+        />
       ) : (
         <Flex
           justifyContent={"center"}

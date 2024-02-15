@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Dispatch, useEffect, useState } from "react";
 import {
   Flex,
   Grid,
@@ -18,7 +18,17 @@ import TaskModal from "../../components/Modals/TaskModal";
 import DeleteModal from "../../components/Modals/DeleteModal";
 import NewTaskModal from "../../components/Modals/NewTaskModal";
 import useDragEndTasks from "../../components/hooks/useDragEndTasks";
-function index({ currentBoard }: { currentBoard: BoardInterface }) {
+import { doc, onSnapshot } from "firebase/firestore";
+import { database } from "../../../firebase";
+function index({
+  currentBoard,
+  setCurrentBoard,
+  boardId,
+}: {
+  currentBoard: BoardInterface;
+  setCurrentBoard: Dispatch<BoardInterface>;
+  boardId: string;
+}) {
   const [selectedTask, setSelectedTask] = useState<taskType | null>(null);
   const { colorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -53,6 +63,14 @@ function index({ currentBoard }: { currentBoard: BoardInterface }) {
     onCloseDeleteModal();
     updateColumn(currentBoard?.id, newColumns as any);
   };
+  //listen to changes in the current board
+  useEffect(() => {
+    const currentBoardRef = doc(database, "boards", currentBoard.id);
+    const unsubscribe = onSnapshot(currentBoardRef, (doc) => {
+      setCurrentBoard({ ...doc.data(), id: doc.id } as BoardInterface);
+    });
+    return () => unsubscribe();
+  }, [boardId]);
   return (
     <Grid
       gridTemplateColumns={`repeat(${

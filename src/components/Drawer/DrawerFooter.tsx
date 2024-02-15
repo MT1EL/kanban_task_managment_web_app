@@ -1,5 +1,4 @@
 import {
-  Box,
   VStack,
   Flex,
   useColorMode,
@@ -12,7 +11,15 @@ import ThemeSwitcher from "../ThemeToggle/";
 import hideIcon from "../../assets/icon-hide-sidebar.svg";
 import { getAuth } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-function DrawerFooter({ closeDrawer }: { closeDrawer: any }) {
+import { Dispatch } from "react";
+import { BoardInterface } from "../../types";
+function DrawerFooter({
+  closeDrawer,
+  setCurrentBoard,
+}: {
+  closeDrawer: any;
+  setCurrentBoard: Dispatch<BoardInterface | boolean>;
+}) {
   const { colorMode } = useColorMode();
   const navigate = useNavigate();
   const authUser = getAuth();
@@ -28,6 +35,7 @@ function DrawerFooter({ closeDrawer }: { closeDrawer: any }) {
         ml="1.5rem"
         onClick={() => (
           authUser.signOut(),
+          setCurrentBoard(false),
           toast({
             duration: 3000,
             variant: "info",
