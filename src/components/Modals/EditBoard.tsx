@@ -67,67 +67,62 @@ function EditBoard({
   const formik = useFormik({
     initialValues: initialValuesObject,
     onSubmit: (values) => {
-      const newColumns: columnType[] = currentBoard
-        ? [...currentBoard?.columns]
-        : [];
-      const formik_keys_arr = Object.keys(values);
-      const formik_values_arr = Object.values(values);
-      const formik_columns = formik_keys_arr.splice(1);
-      const formik_columns_values = formik_values_arr.splice(1);
-      const col_value_changed = newColumns.length === formik_columns.length;
-      const task_deleted = newColumns.length > formik_columns.length;
-
-      if (col_value_changed) {
-        formik_columns.map((key: string, index) => {
-          newColumns[index].name = values[key];
-        });
-      } else if (task_deleted) {
-        newColumns.map((column: columnType, index) => {
-          if (!formik_columns_values.includes(column.name)) {
-            newColumns.splice(index, 1);
-          }
-        });
-      } else {
-        let alreadyUsedColors: string[] = [];
-        formik_columns.map((key, index) => {
-          if (values[key] !== newColumns[index]?.name) {
-            let newDotColor = getRandomColor(alreadyUsedColors);
-            alreadyUsedColors.push(newDotColor);
-            newColumns.push({
+      // check if the board is new or existing
+      // if new, get columns from formik.values where key is not "Board Name"
+      // if existing, get columns from currentBoard
+      // then call addBoard or updateBoard
+      const columns: any[] = [];
+      const colors: string[] = [];
+      const columnNames = currentBoard?.columns?.map((item) => item.name);
+      for (const key in values) {
+        if (key !== "Board Name") {
+          console.log(values);
+          console.log(key);
+          console.log(values[key]);
+          let index = columnNames?.indexOf(values[key]);
+          if (currentBoard && index !== -1) {
+            console.log(index);
+            const column = {
+              name: values[key],
+              tasks: currentBoard?.columns[index].tasks,
+              dotColor: currentBoard?.columns[index].dotColor,
+            };
+            columns.push(column);
+          } else {
+            const dotColor = getRandomColor(colors);
+            columns.push({
               name: values[key],
               tasks: [],
-              dotColor: newDotColor,
+              dotColor: dotColor,
             });
-          } else {
-            alreadyUsedColors.push(newColumns[index].dotColor);
+            colors.push(dotColor);
           }
+        }
+      }
+      if (currentBoard) {
+        updateBoard(
+          {
+            name: values["Board Name"],
+            columns: columns as columnType[],
+            id: currentBoard.id,
+            createdBy: currentBoard.createdBy,
+            collaborators: currentBoard.collaborators,
+          },
+          currentBoard.id
+        );
+      } else {
+        const user = getAuth().currentUser;
+        addBoard({
+          name: values["Board Name"],
+          createdBy: user?.uid,
+          collaborators: [user?.uid],
+          columns: columns as columnType[],
         });
       }
-
-      if (currentBoard) {
-        const newCurrentBoard = {
-          ...currentBoard,
-          name: values["Board Name"],
-          columns: newColumns,
-        };
-        updateBoard(newCurrentBoard, currentBoard?.id);
-      } else {
-        const user_id = getAuth().currentUser?.uid;
-        const newBoard = {
-          name: values["Board Name"],
-          columns: newColumns,
-          createdBy: user_id,
-          collaborators: [user_id],
-        };
-        addBoard(newBoard)
-          .then((addedBoard) => console.log(addedBoard))
-          .catch((err) => console.log(err));
-        formik.setValues({});
-      }
       onClose();
+      formik.resetForm();
     },
   });
-
   useEffect(() => {
     getInitialValues();
   }, [isOpen, currentBoard]);
