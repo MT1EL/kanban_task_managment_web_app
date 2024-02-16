@@ -16,7 +16,7 @@ import { TaskModalInterface } from "../../types";
 import Popover from "../Popover/";
 import { useFormik } from "formik";
 import { useEffect } from "react";
-import { updateBoard, updateColumn } from "../../firebaseFunctions/table";
+import { updateColumn } from "../../firebaseFunctions/table";
 function TaskModal({
   isOpen,
   onClose,
@@ -88,6 +88,7 @@ function TaskModal({
               onDeleteClick={onDeleteClick}
               editTitle={"Edit Task"}
               deleteTitle={"Delete Task"}
+              currentBoard={currentBoard}
             />
           </Flex>
         </ModalHeader>

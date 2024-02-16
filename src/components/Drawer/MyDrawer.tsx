@@ -28,8 +28,11 @@ function MyDrawer({
       const unsubscribe = onSnapshot(
         query(
           collection(database, "boards"),
-          where("collaborators", "array-contains", user.uid),
-          where("createdBy", "==", user.uid)
+          where(
+            "collaborators",
+            "array-contains",
+            user.uid || "ownerId" === user.uid
+          )
         ),
         (snapshot) => {
           const boards: BoardInterface[] = [];
@@ -60,7 +63,6 @@ function MyDrawer({
       position={"fixed"}
       top="90px"
       left="0"
-      zIndex={"100"}
     >
       {loading ? (
         <Spinner />

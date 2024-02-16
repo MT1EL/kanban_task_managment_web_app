@@ -102,6 +102,7 @@ function EditBoard({
             id: currentBoard.id,
             createdBy: currentBoard.createdBy,
             collaborators: currentBoard.collaborators,
+            ownerId: currentBoard.ownerId,
           },
           currentBoard.id
         );
@@ -109,7 +110,13 @@ function EditBoard({
         const user = getAuth().currentUser;
         addBoard({
           name: values["Board Name"],
-          createdBy: user?.uid,
+          createdBy: {
+            ownerId: user?.uid ?? null,
+            email: user?.email ?? null,
+            name: user?.displayName ?? null,
+            photoURL: user?.photoURL ?? null,
+          },
+          ownerId: user?.uid ?? null,
           collaborators: [user?.uid],
           columns: columns as columnType[],
         });

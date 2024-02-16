@@ -88,6 +88,7 @@ function index({
               onClose={() => console.log("clicked")}
               onDeleteClick={onDeleteModalOpen}
               onEditClick={onEditBoardOpen}
+              currentBoard={currentBoard}
             />
           </Flex>
         </Flex>
@@ -102,7 +103,7 @@ function index({
         onClose={onDeleteModalClose}
         onDeleteClick={() => {
           const user = getAuth().currentUser;
-          if (user?.uid === currentBoard?.createdBy) {
+          if (user?.uid === currentBoard?.ownerId) {
             console.log(currentBoard);
             const boardRef = doc(database, "boards", currentBoard.id);
             deleteDoc(boardRef)
@@ -110,8 +111,9 @@ function index({
               .catch((error) => console.error("Error deleting board", error));
           } else {
             toast({
-              title: "You are not authorized to delete this board",
+              title: "You don't have permission to delete this board",
               status: "error",
+              colorScheme: "red",
             });
           }
           onDeleteModalClose();

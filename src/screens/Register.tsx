@@ -43,7 +43,10 @@ function Register() {
                 position: "top",
               });
               setDoc(doc(database, "users", res.user.uid), {
-                boards: [],
+                name: res.user.displayName,
+                email: res.user.email,
+                id: res.user.uid,
+                avatar: res.user.photoURL,
               })
                 .then((res) => {})
                 .catch((err) => console.log("err", err));
