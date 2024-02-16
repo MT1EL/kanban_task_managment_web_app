@@ -90,7 +90,11 @@ function index({
       >
         {currentBoard?.columns?.map((column: any) => (
           <VStack gap="2.5rem" key={column.name} alignItems={"start"}>
-            <ColumnsHeader column={column} />
+            <ColumnsHeader
+              column={column}
+              boardId={boardId}
+              columns={currentBoard?.columns}
+            />
             <Droppable droppableId={column.name} key={column.name}>
               {(provided) => (
                 <VStack

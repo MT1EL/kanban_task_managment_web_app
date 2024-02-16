@@ -1,12 +1,23 @@
 import { HStack, Box, Text } from "@chakra-ui/react";
+import ColorsPopover from "../Popover/ColorsPopover";
+import { columnType } from "../../types";
 function ColumnsHeader({
   column,
+  boardId,
+  columns,
 }: {
-  column: { dotColor?: string; name: string; tasks: any[] };
+  column: columnType;
+  boardId: string;
+  columns: columnType[];
 }) {
   return (
     <HStack gap="0.75rem" alignItems={"center"}>
-      <Box w="15px" h="15px" bg={column.dotColor} borderRadius={"15px"} />
+      <ColorsPopover
+        dotColor={column.dotColor ?? ""}
+        boardId={boardId}
+        columns={columns}
+        currentColumn={column}
+      />
       <Text
         fontSize={"sm"}
         fontWeight={"bold"}
