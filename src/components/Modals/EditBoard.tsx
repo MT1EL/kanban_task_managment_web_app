@@ -34,18 +34,11 @@ function EditBoard({
 }) {
   const [isDisabled, setIsDisabled] = useState(false);
   const getRandomColor = (alreadyUsedColors: string[]) => {
-    const colors = [
-      "#635FC7",
-      "#FFFFFF",
-      "#EA5555",
-      "#49C4E5",
-      "#8471F2",
-      "#67E2AE",
-    ];
+    const colors = ["#635FC7", "#FFFFFF", "#EA5555", "#49C4E5", "#67E2AE"];
     const filteredColors = colors.filter(
       (color) => alreadyUsedColors.includes(color) === false
     );
-    const colorIndex = Math.floor(Math.random() * filteredColors.length + 1);
+    const colorIndex = Math.floor(Math.random() * (filteredColors.length - 1));
     return filteredColors[colorIndex];
   };
   const getInitialValues = () => {
@@ -67,21 +60,23 @@ function EditBoard({
   const formik = useFormik({
     initialValues: initialValuesObject,
     onSubmit: (values) => {
+      if (Object.keys(values).length === 6) {
+        setIsDisabled(true);
+      } else {
+        setIsDisabled(false);
+      }
       // check if the board is new or existing
       // if new, get columns from formik.values where key is not "Board Name"
       // if existing, get columns from currentBoard
       // then call addBoard or updateBoard
+      const columnNames = currentBoard?.columns?.map((column) => column.name);
+      const dotColors = currentBoard?.columns?.map((column) => column.dotColor);
       const columns: any[] = [];
-      const colors: string[] = [];
-      const columnNames = currentBoard?.columns?.map((item) => item.name);
+      const colors: string[] = dotColors ? dotColors : [];
       for (const key in values) {
         if (key !== "Board Name") {
-          console.log(values);
-          console.log(key);
-          console.log(values[key]);
           let index = columnNames?.indexOf(values[key]);
           if (currentBoard && index !== -1) {
-            console.log(index);
             const column = {
               name: values[key],
               tasks: currentBoard?.columns[index].tasks,
@@ -128,7 +123,10 @@ function EditBoard({
   }, [isOpen, currentBoard]);
   const handleNewColumn = () => {
     const formik_values_keys = Object.keys(formik.values);
-    if (formik_values_keys.length > 0 && formik_values_keys.length < 5) {
+    if (formik_values_keys.length === 5) {
+      setIsDisabled(true);
+    }
+    if (formik_values_keys.length > 0 && formik_values_keys.length < 6) {
       const newInitialValueName = `col${Object.keys(formik.values).length - 1}`;
       formik.setFieldValue(
         newInitialValueName,
@@ -136,18 +134,16 @@ function EditBoard({
           ? formik.values[newInitialValueName]
           : ""
       );
-    } else if (formik_values_keys.length === 6) {
-      setIsDisabled(true);
     }
   };
   const handleColumnDelete = (key: string) => {
-    const formik_values_keys = Object.keys(formik.values);
-    if (formik_values_keys.length < 7) {
-      setIsDisabled(false);
-    }
     const newValues = { ...formik.values };
     delete newValues[key];
     formik.setValues(newValues);
+    const formik_values_keys = Object.keys(formik.values);
+    if (formik_values_keys.length <= 6) {
+      setIsDisabled(false);
+    }
   };
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
