@@ -7,6 +7,7 @@ import { BoardInterface } from "./types";
 import Register from "./screens/Register";
 import Login from "./screens/Login";
 import { getAuth } from "firebase/auth";
+import Profile from "./screens/Profile";
 
 function App() {
   const [boardId, setBoardId] = useState<string>("");
@@ -38,19 +39,22 @@ function App() {
       <Router>
         <Routes>
           {user ? (
-            <Route
-              path="/"
-              element={
-                <Home
-                  setCurrentBoard={setCurrentBoard}
-                  boards={boards}
-                  currentBoard={currentBoard}
-                  setBoardId={setBoardId}
-                  setBoards={setBoards}
-                  boardId={boardId}
-                />
-              }
-            />
+            <>
+              <Route
+                path="/"
+                element={
+                  <Home
+                    setCurrentBoard={setCurrentBoard}
+                    boards={boards}
+                    currentBoard={currentBoard}
+                    setBoardId={setBoardId}
+                    setBoards={setBoards}
+                    boardId={boardId}
+                  />
+                }
+              />
+              <Route path="/profile" element={<Profile />} />
+            </>
           ) : (
             <>
               <Route path="*" element={<Login />} />

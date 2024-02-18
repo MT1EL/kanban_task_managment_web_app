@@ -76,10 +76,7 @@ function MyDrawer({
           setBoards={setBoards}
         />
       )}
-      <DrawerFooter
-        closeDrawer={() => setIsOpen(false)}
-        setCurrentBoard={setCurrentBoard}
-      />
+      <DrawerFooter closeDrawer={() => setIsOpen(false)} />
       <ShowDrawer isOpen={isOpen} setOpen={() => setIsOpen(true)} />
       <EditBoard
         isOpen={isBoardOpen}
