@@ -4,6 +4,7 @@ import { useFormik } from "formik";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  updateProfile,
 } from "firebase/auth";
 import { auth, database } from "../../firebase";
 import { Spinner, useToast } from "@chakra-ui/react";
@@ -15,8 +16,14 @@ function Register() {
   const navigate = useNavigate();
   const toast = useToast();
   const formik = useFormik({
-    initialValues: { email: "", password: "", "repeat password": "" },
+    initialValues: {
+      username: "",
+      email: "",
+      password: "",
+      "repeat password": "",
+    },
     validationSchema: yup.object({
+      username: yup.string().required("Username is required"),
       email: yup.string().email("Invalid email").required("Email is required"),
       password: yup
         .string()
@@ -31,28 +38,34 @@ function Register() {
       setLoading(true);
       createUserWithEmailAndPassword(auth, values.email, values.password)
         .then((res) => {
-          signInWithEmailAndPassword(auth, values.email, values.password).then(
-            () => {
-              navigate("/");
-              toast({
-                status: "success",
-                duration: 3000,
-                title: "Register",
-                description: "Congrats! you successfully registered",
-                isClosable: true,
-                position: "top",
+          updateProfile(auth.currentUser, { displayName: values.username })
+            .then(() => {
+              signInWithEmailAndPassword(
+                auth,
+                values.email,
+                values.password
+              ).then(() => {
+                navigate("/");
+                toast({
+                  status: "success",
+                  duration: 3000,
+                  title: "Register",
+                  description: "Congrats! you successfully registered",
+                  isClosable: true,
+                  position: "top",
+                });
+                setDoc(doc(database, "users", res.user.uid), {
+                  name: res.user.displayName,
+                  email: res.user.email,
+                  id: res.user.uid,
+                  avatar: res.user.photoURL,
+                })
+                  .then((res) => {})
+                  .catch((err) => console.log("err", err));
+                setLoading(false);
               });
-              setDoc(doc(database, "users", res.user.uid), {
-                name: res.user.displayName,
-                email: res.user.email,
-                id: res.user.uid,
-                avatar: res.user.photoURL,
-              })
-                .then((res) => {})
-                .catch((err) => console.log("err", err));
-              setLoading(false);
-            }
-          );
+            })
+            .catch((err) => console.log(err));
         })
         .catch((err) => console.log(err));
     },

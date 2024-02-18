@@ -24,6 +24,7 @@ import { getAuth } from "firebase/auth";
 import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
 import { database } from "../../../firebase";
 import { BoardInterface } from "../../types";
+import { CheckCircleIcon } from "@chakra-ui/icons";
 function index({
   onClose,
   onDeleteClick,
@@ -44,7 +45,6 @@ function index({
   const [filteredUsers, setFilteredUsers] = useState<any[]>([]);
   const [collaborator, setCollaborator] = React.useState("");
   const { isOpen, onOpen, onClose: onCollaboratorModalClose } = useDisclosure();
-
   useEffect(() => {
     getDocs(collection(database, "users")).then((querySnapshot) => {
       const users: any[] = [];
@@ -146,33 +146,51 @@ function index({
               onChange={(e) => setCollaborator(e.target.value)}
             />
             <Grid
-              gridTemplateColumns={["1fr", "1fr 1fr 1fr", "1fr 1fr 1fr 1fr"]}
+              gridTemplateColumns={[
+                "1fr",
+                "minmax(300px, 1fr) minmax(300px, 1fr) minmax(300px, 1fr)",
+                "1fr 1fr 1fr 1fr",
+              ]}
+              py="1rem"
+              gap="1rem"
             >
-              {filteredUsers.length > 0 ? (
-                filteredUsers.map((user) => {
+              {users.length > 0 ? (
+                users.map((user) => {
                   return (
                     <Flex
                       key={user.id}
                       w="100%"
                       p="1rem"
-                      gap="0.5rem"
                       _hover={{ opacity: "0.6", cursor: "pointer" }}
                       onClick={() => handleCollaboratorAdd(user.id)}
+                      border="1px solid"
+                      borderColor="light_Grey"
+                      borderRadius={"1rem"}
+                      alignItems={"center"}
+                      justifyContent={"space-between"}
                     >
-                      {user.avatar ? (
-                        <Img
-                          src={user.avatar}
-                          alt="avatar"
-                          borderRadius="50%"
-                          w="40px"
-                          h="40px"
-                        />
-                      ) : (
-                        <Avatar name={user.name} />
+                      <Flex gap="0.5rem">
+                        {user.avatar ? (
+                          <Img
+                            src={user.avatar}
+                            alt="avatar"
+                            borderRadius="50%"
+                            w="40px"
+                            h="40px"
+                          />
+                        ) : (
+                          <Avatar name={user.name} />
+                        )}
+                        <Flex flexDir={"column"}>
+                          <Text color="white">
+                            {user.name ? user.name : "YOUR USERNAME"}
+                          </Text>
+                          <Text color="white">{user.email}</Text>
+                        </Flex>
+                      </Flex>
+                      {currentBoard?.collaborators.includes(user.id) && (
+                        <CheckCircleIcon color="green.300" w="30px" h="30px" />
                       )}
-                      <Text color="white">
-                        {user.name ? user.name : user.email}
-                      </Text>
                     </Flex>
                   );
                 })
