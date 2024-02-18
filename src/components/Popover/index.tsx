@@ -21,7 +21,14 @@ import {
 import ellipsis from "../../assets/icon-vertical-ellipsis.svg";
 import { useEffect, useState } from "react";
 import { getAuth } from "firebase/auth";
-import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  serverTimestamp,
+  updateDoc,
+} from "firebase/firestore";
 import { database } from "../../../firebase";
 import { BoardInterface } from "../../types";
 import { CheckCircleIcon } from "@chakra-ui/icons";
@@ -66,22 +73,52 @@ function index({
     );
     setUsers(filterUser);
   }, [collaborator]);
-  const handleCollaboratorAdd = (id: string) => {
-    updateDoc(doc(database, "boards", currentBoard?.id), {
-      collaborators: [...currentBoard?.collaborators, id],
-    })
-      .then(() => {
-        toast({
-          title: "Collaborator added",
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-      })
-      .catch((error) => {
-        toast({ title: "ERROR", description: error.message, status: "error" });
+  const handleCollaboratorAdd = (user: any) => {
+    const authenticatedUser = getAuth().currentUser;
+    const userRef = doc(database, "users", user.id);
+    const notification = {
+      type: "collaborator",
+      boardId: currentBoard?.id,
+      seen: false,
+      collaborators: currentBoard.collaborators,
+      time: new Date(),
+      user: {
+        name: authenticatedUser?.displayName,
+        email: authenticatedUser?.email,
+        id: authenticatedUser?.uid,
+        avatar: authenticatedUser?.photoURL,
+      },
+      title: "New Board",
+      description: `${authenticatedUser?.displayName} has invited you to a new board: ${currentBoard?.name}`,
+    };
+    const notificationBoardIds = user.notifications.map(
+      (notification: any) => notification.boardId
+    );
+    if (notificationBoardIds.includes(currentBoard.id)) {
+      toast({
+        title: "Invitation already sent",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
       });
-    const updatedUsers = filteredUsers.filter((user) => user.id !== id);
+      return;
+    } else {
+      updateDoc(userRef, {
+        notifications: [...user.notifications, notification],
+      })
+        .then(() => {
+          toast({
+            title: "Invitation sent",
+            status: "success",
+            duration: 3000,
+            isClosable: true,
+          });
+        })
+        .catch((err) => console.log(err));
+    }
+    const updatedUsers = filteredUsers.filter(
+      (filUser) => filUser.id !== user.id
+    );
     setFilteredUsers(updatedUsers);
   };
   return (
@@ -162,7 +199,7 @@ function index({
                       w="100%"
                       p="1rem"
                       _hover={{ opacity: "0.6", cursor: "pointer" }}
-                      onClick={() => handleCollaboratorAdd(user.id)}
+                      onClick={() => handleCollaboratorAdd(user)}
                       border="1px solid"
                       borderColor="light_Grey"
                       borderRadius={"1rem"}

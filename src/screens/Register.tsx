@@ -59,6 +59,7 @@ function Register() {
                   email: res.user.email,
                   id: res.user.uid,
                   avatar: res.user.photoURL,
+                  notifications: [],
                 })
                   .then((res) => {})
                   .catch((err) => console.log("err", err));

@@ -53,11 +53,9 @@ function index({
               pl="2rem"
               cursor={"pointer"}
               _hover={{
-                //   bg: "main_purple",
                 color: "white",
               }}
               color={(index as any) === currentLink ? "white" : "medium_Grey"}
-              // bg={link === currentLink ? "main_purple" : "transparent"}
               onClick={() => setCurrentLink(index)}
               maxW="80%"
               key={link}
