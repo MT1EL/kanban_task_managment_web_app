@@ -32,6 +32,7 @@ function index({
   editTitle,
   deleteTitle,
   currentBoard,
+  addColaborator,
 }: {
   onClose: () => void;
   onDeleteClick: () => void;
@@ -39,6 +40,7 @@ function index({
   editTitle: string;
   deleteTitle: string;
   currentBoard: BoardInterface;
+  addColaborator?: boolean;
 }) {
   const toast = useToast();
   const [users, setUsers] = useState<any[]>([]);
@@ -137,15 +139,17 @@ function index({
           >
             {editTitle}
           </Text>
-          <Text
-            color="mediun_Grey"
-            cursor={"pointer"}
-            fontWeight={"medium"}
-            fontSize="13px"
-            onClick={onOpen}
-          >
-            Add collaborator
-          </Text>
+          {addColaborator && (
+            <Text
+              color="mediun_Grey"
+              cursor={"pointer"}
+              fontWeight={"medium"}
+              fontSize="13px"
+              onClick={onOpen}
+            >
+              Add collaborator
+            </Text>
+          )}
           <Text
             color="red"
             cursor={"pointer"}

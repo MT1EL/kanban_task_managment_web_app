@@ -68,7 +68,10 @@ function Register() {
             })
             .catch((err) => console.log(err));
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          formik.setErrors({ "repeat password": err.message });
+          setLoading(false);
+        });
     },
   });
   let inputs = Object.keys(formik.initialValues);

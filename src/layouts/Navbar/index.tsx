@@ -89,6 +89,7 @@ function index({
               onDeleteClick={onDeleteModalOpen}
               onEditClick={onEditBoardOpen}
               currentBoard={currentBoard}
+              addColaborator={true}
             />
           </Flex>
         </Flex>

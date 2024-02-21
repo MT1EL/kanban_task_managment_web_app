@@ -204,6 +204,3 @@ const theme = extendTheme({
 });
 
 export default theme;
-function mode(arg0: string, arg1: string) {
-  throw new Error("Function not implemented.");
-}
