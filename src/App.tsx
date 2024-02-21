@@ -30,7 +30,12 @@ function App() {
     });
     return unsubscribe;
   }, []);
-
+  useEffect(() => {
+    const sub = getAuth().onIdTokenChanged((user) => {
+      setUser(user);
+    });
+    return sub;
+  }, []);
   if (loading) {
     return <Spinner />;
   }

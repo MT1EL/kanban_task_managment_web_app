@@ -2,23 +2,40 @@ import { Avatar, Box, Flex, Text, useToast } from "@chakra-ui/react";
 import { User } from "firebase/auth";
 import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
 import { useEffect, useState } from "react";
-import { doc, onSnapshot, updateDoc } from "firebase/firestore";
+import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
 import { database } from "../../../firebase";
 function Notifications({ user }: { user: User }) {
   const toast = useToast();
   const [notifications, setNotifications] = useState<any[]>([]);
   const handleInvitationAccept = (notification: any) => {
     const ref = doc(database, "boards", notification.boardId);
-    updateDoc(ref, {
-      collaborators: [...notification.collaborators, user.uid],
-    })
-      .then(() => {
+    getDoc(ref).then((doc) => {
+      console.log(doc.exists());
+      if (doc.exists()) {
+        updateDoc(ref, {
+          collaborators: [...notification.collaborators, user.uid],
+        })
+          .then(() => {
+            handleInvitationReject(notification, false);
+            toast({ title: "Invitation accepted", status: "success" });
+          })
+          .catch((error) =>
+            toast({
+              title: "Error",
+              description: error.message,
+              status: "warning",
+            })
+          );
+      } else {
+        console.log("doing");
+        toast({
+          status: "warning",
+          title: "Board not found",
+          description: "board has been deleted or does not exist",
+        });
         handleInvitationReject(notification, false);
-        toast({ title: "Invitation accepted", status: "success" });
-      })
-      .catch((error) =>
-        toast({ title: "Error", description: error.message, status: "error" })
-      );
+      }
+    });
   };
   const handleInvitationReject = (notification: any, showToast: boolean) => {
     const filteredNotifications = notifications.filter(
@@ -49,8 +66,7 @@ function Notifications({ user }: { user: User }) {
     <Flex
       flexDir={"column"}
       gap="1rem"
-      border="1px solid"
-      borderColor={"medium_Grey"}
+      border="1px solid rgba(130, 143, 163, 0.25)"
       p="1.5rem"
       borderRadius={"10px"}
       w="100%"

@@ -54,9 +54,15 @@ function index({
               pl="2rem"
               cursor={"pointer"}
               _hover={{
-                color: "white",
+                color: colorMode === "dark" ? "white" : "black",
               }}
-              color={(index as any) === currentLink ? "white" : "medium_Grey"}
+              color={
+                (index as any) === currentLink
+                  ? colorMode === "dark"
+                    ? "white"
+                    : "black"
+                  : "medium_Grey"
+              }
               onClick={() => setCurrentLink(index)}
               maxW="80%"
             >

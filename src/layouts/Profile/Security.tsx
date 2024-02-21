@@ -1,13 +1,11 @@
 import {
-  getAuth,
   reauthenticateWithCredential,
   updatePassword,
-  UserCredential,
   AuthError,
   User,
   EmailAuthProvider,
 } from "firebase/auth";
-import { Box, Button, Flex, Input, useToast, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Input, useToast } from "@chakra-ui/react";
 import { useFormik } from "formik";
 
 import * as yup from "yup";
@@ -56,8 +54,7 @@ function Security({ user }: { user: User }) {
       flexDir={"column"}
       w="500px"
       gap="1rem"
-      border="1px solid"
-      borderColor={"medium_Grey"}
+      border="1px solid rgba(130, 143, 163, 0.25)"
       p="1.5rem"
       borderRadius={"10px"}
     >
@@ -70,7 +67,7 @@ function Security({ user }: { user: User }) {
           />
         </Box>
       ))}
-      <Button onClick={formik.handleSubmit}>Reset Password</Button>
+      <Button onClick={() => formik.handleSubmit()}>Reset Password</Button>
     </Flex>
   );
 }

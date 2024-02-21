@@ -1,4 +1,4 @@
-import { background, extendTheme } from "@chakra-ui/react";
+import { extendTheme } from "@chakra-ui/react";
 import myfont from "./assets/font/PlusJakartaSans-Regular.ttf";
 const theme = extendTheme({
   config: {
@@ -204,3 +204,6 @@ const theme = extendTheme({
 });
 
 export default theme;
+function mode(arg0: string, arg1: string) {
+  throw new Error("Function not implemented.");
+}

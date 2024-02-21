@@ -37,7 +37,10 @@ function Login() {
           });
           navigate("/");
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          formik.setErrors({ password: "Invalid email or password" });
+          setLoading(false);
+        });
     },
   });
   let inputs = Object.keys(formik.initialValues);

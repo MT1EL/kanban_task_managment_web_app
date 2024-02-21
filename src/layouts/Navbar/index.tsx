@@ -107,13 +107,18 @@ function index({
             console.log(currentBoard);
             const boardRef = doc(database, "boards", currentBoard.id);
             deleteDoc(boardRef)
-              .then(() => setCurrentBoard(false))
+              .then(() => {
+                setCurrentBoard(false);
+                toast({
+                  title: "Board deleted",
+                  status: "success",
+                });
+              })
               .catch((error) => console.error("Error deleting board", error));
           } else {
             toast({
               title: "You don't have permission to delete this board",
-              status: "error",
-              colorScheme: "red",
+              status: "warning",
             });
           }
           onDeleteModalClose();

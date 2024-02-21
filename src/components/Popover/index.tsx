@@ -209,13 +209,11 @@ function index({
                             h="40px"
                           />
                         ) : (
-                          <Avatar name={user.name} />
+                          <Avatar name={user.name} size="md" />
                         )}
                         <Flex flexDir={"column"}>
-                          <Text color="white">
-                            {user.name ? user.name : "YOUR USERNAME"}
-                          </Text>
-                          <Text color="white">{user.email}</Text>
+                          <Text>{user.name ? user.name : "YOUR USERNAME"}</Text>
+                          <Text>{user.email}</Text>
                         </Flex>
                       </Flex>
                       {currentBoard?.collaborators?.includes(user.id) && (
