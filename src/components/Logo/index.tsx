@@ -10,6 +10,8 @@ function Logo() {
       pl={["0", "2.125rem"]}
       minW={["fit-content", "260px", "300px"]}
       alignItems={"center"}
+      as="a"
+      href="/"
     >
       <Img
         display={["none", "block"]}

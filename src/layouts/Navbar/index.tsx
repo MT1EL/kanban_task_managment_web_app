@@ -6,19 +6,27 @@ import {
   Text,
   Button,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import Logo from "../../components/Logo";
 import addTask from "../../assets/icon-add-task-mobile.svg";
 import NewTaskModal from "../../components/Modals/NewTaskModal";
 import Popover from "../../components/Popover/";
 import DeleteModal from "../../components/Modals/DeleteModal";
-import { deleteBoard } from "../../firebaseFunctions/table";
 import EditBoard from "../../components/Modals/EditBoard";
-import { doc, updateDoc } from "firebase/firestore";
+import { deleteDoc, doc } from "firebase/firestore";
 import { database } from "../../../firebase";
 import { getAuth } from "firebase/auth";
 import { BoardInterface } from "../../types";
-function index({ currentBoard, setCurrentBoard, boards }: any) {
+import { Dispatch } from "react";
+function index({
+  currentBoard,
+  setCurrentBoard,
+}: {
+  currentBoard: BoardInterface;
+  setCurrentBoard: Dispatch<BoardInterface | boolean>;
+}) {
+  const toast = useToast();
   const { colorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -31,7 +39,6 @@ function index({ currentBoard, setCurrentBoard, boards }: any) {
     onOpen: onEditBoardOpen,
     onClose: onEditBoardClose,
   } = useDisclosure();
-
   return (
     <Flex
       alignItems={"center"}
@@ -58,31 +65,34 @@ function index({ currentBoard, setCurrentBoard, boards }: any) {
         bg={colorMode === "dark" ? "lines_dark" : "lines_light"}
         orientation="vertical"
       />
-      <Flex
-        pl={["1rem", "1.5rem"]}
-        pr={["0", "2rem"]}
-        alignItems={"center"}
-        justifyContent={"space-between"}
-        w="100%"
-        h="100%"
-      >
-        <Text fontSize={["lg", "xl"]} fontWeight={"bold"}>
-          {currentBoard?.name}
-        </Text>
-        <Flex alignItems={"center"} gap={["1rem", "1.5rem"]}>
-          <Button variant={"primary"} size={["xs", "xl"]} onClick={onOpen}>
-            <Img src={addTask} alt="add task" display={["block", "none"]} />
-            <Text display={["none", "block"]}>+Add New Task</Text>
-          </Button>
-          <Popover
-            editTitle="Edit Board"
-            deleteTitle="Delete Board"
-            onClose={() => console.log("clicked")}
-            onDeleteClick={onDeleteModalOpen}
-            onEditClick={onEditBoardOpen}
-          />
+      {currentBoard ? (
+        <Flex
+          pl={["1rem", "1.5rem"]}
+          pr={["0", "2rem"]}
+          alignItems={"center"}
+          justifyContent={"space-between"}
+          w="100%"
+          h="100%"
+        >
+          <Text fontSize={["lg", "xl"]} fontWeight={"bold"}>
+            {currentBoard?.name}
+          </Text>
+          <Flex alignItems={"center"} gap={["1rem", "1.5rem"]}>
+            <Button variant={"primary"} size={["xs", "xl"]} onClick={onOpen}>
+              <Img src={addTask} alt="add task" display={["block", "none"]} />
+              <Text display={["none", "block"]}>+Add New Task</Text>
+            </Button>
+            <Popover
+              editTitle="Edit Board"
+              deleteTitle="Delete Board"
+              onClose={() => console.log("clicked")}
+              onDeleteClick={onDeleteModalOpen}
+              onEditClick={onEditBoardOpen}
+              currentBoard={currentBoard}
+            />
+          </Flex>
         </Flex>
-      </Flex>
+      ) : null}
       <EditBoard
         isOpen={isEditBoardOpen}
         onClose={onEditBoardClose}
@@ -92,22 +102,21 @@ function index({ currentBoard, setCurrentBoard, boards }: any) {
         isOpen={isDeleteModalOpen}
         onClose={onDeleteModalClose}
         onDeleteClick={() => {
-          deleteBoard(currentBoard.id);
-          onDeleteModalClose();
           const user = getAuth().currentUser;
-          if (user) {
-            const ref = doc(database, "users", user?.uid);
-            const boardIds = boards.map((board: any) => board.id);
-            const filteredBoards = boardIds.filter(
-              (id: any) => id !== currentBoard.id
-            );
-
-            let newCurrentBoard = boards.find(
-              (board: BoardInterface) => board.id === filteredBoards[0]
-            );
-            setCurrentBoard(newCurrentBoard);
-            updateDoc(ref, { boards: filteredBoards });
+          if (user?.uid === currentBoard?.ownerId) {
+            console.log(currentBoard);
+            const boardRef = doc(database, "boards", currentBoard.id);
+            deleteDoc(boardRef)
+              .then(() => setCurrentBoard(false))
+              .catch((error) => console.error("Error deleting board", error));
+          } else {
+            toast({
+              title: "You don't have permission to delete this board",
+              status: "error",
+              colorScheme: "red",
+            });
           }
+          onDeleteModalClose();
         }}
         title={"Delete this board?"}
       />

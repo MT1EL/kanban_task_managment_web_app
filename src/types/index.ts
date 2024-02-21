@@ -2,7 +2,14 @@ interface BoardInterface {
   name: string;
   id: string;
   columns: columnType[];
-  updatedAt?: any;
+  createdBy: {
+    ownerId: string;
+    email: string;
+    name: string;
+    photoURL: string;
+  };
+  ownerId: string;
+  collaborators: string[];
 }
 type columnType = {
   name: string;

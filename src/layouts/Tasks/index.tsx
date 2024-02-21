@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Dispatch, useEffect, useState } from "react";
 import {
   Flex,
   Grid,
@@ -7,6 +7,7 @@ import {
   Text,
   useColorMode,
   Box,
+  Input,
 } from "@chakra-ui/react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { BoardInterface, taskType } from "../../types";
@@ -18,7 +19,23 @@ import TaskModal from "../../components/Modals/TaskModal";
 import DeleteModal from "../../components/Modals/DeleteModal";
 import NewTaskModal from "../../components/Modals/NewTaskModal";
 import useDragEndTasks from "../../components/hooks/useDragEndTasks";
-function index({ currentBoard }: { currentBoard: BoardInterface }) {
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  onSnapshot,
+} from "firebase/firestore";
+import { database } from "../../../firebase";
+function index({
+  currentBoard,
+  setCurrentBoard,
+  boardId,
+}: {
+  currentBoard: BoardInterface;
+  setCurrentBoard: Dispatch<BoardInterface>;
+  boardId: string;
+}) {
   const [selectedTask, setSelectedTask] = useState<taskType | null>(null);
   const { colorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -53,6 +70,14 @@ function index({ currentBoard }: { currentBoard: BoardInterface }) {
     onCloseDeleteModal();
     updateColumn(currentBoard?.id, newColumns as any);
   };
+  //listen to changes in the current board
+  useEffect(() => {
+    const currentBoardRef = doc(database, "boards", currentBoard.id);
+    const unsubscribe = onSnapshot(currentBoardRef, (doc) => {
+      setCurrentBoard({ ...doc.data(), id: doc.id } as BoardInterface);
+    });
+    return () => unsubscribe();
+  }, [boardId]);
   return (
     <Grid
       gridTemplateColumns={`repeat(${
@@ -72,7 +97,11 @@ function index({ currentBoard }: { currentBoard: BoardInterface }) {
       >
         {currentBoard?.columns?.map((column: any) => (
           <VStack gap="2.5rem" key={column.name} alignItems={"start"}>
-            <ColumnsHeader column={column} />
+            <ColumnsHeader
+              column={column}
+              boardId={boardId}
+              columns={currentBoard?.columns}
+            />
             <Droppable droppableId={column.name} key={column.name}>
               {(provided) => (
                 <VStack

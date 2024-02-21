@@ -3,6 +3,7 @@ import board from "../../assets/icon-board.svg";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import useDragEndBoards from "../hooks/useDragEndBoards";
 import { Dispatch } from "react";
+import { BoardInterface } from "../../types";
 
 function DrawerBody({
   handleNewBoard,
@@ -10,12 +11,14 @@ function DrawerBody({
   currentBoard,
   setCurrentBoard,
   setBoardId,
+  setBoards,
 }: {
   handleNewBoard: () => void;
   boards: any[];
   currentBoard: any;
   setCurrentBoard: any;
   setBoardId: Dispatch<string>;
+  setBoards: Dispatch<BoardInterface[]>;
 }) {
   return (
     <Box
@@ -37,7 +40,7 @@ function DrawerBody({
       </Text>
       <VStack>
         <DragDropContext
-          onDragEnd={(result) => useDragEndBoards(result, boards)}
+          onDragEnd={(result) => useDragEndBoards(result, boards, setBoards)}
         >
           <Droppable droppableId={"BOARDSCOL"}>
             {(provided) => (
@@ -48,7 +51,7 @@ function DrawerBody({
               >
                 {boards?.map((item, index) => (
                   <Draggable
-                    key={item.name}
+                    key={item.id}
                     draggableId={item.name}
                     index={index}
                   >
@@ -59,7 +62,7 @@ function DrawerBody({
                         {...provided.dragHandleProps}
                         gap="1rem"
                         bg={
-                          currentBoard?.name === item.name
+                          currentBoard?.id === item.id
                             ? "main_purple"
                             : "transparent"
                         }
@@ -75,9 +78,7 @@ function DrawerBody({
                           setCurrentBoard(item);
                         }}
                         color={
-                          currentBoard?.name === item.name
-                            ? "white"
-                            : "medium_Grey"
+                          currentBoard?.id === item.id ? "white" : "medium_Grey"
                         }
                         _hover={{
                           bg: "main_purple",
@@ -85,7 +86,14 @@ function DrawerBody({
                         }}
                       >
                         <Img src={board} alt="board" />
-                        <Text fontSize={"md"}>{item.name}</Text>
+                        <Flex flexDir={"column"}>
+                          <Text fontSize={"ms"}>{item.name}</Text>
+                          <Text fontSize={"xs"}>
+                            {item.createdBy.email
+                              ? item.createdBy.email
+                              : item.createdBy.name}
+                          </Text>
+                        </Flex>
                       </Flex>
                     )}
                   </Draggable>

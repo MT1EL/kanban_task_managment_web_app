@@ -7,133 +7,72 @@ import { BoardInterface } from "./types";
 import Register from "./screens/Register";
 import Login from "./screens/Login";
 import { getAuth } from "firebase/auth";
-import { getUserBoards } from "./firebaseFunctions/user";
-import {
-  collection,
-  doc,
-  documentId,
-  getDocs,
-  onSnapshot,
-  query,
-  where,
-} from "firebase/firestore";
-import { database } from "../firebase";
-import Loading from "../src/components/Loading/";
+import ProfileLayout from "./screens/Profile";
+import Boards from "./layouts/Profile/Boards";
+import Security from "./layouts/Profile/Security";
+import Notifications from "./layouts/Profile/Notifications";
+import Profile from "./layouts/Profile/";
+
 function App() {
   const [boardId, setBoardId] = useState<string>("");
-  const [initialLoad, setInitialLoad] = useState(true);
   const [loading, setLoading] = useState(true);
-  const [currentUser, setCurrentUser] = useState(getAuth().currentUser);
+  const [user, setUser] = useState(getAuth().currentUser);
   const [boards, setBoards] = useState<BoardInterface[]>();
   const [currentBoard, setCurrentBoard] = useState<BoardInterface | boolean>(
     false
   );
+
+  // update user
   useEffect(() => {
     const unsubscribe = getAuth().onAuthStateChanged((user) => {
-      setCurrentUser(user);
-      if (!user) {
-        setLoading(false);
-      }
+      setUser(user);
+      setLoading(false);
     });
-    return () => unsubscribe();
+    return unsubscribe;
   }, []);
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Your asynchronous logic here
-        if (currentUser) {
-          const updatedUserBoards = await getUserBoards(currentUser?.uid);
-          setBoards(updatedUserBoards);
-          if (
-            currentBoard === false &&
-            initialLoad &&
-            updatedUserBoards?.length > 0
-          ) {
-            setCurrentBoard(updatedUserBoards[0]);
-            setInitialLoad(false);
-          }
-          setInitialLoad(false);
-        }
-      } catch (err) {
-        setLoading(false);
-        console.log(err);
-        return err;
-      }
-    };
-    fetchData();
-  }, [currentUser]);
-  useEffect(() => {
-    if (currentUser) {
-      const ref = doc(database, "users", currentUser?.uid);
-      const subscribe = onSnapshot(ref, (doc: any) => {
-        const updatedBoards = doc?.data()?.boards;
-        const boardsRef = collection(database, "boards");
-        if (updatedBoards?.length === 0) {
-          setLoading(false);
-          setBoards([]);
-          return;
-        } else {
-          const boardQuery = query(
-            boardsRef,
-            where(documentId(), "in", updatedBoards)
-          );
-          getDocs(boardQuery).then((docs) => {
-            const updatedBoards: any = [];
-            docs.forEach((doc) =>
-              updatedBoards.push({
-                id: doc.id,
-                ...doc.data(),
-              })
-            );
-            setBoards(updatedBoards);
-          });
-        }
-      });
 
-      return () => subscribe();
-    }
-  }, [currentUser]);
-
-  useEffect(() => {
-    if (currentBoard && !initialLoad && typeof currentBoard !== "boolean") {
-      const boardRef = doc(database, "boards", currentBoard.id);
-      const unsubscribe = onSnapshot(boardRef, (doc) => {
-        const updatedBoards = {
-          id: doc?.id,
-          ...doc?.data(),
-        };
-        setCurrentBoard(updatedBoards as any);
-        setLoading(false);
-      });
-
-      return () => unsubscribe();
-    }
-  }, [initialLoad, boardId]);
   if (loading) {
     return <Spinner />;
   }
-
   return (
     <Box height={"100vh"}>
       <Navbar
-        currentBoard={currentBoard}
+        currentBoard={currentBoard as BoardInterface}
         setCurrentBoard={setCurrentBoard}
-        boards={boards}
       />
       <Router>
         <Routes>
-          {currentUser ? (
-            <Route
-              path="/"
-              element={
-                <Home
-                  setCurrentBoard={setCurrentBoard}
-                  boards={boards}
-                  currentBoard={currentBoard}
-                  setBoardId={setBoardId}
+          {user ? (
+            <>
+              <Route
+                path="/"
+                element={
+                  <Home
+                    setCurrentBoard={setCurrentBoard}
+                    boards={boards}
+                    currentBoard={currentBoard}
+                    setBoardId={setBoardId}
+                    setBoards={setBoards}
+                    boardId={boardId}
+                  />
+                }
+              />
+              <Route path="/profile" element={<ProfileLayout />}>
+                <Route path="/profile/" element={<Profile user={user} />} />
+                <Route
+                  path="/profile/boards"
+                  element={<Boards user={user} />}
                 />
-              }
-            />
+                <Route
+                  path="/profile/security"
+                  element={<Security user={user} />}
+                />
+                <Route
+                  path="/profile/notifications"
+                  element={<Notifications user={user} />}
+                />
+              </Route>
+            </>
           ) : (
             <>
               <Route path="*" element={<Login />} />
