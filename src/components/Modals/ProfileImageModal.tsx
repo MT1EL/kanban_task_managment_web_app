@@ -30,7 +30,6 @@ function ProfileImageModal({
   const [downloadURL, setDownloadURL] = useState<string>("");
   const [progress, setProgress] = useState<number>(0);
   const toast = useToast();
-  const user = getAuth().currentUser;
 
   const handleUpload = (file: any) => {
     if (file[0]) {

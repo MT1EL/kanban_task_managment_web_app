@@ -63,6 +63,7 @@ function MyDrawer({
       position={"fixed"}
       top="90px"
       left="0"
+      zIndex={2}
     >
       {loading ? (
         <Spinner />

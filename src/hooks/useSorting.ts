@@ -1,4 +1,4 @@
-import { BoardInterface } from "../../types";
+import { BoardInterface } from "../types";
 
 function useSorting(arr1: string[], arr2: BoardInterface[]) {
   // Create a map of ids to their corresponding index positions in the second array

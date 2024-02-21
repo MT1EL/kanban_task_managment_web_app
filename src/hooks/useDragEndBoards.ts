@@ -1,9 +1,9 @@
 import { DropResult } from "react-beautiful-dnd";
-import { BoardInterface } from "../../types";
+import { BoardInterface } from "../types";
 import { doc, updateDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import { getUserData } from "../../firebaseFunctions/user";
-import { database } from "../../../firebase";
+import { getUserData } from "../firebaseFunctions/user";
+import { database } from "../../firebase";
 import { Dispatch } from "react";
 import useSorting from "./useSorting";
 

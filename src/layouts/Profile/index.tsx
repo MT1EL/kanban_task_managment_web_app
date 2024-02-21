@@ -7,22 +7,17 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import {
-  AuthError,
-  EmailAuthProvider,
-  User,
-  getAuth,
-  reauthenticateWithCredential,
-  updateProfile,
-} from "firebase/auth";
+import { User, getAuth } from "firebase/auth";
 import ProfileHeader from "../../components/Header/ProfileHeader";
 import { useNavigate } from "react-router-dom";
 import DeleteModal from "../../components/Modals/DeleteModal";
-import { useFormik } from "formik";
+import { FormikProps, useFormik } from "formik";
 import * as yup from "yup";
-import { doc, updateDoc } from "firebase/firestore";
-import { database } from "../../../firebase";
 import ProfileImageModal from "../../components/Modals/ProfileImageModal";
+import {
+  deleteUserOnSubmit,
+  updateUserOnSubmit,
+} from "../../formik/onSubmit/profile";
 function index({ user }: { user: User }) {
   const UserFormik = useFormik({
     initialValues: { name: user.displayName, email: user.email },
@@ -30,54 +25,15 @@ function index({ user }: { user: User }) {
       name: yup.string().required(),
       email: yup.string().email().required(),
     }),
-    onSubmit: (values) => {
-      const auth = getAuth();
-      const user = auth.currentUser;
-
-      if (user) {
-        updateProfile(user, {
-          displayName: values.name,
-        })
-          .then(() => {
-            const userRef = doc(database, "users", user.uid);
-            updateDoc(userRef, { name: values.name })
-              .then(() =>
-                toast({
-                  status: "success",
-                  title: "Profile Updated",
-                  description: "Your profile has been updated successfully",
-                })
-              )
-              .catch((error: AuthError) => console.log(error));
-          })
-          .catch((error: AuthError) => console.log(error));
-      }
-    },
+    onSubmit: (values) => updateUserOnSubmit(values, toast),
   });
-  const formik = useFormik({
+  interface FormValues {
+    password: string;
+  }
+  const formik: FormikProps<FormValues> = useFormik<FormValues>({
     initialValues: { password: "" },
     validationSchema: yup.object({ password: yup.string().required() }),
-    onSubmit: (values) => {
-      console.log(values);
-      const credential = EmailAuthProvider.credential(
-        user.email as string,
-        values.password
-      );
-      reauthenticateWithCredential(user, credential)
-        .then((user) =>
-          user.user.delete().then(() => {
-            toast({
-              status: "success",
-              title: "Account Deleted",
-              description: "Your account has been deleted successfully",
-            });
-          })
-        )
-        .catch((error: AuthError) => {
-          onClose();
-          formik.setErrors({ password: "wrong password" });
-        });
-    },
+    onSubmit: (values) => deleteUserOnSubmit(values, toast, onClose, formik),
   });
   const { isOpen, onClose, onOpen } = useDisclosure();
   const {

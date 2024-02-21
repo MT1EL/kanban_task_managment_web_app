@@ -1,7 +1,7 @@
 import { Text, VStack, Img, Flex, Box } from "@chakra-ui/react";
 import board from "../../assets/icon-board.svg";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-import useDragEndBoards from "../hooks/useDragEndBoards";
+import useDragEndBoards from "../../hooks/useDragEndBoards";
 import { Dispatch } from "react";
 import { BoardInterface } from "../../types";
 
