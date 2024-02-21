@@ -1,36 +1,31 @@
-import { Flex, Spinner } from "@chakra-ui/react";
-import { getAuth } from "firebase/auth";
+import { Flex } from "@chakra-ui/react";
 import ProfileDrawer from "../components/Drawer/ProfileDrawer";
 import { useState } from "react";
-import ProfileLayout from "../layouts/Profile/";
-import Boards from "../layouts/Profile/Boards";
-import Security from "../layouts/Profile/Security";
-import Notifications from "../layouts/Profile/Notifications";
+import { Outlet } from "react-router-dom";
 function Profile() {
-  const user = getAuth().currentUser;
+  const [isDrawerOpen, setIsDrawerOpen] = useState(true);
   const [currentLink, setCurrentLink] = useState(0);
-  if (!user) {
-    return <Spinner />;
-  }
-  const components = [
-    <ProfileLayout user={user} />,
-    <Boards user={user} />,
-    <Security user={user} />,
-    <Notifications user={user} />,
-  ];
+
   return (
     <Flex mt="90px">
       <ProfileDrawer
         currentLink={currentLink}
         setCurrentLink={setCurrentLink}
+        isDrawerOpen={isDrawerOpen}
+        setIsDrawerOpen={setIsDrawerOpen}
       />
       <Flex
-        ml={["1rem", "calc(2rem + 260px)", "calc(2rem + 301px)"]}
+        ml={
+          isDrawerOpen
+            ? ["1rem", "calc(2rem + 260px)", "calc(2rem + 301px)"]
+            : ["1rem", "2rem", "2rem"]
+        }
         mr={["1rem", "2rem", "3rem"]}
         w="100%"
         my="2rem"
+        transition={"300ms ease-in-out"}
       >
-        {components[currentLink]}
+        <Outlet />
       </Flex>
     </Flex>
   );

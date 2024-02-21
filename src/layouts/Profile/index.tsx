@@ -58,7 +58,7 @@ function index({ user }: { user: User }) {
       navigate("/login");
   };
   return (
-    <Flex flexDir={"column"} maxW="700px" w="100%" gap="2rem">
+    <Flex flexDir={"column"} maxW="700px" w="100%" gap="2rem ">
       <Flex
         p="1.5rem"
         flexDir={"column"}

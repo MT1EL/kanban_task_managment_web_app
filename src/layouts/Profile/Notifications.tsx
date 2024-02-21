@@ -56,70 +56,74 @@ function Notifications({ user }: { user: User }) {
       w="100%"
     >
       <Text>Notifications</Text>
-      {notifications.map((notification, index) => {
-        console.log(notification);
-        let timeAgo;
-        const fetchedTime = notification.time.seconds * 1000;
-        const currentTime = new Date().getTime();
-        const difference = currentTime - fetchedTime;
-        const minutesAgo = Math.floor(difference / (1000 * 60));
-        const hoursAgo = Math.floor(difference / (1000 * 60 * 60));
-        if (minutesAgo === 0) {
-          timeAgo = "Just now";
-        } else if (minutesAgo < 60) {
-          timeAgo = minutesAgo + " minutes ago";
-        } else if (hoursAgo < 24) {
-          timeAgo = hoursAgo + " hours ago";
-        } else {
-          timeAgo = Math.floor(hoursAgo / 24) + " days ago";
-        }
-        return (
-          <Flex
-            border="1px solid"
-            borderColor={"medium_Grey"}
-            py="10px"
-            px="20px"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-            w="100%"
-            key={notification.boarId + notification.time.toString()}
-          >
-            <Flex gap="1rem">
-              <Avatar name={notification.user.name} />
-              <Box>
-                <Text>{notification.title}</Text>
-                <Text fontSize={"sm"} color="light_Grey">
-                  {timeAgo}
-                </Text>
-              </Box>
-            </Flex>
-            <Flex gap="1rem" alignItems={"center"}>
-              <Flex alignItems={"center"} gap="1rem">
-                <CheckIcon
-                  w="20px"
-                  h="20px"
-                  _hover={{ color: "medium_Grey", cursor: "pointer" }}
-                  onClick={() => handleInvitationAccept(notification)}
-                />
-
-                <CloseIcon
-                  w="20px"
-                  _hover={{ color: "medium_Grey", cursor: "pointer" }}
-                  onClick={() => handleInvitationReject(notification, true)}
-                />
+      {notifications.length > 0 ? (
+        notifications.map((notification) => {
+          console.log(notification);
+          let timeAgo;
+          const fetchedTime = notification.time.seconds * 1000;
+          const currentTime = new Date().getTime();
+          const difference = currentTime - fetchedTime;
+          const minutesAgo = Math.floor(difference / (1000 * 60));
+          const hoursAgo = Math.floor(difference / (1000 * 60 * 60));
+          if (minutesAgo === 0) {
+            timeAgo = "Just now";
+          } else if (minutesAgo < 60) {
+            timeAgo = minutesAgo + " minutes ago";
+          } else if (hoursAgo < 24) {
+            timeAgo = hoursAgo + " hours ago";
+          } else {
+            timeAgo = Math.floor(hoursAgo / 24) + " days ago";
+          }
+          return (
+            <Flex
+              border="1px solid"
+              borderColor={"medium_Grey"}
+              py="10px"
+              px="20px"
+              justifyContent={"space-between"}
+              alignItems={"center"}
+              w="100%"
+              key={notification.boarId + notification.time.toString()}
+            >
+              <Flex gap="1rem">
+                <Avatar name={notification.user.name} />
+                <Box>
+                  <Text>{notification.title}</Text>
+                  <Text fontSize={"sm"} color="light_Grey">
+                    {timeAgo}
+                  </Text>
+                </Box>
               </Flex>
-              {notification.seen === false && (
-                <Box
-                  w="10px"
-                  h="10px"
-                  borderRadius={"full"}
-                  bg={"medium_Grey"}
-                ></Box>
-              )}
+              <Flex gap="1rem" alignItems={"center"}>
+                <Flex alignItems={"center"} gap="1rem">
+                  <CheckIcon
+                    w="20px"
+                    h="20px"
+                    _hover={{ color: "medium_Grey", cursor: "pointer" }}
+                    onClick={() => handleInvitationAccept(notification)}
+                  />
+
+                  <CloseIcon
+                    w="20px"
+                    _hover={{ color: "medium_Grey", cursor: "pointer" }}
+                    onClick={() => handleInvitationReject(notification, true)}
+                  />
+                </Flex>
+                {notification.seen === false && (
+                  <Box
+                    w="10px"
+                    h="10px"
+                    borderRadius={"full"}
+                    bg={"medium_Grey"}
+                  ></Box>
+                )}
+              </Flex>
             </Flex>
-          </Flex>
-        );
-      })}
+          );
+        })
+      ) : (
+        <Text>All caught up! ✨</Text>
+      )}
     </Flex>
   );
 }

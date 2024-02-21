@@ -30,7 +30,7 @@ function index({
                 placeholder={`Enter your ${input}`}
                 name={input}
                 onChange={formik.handleChange}
-                type={input.includes("password") ? "password" : "text"}
+                type={input?.includes("password") ? "password" : "text"}
               />
               {formik.errors[input] && formik.touched[input] && (
                 <Text color="red">{formik.errors[input]}</Text>

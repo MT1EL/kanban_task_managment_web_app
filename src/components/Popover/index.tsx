@@ -21,14 +21,7 @@ import {
 import ellipsis from "../../assets/icon-vertical-ellipsis.svg";
 import { useEffect, useState } from "react";
 import { getAuth } from "firebase/auth";
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  serverTimestamp,
-  updateDoc,
-} from "firebase/firestore";
+import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
 import { database } from "../../../firebase";
 import { BoardInterface } from "../../types";
 import { CheckCircleIcon } from "@chakra-ui/icons";
@@ -94,7 +87,7 @@ function index({
     const notificationBoardIds = user.notifications.map(
       (notification: any) => notification.boardId
     );
-    if (notificationBoardIds.includes(currentBoard.id)) {
+    if (notificationBoardIds?.includes(currentBoard.id)) {
       toast({
         title: "Invitation already sent",
         status: "warning",
@@ -225,7 +218,7 @@ function index({
                           <Text color="white">{user.email}</Text>
                         </Flex>
                       </Flex>
-                      {currentBoard?.collaborators.includes(user.id) && (
+                      {currentBoard?.collaborators?.includes(user.id) && (
                         <CheckCircleIcon color="green.300" w="30px" h="30px" />
                       )}
                     </Flex>

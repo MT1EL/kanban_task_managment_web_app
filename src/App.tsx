@@ -7,7 +7,11 @@ import { BoardInterface } from "./types";
 import Register from "./screens/Register";
 import Login from "./screens/Login";
 import { getAuth } from "firebase/auth";
-import Profile from "./screens/Profile";
+import ProfileLayout from "./screens/Profile";
+import Boards from "./layouts/Profile/Boards";
+import Security from "./layouts/Profile/Security";
+import Notifications from "./layouts/Profile/Notifications";
+import Profile from "./layouts/Profile/";
 
 function App() {
   const [boardId, setBoardId] = useState<string>("");
@@ -53,7 +57,21 @@ function App() {
                   />
                 }
               />
-              <Route path="/profile" element={<Profile />} />
+              <Route path="/profile" element={<ProfileLayout />}>
+                <Route path="/profile/" element={<Profile user={user} />} />
+                <Route
+                  path="/profile/boards"
+                  element={<Boards user={user} />}
+                />
+                <Route
+                  path="/profile/security"
+                  element={<Security user={user} />}
+                />
+                <Route
+                  path="/profile/notifications"
+                  element={<Notifications user={user} />}
+                />
+              </Route>
             </>
           ) : (
             <>

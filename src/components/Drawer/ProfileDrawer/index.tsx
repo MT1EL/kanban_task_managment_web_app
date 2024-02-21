@@ -1,21 +1,19 @@
-import {
-  Divider,
-  Flex,
-  TabList,
-  Text,
-  useColorMode,
-  Box,
-} from "@chakra-ui/react";
-import { Dispatch, useState } from "react";
+import { Flex, Text, useColorMode } from "@chakra-ui/react";
+import { Dispatch } from "react";
 import DrawerFooter from "../DrawerFooter";
+import { Link } from "react-router-dom";
+import ShowDrawer from "../ShowDrawer";
 function index({
+  isDrawerOpen,
+  setIsDrawerOpen,
   currentLink,
   setCurrentLink,
 }: {
   currentLink: number;
   setCurrentLink: Dispatch<any>;
+  isDrawerOpen: boolean;
+  setIsDrawerOpen: Dispatch<boolean>;
 }) {
-  const [isOpen, setIsOpen] = useState(true);
   const { colorMode } = useColorMode();
   const profileLinks = ["Profile", "Boards", "Security", "Notifications"];
   return (
@@ -30,19 +28,22 @@ function index({
       justifyContent={"space-between"}
       pb="1rem"
       bg={colorMode === "dark" ? "dark_Grey" : "white"}
-      transform={isOpen ? "translateX(0%)" : "translateX(-100%)"}
+      transform={isDrawerOpen ? "translateX(0%)" : "translateX(-100%)"}
       transition={"300ms ease-in-out"}
       position={"fixed"}
       top="90px"
       left="0"
     >
-      <Box>
-        <Text fontSize={"xl"} px="2rem">
-          Profile
-        </Text>
-        <Divider my="1rem" />
-        <Flex flexDir={"column"} gap="0.5rem">
-          {profileLinks.map((link, index) => (
+      <Flex flexDir={"column"} gap="0.5rem" mt="2rem">
+        {profileLinks.map((link, index) => (
+          <Link
+            to={
+              link.toLocaleLowerCase() === "profile"
+                ? "/profile"
+                : `/profile/${link.toLowerCase()}`
+            }
+            key={link}
+          >
             <Flex
               gap="1rem"
               w="100%"
@@ -58,14 +59,14 @@ function index({
               color={(index as any) === currentLink ? "white" : "medium_Grey"}
               onClick={() => setCurrentLink(index)}
               maxW="80%"
-              key={link}
             >
               <Text fontSize={"ms"}>{link}</Text>
             </Flex>
-          ))}
-        </Flex>
-      </Box>
-      <DrawerFooter closeDrawer={() => setIsOpen(false)} />
+          </Link>
+        ))}
+      </Flex>
+      <DrawerFooter closeDrawer={() => setIsDrawerOpen(false)} />
+      <ShowDrawer isOpen={isDrawerOpen} setOpen={() => setIsDrawerOpen(true)} />
     </Flex>
   );
 }

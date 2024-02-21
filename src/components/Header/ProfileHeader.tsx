@@ -22,14 +22,11 @@ function ProfileHeader({ user }: { user: User }) {
           >
             <AddIcon />
           </Flex>
-          {user?.photoURL ? (
-            <Img
-              src={user.photoURL}
-              alt={user?.displayName ? user?.displayName : ""}
-            />
-          ) : (
-            <Avatar name={user?.displayName} />
-          )}
+          <Avatar
+            size="md"
+            name={user.displayName as string}
+            src={user?.photoURL as string}
+          />
         </Flex>
 
         <Flex flexDir="column">

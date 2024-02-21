@@ -51,100 +51,104 @@ function Boards({ user }: { user: User }) {
       flexWrap={"wrap"}
       w="fit-content"
     >
-      {boards?.map((board: BoardInterface) => (
-        <Card
-          key={board.id}
-          p="1rem"
-          borderRadius={"10px"}
-          border="1px solid"
-          borderColor={"light_Grey"}
-          minW="200px"
-          gap="1rem"
-          w="100%"
-        >
-          <Flex gap="0.5rem">
-            {board.createdBy.photoURL ? (
-              <Img src={board.createdBy.photoURL} w="50px" h="50px" />
-            ) : (
-              <Avatar name={board.createdBy.name} />
-            )}
-            <Box>
-              <Text>{board.createdBy.name}</Text>
-              <Text>{board.createdBy.email}</Text>
-            </Box>
-          </Flex>
-          <Grid
-            gridTemplateColumns={"1fr 1fr 1fr 1fr"}
-            borderBottom={"1px solid"}
-            borderColor={"medium_Grey"}
+      {boards.length > 0 ? (
+        boards?.map((board: BoardInterface) => (
+          <Card
+            key={board.id}
+            p="1rem"
             borderRadius={"10px"}
+            border="1px solid"
+            borderColor={"light_Grey"}
+            minW="200px"
+            gap="1rem"
+            w="100%"
           >
-            {boardDescriptionTitles.map((title, index) => (
-              <Box
-                key={title}
-                border="1px solid"
-                borderColor={"medium_Grey"}
-                borderRadius={
-                  boardDescriptionTitles.length === index + 1
-                    ? "0 10px 0 0"
-                    : index === 0
-                    ? "10px 0 0 0"
-                    : "0"
-                }
-                w="100%"
-                px="0.5rem"
-              >
-                <Text>{title}</Text>
+            <Flex gap="0.5rem">
+              {board.createdBy.photoURL ? (
+                <Img src={board.createdBy.photoURL} w="50px" h="50px" />
+              ) : (
+                <Avatar name={board.createdBy.name} />
+              )}
+              <Box>
+                <Text>{board.createdBy.name}</Text>
+                <Text>{board.createdBy.email}</Text>
               </Box>
-            ))}
-            <Box
-              borderBottomLeftRadius={"10px"}
-              borderInline={"1px solid"}
+            </Flex>
+            <Grid
+              gridTemplateColumns={"1fr 1fr 1fr 1fr"}
+              borderBottom={"1px solid"}
               borderColor={"medium_Grey"}
+              borderRadius={"10px"}
             >
-              <Text p="0.5rem">{board.name}</Text>
-            </Box>
-            <Box py="0.5rem">
-              {board.columns.map((column, index) => (
-                <Flex
-                  key={column.name + column.dotColor + index}
-                  px=".5rem"
-                  alignItems={"center"}
-                  gap="0.5rem"
+              {boardDescriptionTitles.map((title, index) => (
+                <Box
+                  key={title}
+                  border="1px solid"
+                  borderColor={"medium_Grey"}
+                  borderRadius={
+                    boardDescriptionTitles.length === index + 1
+                      ? "0 10px 0 0"
+                      : index === 0
+                      ? "10px 0 0 0"
+                      : "0"
+                  }
+                  w="100%"
+                  px="0.5rem"
                 >
-                  <Box
-                    h="12px"
-                    w="12px"
-                    borderRadius={"full"}
-                    bg={column.dotColor}
-                  />
-                  <Text>{column.name}</Text>
-                </Flex>
-              ))}
-            </Box>
-            <Box
-              p="0.5rem"
-              borderInline={"1px solid"}
-              borderColor={"medium_Grey"}
-            >
-              {board.collaborators.map((collaborator, index) => (
-                <Box key={collaborator + index} px=".5rem">
-                  <Text>NAME</Text>
+                  <Text>{title}</Text>
                 </Box>
               ))}
-            </Box>
-            <Box
-              borderBottomRightRadius={"10px"}
-              borderInline={"1px solid"}
-              borderColor={"medium_Grey"}
-            >
-              <Text p="0.5rem">
-                {board.createdBy.name ?? board.createdBy.email}
-              </Text>
-            </Box>
-          </Grid>
-        </Card>
-      ))}
+              <Box
+                borderBottomLeftRadius={"10px"}
+                borderInline={"1px solid"}
+                borderColor={"medium_Grey"}
+              >
+                <Text p="0.5rem">{board.name}</Text>
+              </Box>
+              <Box py="0.5rem">
+                {board.columns.map((column, index) => (
+                  <Flex
+                    key={column.name + column.dotColor + index}
+                    px=".5rem"
+                    alignItems={"center"}
+                    gap="0.5rem"
+                  >
+                    <Box
+                      h="12px"
+                      w="12px"
+                      borderRadius={"full"}
+                      bg={column.dotColor}
+                    />
+                    <Text>{column.name}</Text>
+                  </Flex>
+                ))}
+              </Box>
+              <Box
+                p="0.5rem"
+                borderInline={"1px solid"}
+                borderColor={"medium_Grey"}
+              >
+                {board.collaborators.map((collaborator, index) => (
+                  <Box key={collaborator + index} px=".5rem">
+                    <Text>NAME</Text>
+                  </Box>
+                ))}
+              </Box>
+              <Box
+                borderBottomRightRadius={"10px"}
+                borderInline={"1px solid"}
+                borderColor={"medium_Grey"}
+              >
+                <Text p="0.5rem">
+                  {board.createdBy.name ?? board.createdBy.email}
+                </Text>
+              </Box>
+            </Grid>
+          </Card>
+        ))
+      ) : (
+        <Text>Your boards is empty</Text>
+      )}
     </Flex>
   );
 }
