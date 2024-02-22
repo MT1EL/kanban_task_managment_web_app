@@ -30,8 +30,8 @@ const editBoardSubmit = (
       if (currentBoard && index !== -1) {
         const column = {
           name: values[key],
-          tasks: currentBoard?.columns[index].tasks,
-          dotColor: currentBoard?.columns[index].dotColor,
+          tasks: currentBoard?.columns[index as any].tasks,
+          dotColor: currentBoard?.columns[index as any].dotColor,
         };
         columns.push(column);
       } else {

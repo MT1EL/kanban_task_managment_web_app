@@ -20,6 +20,7 @@ export const deleteUserOnSubmit = (
     user?.email as string,
     values.password
   );
+  if (!user) return;
   return reauthenticateWithCredential(user, credential)
     .then((user) =>
       user.user.delete().then(() => {
