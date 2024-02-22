@@ -26,12 +26,10 @@ function EditBoard({
   isOpen,
   onClose,
   currentBoard,
-  setCurrentBoard,
 }: {
   isOpen: boolean;
   onClose: () => void;
   currentBoard?: BoardInterface;
-  setCurrentBoard?: Dispatch<BoardInterface>;
 }) {
   const [isDisabled, setIsDisabled] = useState(false);
 
@@ -99,7 +97,7 @@ function EditBoard({
             <Text color="mediun_Grey" fontWeight={"sm"}>
               Board Columns
             </Text>
-            {Object.keys(formik.values)?.map((key, index: number) => (
+            {Object.keys(formik.values)?.map((key) => (
               <Flex
                 gap="0.5rem"
                 alignItems={"center"}
