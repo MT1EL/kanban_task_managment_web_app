@@ -31,7 +31,7 @@ export const deleteUserOnSubmit = (
         });
       })
     )
-    .catch((error: AuthError) => {
+    .catch(() => {
       onClose();
       formik.setErrors({ password: "wrong password" });
     });

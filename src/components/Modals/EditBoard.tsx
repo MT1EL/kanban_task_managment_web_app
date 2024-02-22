@@ -12,7 +12,7 @@ import {
   Img,
 } from "@chakra-ui/react";
 import xIcon from "../../assets/icon-cross.svg";
-import { Dispatch, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { FormikProps, useFormik } from "formik";
 import { BoardInterface, columnType } from "../../types";
 import editBoardSubmit from "../../formik/onSubmit/editboard";
