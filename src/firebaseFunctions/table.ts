@@ -34,7 +34,7 @@ function addBoard(board: any) {
 
 function updateBoard(board: BoardInterface, boardId: string) {
   const ref = doc(database, "boards", boardId);
-  return updateDoc(ref, board)
+  return updateDoc(ref, board as any)
     .then((res) => console.log(res))
     .catch((err) => console.log(err));
 }

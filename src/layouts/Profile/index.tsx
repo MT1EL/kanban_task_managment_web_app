@@ -26,7 +26,7 @@ function index({ user }: { user: User }) {
     initialValues: { name: user.displayName, email: user.email },
     validationSchema: profileValidationSchema,
     onSubmit: (values) => {
-      updateUserOnSubmit(values, toast);
+      updateUserOnSubmit(values as any, toast);
     },
   });
   interface FormValues {
@@ -89,7 +89,7 @@ function index({ user }: { user: User }) {
           <Button variant="secondary" onClick={() => UserFormik.resetForm()}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={UserFormik.handleSubmit}>
+          <Button variant="primary" onClick={() => UserFormik.handleSubmit()}>
             Save
           </Button>
         </Flex>
@@ -127,7 +127,7 @@ function index({ user }: { user: User }) {
         <Button
           variant="destructive"
           size="sm"
-          onClick={formik.values.password && onOpen}
+          onClick={() => formik.values.password && onOpen()}
         >
           Delete Account
         </Button>

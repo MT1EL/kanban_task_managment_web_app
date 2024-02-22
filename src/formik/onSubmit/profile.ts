@@ -37,7 +37,7 @@ export const deleteUserOnSubmit = (
     });
 };
 
-export const updateUserOnSubmit = (values: { name: string }, toast) => {
+export const updateUserOnSubmit = (values: { name: string }, toast: any) => {
   const auth = getAuth();
   const user = auth.currentUser;
 

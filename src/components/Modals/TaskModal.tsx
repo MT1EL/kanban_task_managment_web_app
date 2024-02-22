@@ -16,7 +16,6 @@ import { TaskModalInterface } from "../../types";
 import Popover from "../Popover/";
 import { useFormik } from "formik";
 import { useEffect } from "react";
-import { updateColumn } from "../../firebaseFunctions/table";
 import { taskModalOnSubmit } from "../../formik/onSubmit/taskModal";
 function TaskModal({
   isOpen,
@@ -96,18 +95,22 @@ function TaskModal({
               Subtasks ({selectedTask?.completedCount} of {subtasks?.length})
             </Text>
             <VStack gap="0.5rem" alignItems={"start"}>
-              {Object.keys(formik.values)?.map((subTask, index) => (
-                <Checkbox
-                  key={index}
-                  defaultChecked={subtasks && subtasks[index]?.isCompleted}
-                  isChecked={formik.values[subTask]}
-                  onChange={formik.handleChange}
-                  name={subTask}
-                  id={subTask}
-                >
-                  {subtasks[index]?.description}
-                </Checkbox>
-              ))}
+              {Object.keys(formik.values)?.map(
+                (subTask: string, index: number) => (
+                  <Checkbox
+                    key={index}
+                    defaultChecked={subtasks && subtasks[index]?.isCompleted}
+                    isChecked={
+                      formik.values[subTask as keyof typeof formik.values]
+                    }
+                    onChange={formik.handleChange}
+                    name={subTask}
+                    id={subTask}
+                  >
+                    {subtasks[index]?.description}
+                  </Checkbox>
+                )
+              )}
             </VStack>
           </Flex>
         </ModalBody>

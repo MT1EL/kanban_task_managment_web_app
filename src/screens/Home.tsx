@@ -2,6 +2,7 @@ import { Button, Flex, Text, useDisclosure } from "@chakra-ui/react";
 import MyDrawer from "../components/Drawer/MyDrawer";
 import TaskLayout from "../layouts/Tasks/";
 import { useState } from "react";
+import { BoardInterface } from "../types";
 function Home({
   boards,
   setCurrentBoard,
@@ -22,7 +23,6 @@ function Home({
       h="100%"
     >
       <MyDrawer
-        boards={boards}
         currentBoard={currentBoard}
         setCurrentBoard={setCurrentBoard}
         setIsOpen={setIsOpen}
@@ -31,8 +31,6 @@ function Home({
         onOpen={onOpen}
         onClose={onClose}
         setBoardId={setBoardId}
-        setBoards={setBoards}
-        boardId={boardId}
       />
       {currentBoard ? (
         <TaskLayout
