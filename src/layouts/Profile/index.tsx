@@ -12,19 +12,19 @@ import ProfileHeader from "../../components/Header/ProfileHeader";
 import { useNavigate } from "react-router-dom";
 import DeleteModal from "../../components/Modals/DeleteModal";
 import { FormikProps, useFormik } from "formik";
-import * as yup from "yup";
 import ProfileImageModal from "../../components/Modals/ProfileImageModal";
 import {
   deleteUserOnSubmit,
   updateUserOnSubmit,
 } from "../../formik/onSubmit/profile";
+import {
+  passwordValidationSchema,
+  profileValidationSchema,
+} from "../../formik/validationSchemas/Profile";
 function index({ user }: { user: User }) {
   const UserFormik = useFormik({
     initialValues: { name: user.displayName, email: user.email },
-    validationSchema: yup.object({
-      name: yup.string().required(),
-      email: yup.string().email().required(),
-    }),
+    validationSchema: profileValidationSchema,
     onSubmit: (values) => updateUserOnSubmit(values, toast),
   });
   interface FormValues {
@@ -32,7 +32,7 @@ function index({ user }: { user: User }) {
   }
   const formik: FormikProps<FormValues> = useFormik<FormValues>({
     initialValues: { password: "" },
-    validationSchema: yup.object({ password: yup.string().required() }),
+    validationSchema: passwordValidationSchema,
     onSubmit: (values) => deleteUserOnSubmit(values, toast, onClose, formik),
   });
   const { isOpen, onClose, onOpen } = useDisclosure();

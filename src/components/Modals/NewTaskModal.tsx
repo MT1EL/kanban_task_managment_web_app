@@ -15,8 +15,7 @@ import {
 } from "@chakra-ui/react";
 import xIcon from "../../assets/icon-cross.svg";
 import { useFormik } from "formik";
-import { updateColumn } from "../../firebaseFunctions/table";
-import { NewTaskModalInterface, columnType, subtaskType } from "../../types";
+import { NewTaskModalInterface, subtaskType } from "../../types";
 import { useEffect } from "react";
 import { newtaskModalOnSubmit } from "../../formik/onSubmit/newtaskmodal";
 import {

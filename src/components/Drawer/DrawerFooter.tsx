@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
 import { database } from "../../../firebase";
 import { doc, onSnapshot } from "firebase/firestore";
 import { Link } from "react-router-dom";
-function DrawerFooter({ closeDrawer }: { closeDrawer: any }) {
+function DrawerFooter({ closeDrawer }: { closeDrawer: () => void }) {
   const [notifications, setNotifications] = useState([]);
   const { colorMode } = useColorMode();
   const user = getAuth().currentUser;

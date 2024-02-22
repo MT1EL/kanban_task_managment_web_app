@@ -14,7 +14,7 @@ import {
 import xIcon from "../../assets/icon-cross.svg";
 import { Dispatch, useEffect, useState } from "react";
 import { FormikProps, useFormik } from "formik";
-import { BoardInterface } from "../../types";
+import { BoardInterface, columnType } from "../../types";
 import editBoardSubmit from "../../formik/onSubmit/editboard";
 import { useColumnDelete } from "../../hooks/useColumnDelete";
 import { useColumnAdd } from "../../hooks/useColumnAdd";
@@ -39,7 +39,7 @@ function EditBoard({
     if (currentBoard) {
       formik.setValues({});
       formik.setFieldValue("Board Name", currentBoard ? currentBoard.name : "");
-      currentBoard.columns?.map((item: any, index: number) => {
+      currentBoard.columns?.map((item: columnType, index: number) => {
         formik.setFieldValue(`col${index}`, item.name);
       });
     } else {

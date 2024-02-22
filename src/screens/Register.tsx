@@ -11,6 +11,7 @@ import { Spinner, useToast } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { addDoc, collection, doc, setDoc } from "firebase/firestore";
+import { registerValdiationSchema } from "../formik/validationSchemas/Authentication";
 function Register() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -22,18 +23,7 @@ function Register() {
       password: "",
       "repeat password": "",
     },
-    validationSchema: yup.object({
-      username: yup.string().required("Username is required"),
-      email: yup.string().email("Invalid email").required("Email is required"),
-      password: yup
-        .string()
-        .required("Password is required")
-        .min(6, "Password must be at least 6 characters"),
-      "repeat password": yup
-        .string()
-        .required()
-        .oneOf([yup.ref("password")], "passwords must match"),
-    }),
+    validationSchema: registerValdiationSchema,
     onSubmit: (values) => {
       setLoading(true);
       createUserWithEmailAndPassword(auth, values.email, values.password)

@@ -1,24 +1,14 @@
 import { Box, Button, Flex, Input, useToast } from "@chakra-ui/react";
 import { useFormik } from "formik";
 
-import * as yup from "yup";
 import { updatePassowrdOnSubmit } from "../../formik/onSubmit/profile";
+import { resetPasswordValidationSchema } from "../../formik/validationSchemas/Profile";
+import { resetPasswordInitialValues } from "../../formik/initialValues/profile";
 function Security() {
   const toast = useToast();
   const formik = useFormik({
-    initialValues: {
-      "Current password": "",
-      "New password": "",
-      "Confirm password": "",
-    },
-    validationSchema: yup.object({
-      "Current password": yup.string().required(),
-      "New password": yup.string().required(),
-      "Confirm password": yup
-        .string()
-        .required()
-        .oneOf([yup.ref("New password")], "passwords must match"),
-    }),
+    initialValues: resetPasswordInitialValues,
+    validationSchema: resetPasswordValidationSchema,
     onSubmit: (values): void => updatePassowrdOnSubmit(values, toast, formik),
   });
 

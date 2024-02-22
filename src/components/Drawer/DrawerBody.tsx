@@ -14,9 +14,9 @@ function DrawerBody({
   setBoards,
 }: {
   handleNewBoard: () => void;
-  boards: any[];
-  currentBoard: any;
-  setCurrentBoard: any;
+  boards: BoardInterface[];
+  currentBoard: BoardInterface | null;
+  setCurrentBoard: Dispatch<BoardInterface>;
   setBoardId: Dispatch<string>;
   setBoards: Dispatch<BoardInterface[]>;
 }) {
