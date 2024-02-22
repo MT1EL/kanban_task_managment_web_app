@@ -3,7 +3,6 @@ import AuthenticationLayout from "../layouts/Authentication/";
 import { useFormik } from "formik";
 import {
   createUserWithEmailAndPassword,
-  getAuth,
   signInWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
