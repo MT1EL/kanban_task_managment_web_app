@@ -66,6 +66,7 @@ export const updatePassowrdOnSubmit = (
   formik: any
 ) => {
   const user = getAuth().currentUser;
+  if (!user) return;
   const credential = EmailAuthProvider.credential(
     user.email as string,
     values["Current password"]

@@ -1,4 +1,4 @@
-import { HStack, Box, Text } from "@chakra-ui/react";
+import { HStack, Text } from "@chakra-ui/react";
 import ColorsPopover from "../Popover/ColorsPopover";
 import { columnType } from "../../types";
 function ColumnsHeader({

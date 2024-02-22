@@ -7,7 +7,6 @@ import {
   Text,
   useColorMode,
   Box,
-  Input,
 } from "@chakra-ui/react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { BoardInterface, taskType } from "../../types";
@@ -19,13 +18,7 @@ import TaskModal from "../../components/Modals/TaskModal";
 import DeleteModal from "../../components/Modals/DeleteModal";
 import NewTaskModal from "../../components/Modals/NewTaskModal";
 import useDragEndTasks from "../../hooks/useDragEndTasks";
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  onSnapshot,
-} from "firebase/firestore";
+import { doc, onSnapshot } from "firebase/firestore";
 import { database } from "../../../firebase";
 function index({
   currentBoard,

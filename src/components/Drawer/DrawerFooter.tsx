@@ -21,6 +21,7 @@ function DrawerFooter({ closeDrawer }: { closeDrawer: () => void }) {
   const user = getAuth().currentUser;
 
   useEffect(() => {
+    if (!user) return;
     const userRef = doc(database, "users", user?.uid);
     const unsubscribe = onSnapshot(userRef, (doc) => {
       setNotifications(doc.data()?.notifications);

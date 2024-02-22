@@ -1,5 +1,3 @@
-import React from "react";
-
 export const handleNewSubtask = (formik: any) => {
   const formik_values_keys = Object.keys(formik.values);
   if (formik_values_keys.length > 0) {

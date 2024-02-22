@@ -83,7 +83,6 @@ function MyDrawer({
           currentBoard={currentBoard}
           setCurrentBoard={setCurrentBoard}
           setBoardId={setBoardId}
-          setBoards={setBoards}
         />
       )}
       <DrawerFooter closeDrawer={() => setIsOpen(false)} />

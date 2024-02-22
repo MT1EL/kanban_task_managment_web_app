@@ -9,14 +9,12 @@ function DrawerBody({
   currentBoard,
   setCurrentBoard,
   setBoardId,
-  setBoards,
 }: {
   handleNewBoard: () => void;
   boards: BoardInterface[];
   currentBoard: BoardInterface | null;
   setCurrentBoard: Dispatch<BoardInterface>;
   setBoardId: Dispatch<string>;
-  setBoards: Dispatch<BoardInterface[]>;
 }) {
   return (
     <Box
@@ -37,7 +35,7 @@ function DrawerBody({
         ALL BOARDS ({boards?.length})
       </Text>
       <VStack w="100%">
-        {boards?.map((item, index) => (
+        {boards?.map((item) => (
           <Flex
             gap="1rem"
             bg={currentBoard?.id === item.id ? "main_purple" : "transparent"}

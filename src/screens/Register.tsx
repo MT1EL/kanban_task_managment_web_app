@@ -3,14 +3,14 @@ import AuthenticationLayout from "../layouts/Authentication/";
 import { useFormik } from "formik";
 import {
   createUserWithEmailAndPassword,
+  getAuth,
   signInWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
 import { auth, database } from "../../firebase";
 import { Spinner, useToast } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-import * as yup from "yup";
-import { addDoc, collection, doc, setDoc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import { registerValdiationSchema } from "../formik/validationSchemas/Authentication";
 function Register() {
   const [loading, setLoading] = useState(false);
@@ -25,10 +25,12 @@ function Register() {
     },
     validationSchema: registerValdiationSchema,
     onSubmit: (values) => {
+      const user = getAuth().currentUser;
+      if (!user) return;
       setLoading(true);
       createUserWithEmailAndPassword(auth, values.email, values.password)
         .then((res) => {
-          updateProfile(auth.currentUser, { displayName: values.username })
+          updateProfile(user, { displayName: values.username })
             .then(() => {
               signInWithEmailAndPassword(
                 auth,
@@ -51,7 +53,7 @@ function Register() {
                   avatar: res.user.photoURL,
                   notifications: [],
                 })
-                  .then((res) => {})
+                  .then(() => {})
                   .catch((err) => console.log("err", err));
                 setLoading(false);
               });

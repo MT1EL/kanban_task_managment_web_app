@@ -20,7 +20,7 @@ function Login() {
       const { email, password } = values;
       setLoading(true);
       signInWithEmailAndPassword(auth, email, password)
-        .then((res) => {
+        .then(() => {
           setLoading(false);
           toast({
             status: "success",
@@ -31,7 +31,7 @@ function Login() {
           });
           navigate("/");
         })
-        .catch((err) => {
+        .catch(() => {
           formik.setErrors({ password: "Invalid email or password" });
           setLoading(false);
         });

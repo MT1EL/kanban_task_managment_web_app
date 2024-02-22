@@ -50,6 +50,7 @@ function ProfileImageModal({
           return await getDownloadURL(uploadTask.snapshot.ref).then(
             (downloadUrl) => {
               const user = getAuth().currentUser;
+              if (!user) return;
               updateProfile(user, { photoURL: downloadUrl }).then(() => {
                 setDownloadURL(downloadUrl);
                 const userRef = doc(database, "users", user.uid);
