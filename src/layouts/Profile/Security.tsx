@@ -1,54 +1,15 @@
-import {
-  getAuth,
-  reauthenticateWithCredential,
-  updatePassword,
-  UserCredential,
-  AuthError,
-  User,
-  EmailAuthProvider,
-} from "firebase/auth";
-import { Box, Button, Flex, Input, useToast, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Input, useToast } from "@chakra-ui/react";
 import { useFormik } from "formik";
 
-import * as yup from "yup";
-function Security({ user }: { user: User }) {
+import { updatePassowrdOnSubmit } from "../../formik/onSubmit/profile";
+import { resetPasswordValidationSchema } from "../../formik/validationSchemas/Profile";
+import { resetPasswordInitialValues } from "../../formik/initialValues/profile";
+function Security() {
   const toast = useToast();
   const formik = useFormik({
-    initialValues: {
-      "Current password": "",
-      "New password": "",
-      "Confirm password": "",
-    },
-    validationSchema: yup.object({
-      "Current password": yup.string().required(),
-      "New password": yup.string().required(),
-      "Confirm password": yup
-        .string()
-        .required()
-        .oneOf([yup.ref("New password")], "passwords must match"),
-    }),
-    onSubmit: (values) => {
-      const credential = EmailAuthProvider.credential(
-        user.email as string,
-        values["Current password"]
-      );
-      reauthenticateWithCredential(user, credential)
-        .then(() =>
-          updatePassword(user, values["New password"]).then(() => {
-            toast({
-              status: "success",
-              title: "Password changed Succesfully",
-            });
-            formik.resetForm();
-          })
-        )
-        .catch(
-          (error: AuthError) => (
-            console.log(error),
-            formik.setFieldError("Current password", error.message)
-          )
-        );
-    },
+    initialValues: resetPasswordInitialValues,
+    validationSchema: resetPasswordValidationSchema,
+    onSubmit: (values): void => updatePassowrdOnSubmit(values, toast, formik),
   });
 
   return (
@@ -56,8 +17,7 @@ function Security({ user }: { user: User }) {
       flexDir={"column"}
       w="500px"
       gap="1rem"
-      border="1px solid"
-      borderColor={"medium_Grey"}
+      border="1px solid rgba(130, 143, 163, 0.25)"
       p="1.5rem"
       borderRadius={"10px"}
     >
@@ -70,7 +30,7 @@ function Security({ user }: { user: User }) {
           />
         </Box>
       ))}
-      <Button onClick={formik.handleSubmit}>Reset Password</Button>
+      <Button onClick={() => formik.handleSubmit()}>Reset Password</Button>
     </Flex>
   );
 }

@@ -17,6 +17,7 @@ import Popover from "../Popover/";
 import { useFormik } from "formik";
 import { useEffect } from "react";
 import { updateColumn } from "../../firebaseFunctions/table";
+import { taskModalOnSubmit } from "../../formik/onSubmit/taskModal";
 function TaskModal({
   isOpen,
   onClose,
@@ -31,25 +32,8 @@ function TaskModal({
 }: TaskModalInterface) {
   const formik = useFormik({
     initialValues: {},
-    onSubmit: (values: any) => {
-      let updatedColumns = [...currentBoard.columns];
-      let updatedTasks = [...currentBoard.columns[status].tasks];
-      const indexOfTask = updatedTasks.indexOf(selectedTask);
-      const taskToUpdate = updatedTasks[indexOfTask];
-      let completedCount = taskToUpdate.subtasks.length;
-
-      taskToUpdate.subtasks.map((subtask, index) => {
-        if (!values[`isCompleted${index}`]) {
-          completedCount--;
-        }
-        subtask.isCompleted = values[`isCompleted${index}`];
-      });
-      taskToUpdate.completedCount = completedCount;
-      updatedColumns[status] = {
-        ...updatedColumns[status],
-        tasks: updatedTasks,
-      };
-      updateColumn(currentBoard.id, updatedColumns as any);
+    onSubmit: (values) => {
+      taskModalOnSubmit(values, currentBoard, selectedTask, status);
       formik.setValues({});
       onClose();
     },

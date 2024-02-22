@@ -15,9 +15,13 @@ import {
 } from "@chakra-ui/react";
 import xIcon from "../../assets/icon-cross.svg";
 import { useFormik } from "formik";
-import { updateColumn } from "../../firebaseFunctions/table";
-import { NewTaskModalInterface, columnType, subtaskType } from "../../types";
+import { NewTaskModalInterface, subtaskType } from "../../types";
 import { useEffect } from "react";
+import { newtaskModalOnSubmit } from "../../formik/onSubmit/newtaskmodal";
+import {
+  handleDeleteSubtask,
+  handleNewSubtask,
+} from "../../formik/functions/task";
 
 function NewTaskModal({
   isOpen,
@@ -56,65 +60,11 @@ function NewTaskModal({
   const formik = useFormik({
     initialValues: { ...getInitialValues() },
     onSubmit: (values) => {
-      let taskObj: any = { completedCount: 0, ...values };
-      let subtaskArr: subtaskType[] = [];
-      const taskObj_keys = Object.keys(taskObj).splice(4);
-
-      taskObj_keys?.map((key) => {
-        subtaskArr.push({ description: values[key], isCompleted: false });
-        delete taskObj[key];
-      });
-      taskObj.subtasks = subtaskArr;
-      let newColumns: columnType[] = [...currentBoard?.columns];
-      newColumns?.map((column) => {
-        if (column.name === currentBoard?.columns[values.status].name) {
-          if (
-            column.tasks.some(
-              (item) => JSON.stringify(item) === JSON.stringify(selectedTask)
-            ) &&
-            selectedTask
-          ) {
-            const taskIndex = column.tasks.indexOf(selectedTask);
-            column.tasks[taskIndex] = taskObj;
-          } else {
-            column.tasks = [taskObj, ...column.tasks];
-          }
-        }
-        if (selectedTask && selectedTask.status !== taskObj.status) {
-          if (column.name === currentBoard?.columns[selectedTask.status].name) {
-            if (column.tasks.length === 1) {
-              column.tasks = [];
-            } else {
-              const indexToRemove = column.tasks.indexOf(selectedTask);
-              column.tasks.splice(indexToRemove, 1);
-            }
-          }
-        }
-      });
-      updateColumn(currentBoard?.id, newColumns as any);
-      formik.setValues({});
+      newtaskModalOnSubmit(values, currentBoard, selectedTask, formik);
       onClose();
     },
   });
-  const handleNewSubtask = () => {
-    const formik_values_keys = Object.keys(formik.values);
-    if (formik_values_keys.length > 0) {
-      const newInitialValueName = `subtask${
-        Object.keys(formik.values).length - 1
-      }`;
-      formik.setFieldValue(
-        newInitialValueName,
-        formik.values[newInitialValueName]
-          ? formik.values[newInitialValueName]
-          : ""
-      );
-    }
-  };
-  const handleDeleteSubtask = (key: string) => {
-    const newValues = { ...formik.values };
-    delete newValues[key];
-    formik.setValues(newValues);
-  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -196,12 +146,15 @@ function NewTaskModal({
                     src={xIcon}
                     alt="remove"
                     cursor={"pointer"}
-                    onClick={() => handleDeleteSubtask(key)}
+                    onClick={() => handleDeleteSubtask(key, formik)}
                   />
                 </Flex>
               ))}
             </Flex>
-            <Button variant={"secondary"} onClick={handleNewSubtask}>
+            <Button
+              variant={"secondary"}
+              onClick={() => handleNewSubtask(formik)}
+            >
               +Add New Subtask
             </Button>
           </Flex>

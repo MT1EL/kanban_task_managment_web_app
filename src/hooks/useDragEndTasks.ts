@@ -1,6 +1,6 @@
 import { DropResult } from "react-beautiful-dnd";
-import { BoardInterface, columnType } from "../../types";
-import { updateBoard } from "../../firebaseFunctions/table";
+import { BoardInterface, columnType } from "../types";
+import { updateBoard } from "../firebaseFunctions/table";
 
 const useDragEndTasks = (result: DropResult, currentBoard: BoardInterface) => {
   if (!result.destination) {

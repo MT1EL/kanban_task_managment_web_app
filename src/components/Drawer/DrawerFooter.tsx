@@ -15,12 +15,13 @@ import { useEffect, useState } from "react";
 import { database } from "../../../firebase";
 import { doc, onSnapshot } from "firebase/firestore";
 import { Link } from "react-router-dom";
-function DrawerFooter({ closeDrawer }: { closeDrawer: any }) {
+function DrawerFooter({ closeDrawer }: { closeDrawer: () => void }) {
   const [notifications, setNotifications] = useState([]);
   const { colorMode } = useColorMode();
   const user = getAuth().currentUser;
 
   useEffect(() => {
+    if (!user) return;
     const userRef = doc(database, "users", user?.uid);
     const unsubscribe = onSnapshot(userRef, (doc) => {
       setNotifications(doc.data()?.notifications);
@@ -82,7 +83,12 @@ function DrawerFooter({ closeDrawer }: { closeDrawer: any }) {
             >
               <BellIcon
                 color="medium_Grey"
-                _groupHover={{ color: "red" }}
+                _groupHover={{
+                  color:
+                    colorMode === "dark"
+                      ? "light_grey_light_bg"
+                      : "very_dark_grey_dark_bg",
+                }}
                 w="20px"
                 h="20px"
               />
@@ -94,11 +100,24 @@ function DrawerFooter({ closeDrawer }: { closeDrawer: any }) {
                 right={"-4px"}
                 borderRadius={"full"}
                 p="1px"
-                bg="red"
                 h="12px"
                 w="12px"
+                bg={"medium_Grey"}
+                _groupHover={{
+                  bg:
+                    colorMode === "dark"
+                      ? "light_grey_light_bg"
+                      : "very_dark_grey_dark_bg",
+                }}
               >
-                <Text fontSize={"sm"} lineHeight={"12px"} textAlign={"center"}>
+                <Text
+                  fontSize={"sm"}
+                  lineHeight={"12px"}
+                  textAlign={"center"}
+                  _groupHover={{
+                    color: colorMode === "dark" ? "black" : "white",
+                  }}
+                >
                   {notifications.length}
                 </Text>
               </Flex>

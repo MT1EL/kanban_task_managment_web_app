@@ -5,7 +5,7 @@ import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase";
 import { Spinner, useToast } from "@chakra-ui/react";
-import * as yup from "yup";
+import { loginValdiationSchema } from "../formik/validationSchemas/Authentication";
 function Login() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -15,18 +15,12 @@ function Login() {
       email: "",
       password: "",
     },
-    validationSchema: yup.object({
-      email: yup.string().email("Invalid email").required("Email is required"),
-      password: yup
-        .string()
-        .required("Password is required")
-        .min(6, "Password must be at least 6 characters"),
-    }),
+    validationSchema: loginValdiationSchema,
     onSubmit: (values) => {
       const { email, password } = values;
       setLoading(true);
       signInWithEmailAndPassword(auth, email, password)
-        .then((res) => {
+        .then(() => {
           setLoading(false);
           toast({
             status: "success",
@@ -37,7 +31,10 @@ function Login() {
           });
           navigate("/");
         })
-        .catch((err) => console.log(err));
+        .catch(() => {
+          formik.setErrors({ password: "Invalid email or password" });
+          setLoading(false);
+        });
     },
   });
   let inputs = Object.keys(formik.initialValues);

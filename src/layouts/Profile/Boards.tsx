@@ -1,14 +1,5 @@
 import { User } from "firebase/auth";
-import {
-  Avatar,
-  Box,
-  Card,
-  Flex,
-  Grid,
-  Img,
-  Spinner,
-  Text,
-} from "@chakra-ui/react";
+import { Avatar, Box, Card, Flex, Grid, Spinner, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { database } from "../../../firebase";
@@ -45,8 +36,7 @@ function Boards({ user }: { user: User }) {
     <Flex
       borderRadius={"10px"}
       p="1.5rem"
-      border="1px solid"
-      borderColor={"medium_Grey"}
+      border="1px solid rgba(130, 143, 163, 0.25)"
       gap="2rem"
       flexWrap={"wrap"}
       w="fit-content"
@@ -57,15 +47,14 @@ function Boards({ user }: { user: User }) {
             key={board.id}
             p="1rem"
             borderRadius={"10px"}
-            border="1px solid"
-            borderColor={"light_Grey"}
+            border="1px solid rgba(130, 143, 163, 0.25)"
             minW="200px"
             gap="1rem"
             w="100%"
           >
             <Flex gap="0.5rem">
               {board.createdBy.photoURL ? (
-                <Img src={board.createdBy.photoURL} w="50px" h="50px" />
+                <Avatar src={board.createdBy.photoURL} w="50px" h="50px" />
               ) : (
                 <Avatar name={board.createdBy.name} />
               )}
@@ -128,9 +117,9 @@ function Boards({ user }: { user: User }) {
                 borderInline={"1px solid"}
                 borderColor={"medium_Grey"}
               >
-                {board.collaborators.map((collaborator, index) => (
-                  <Box key={collaborator + index} px=".5rem">
-                    <Text>NAME</Text>
+                {board.collaboratorsData.map((collaborator, index) => (
+                  <Box key={collaborator.ownerId + index} px=".5rem">
+                    <Text>{collaborator.name}</Text>
                   </Box>
                 ))}
               </Box>

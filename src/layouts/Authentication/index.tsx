@@ -1,4 +1,11 @@
-import { Text, Button, Flex, Input, Link } from "@chakra-ui/react";
+import {
+  Text,
+  Button,
+  Flex,
+  Input,
+  Link,
+  useColorMode,
+} from "@chakra-ui/react";
 
 function index({
   type,
@@ -9,8 +16,9 @@ function index({
   inputs: any[];
   formik: any;
 }) {
+  const { colorMode } = useColorMode();
   return (
-    <Flex h="100%" alignItems={"center"} justifyContent={"center"}>
+    <Flex h="100%" alignItems={"center"} justifyContent={"center"} as="form">
       <Flex
         flexDir={"column"}
         gap="1.5rem"
@@ -18,7 +26,7 @@ function index({
         borderRadius={"1rem"}
         w="400px"
         maxW="100%"
-        bg="dark_Grey"
+        bg={colorMode === "dark" ? "dark_Grey" : "white"}
       >
         <Text textTransform={"uppercase"} fontWeight={"bold"} fontSize={"18px"}>
           {type.toUpperCase()}
@@ -39,16 +47,15 @@ function index({
           ))}
         </Flex>
         <Flex flexDir={"column"} gap="0.5rem" alignItems={"center"}>
-          <Button variant={"primary"} onClick={formik.handleSubmit}>
+          <Button
+            variant={"primary"}
+            onClick={formik.handleSubmit}
+            type="submit"
+          >
             {type}
           </Button>
           <Flex alignItems={"center"} gap="0.25rem">
-            <Text
-              fontWeight={"medium"}
-              fontSize={"13px"}
-              lineHeight={"23px"}
-              color="white"
-            >
+            <Text fontWeight={"medium"} fontSize={"13px"} lineHeight={"23px"}>
               {type === "Register"
                 ? "Already have an accoung?"
                 : "Don't have an account?"}

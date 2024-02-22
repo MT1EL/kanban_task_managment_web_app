@@ -32,6 +32,7 @@ function index({
   editTitle,
   deleteTitle,
   currentBoard,
+  addColaborator,
 }: {
   onClose: () => void;
   onDeleteClick: () => void;
@@ -39,6 +40,7 @@ function index({
   editTitle: string;
   deleteTitle: string;
   currentBoard: BoardInterface;
+  addColaborator?: boolean;
 }) {
   const toast = useToast();
   const [users, setUsers] = useState<any[]>([]);
@@ -81,6 +83,7 @@ function index({
         id: authenticatedUser?.uid,
         avatar: authenticatedUser?.photoURL,
       },
+      collaboratorsData: currentBoard.collaboratorsData,
       title: "New Board",
       description: `${authenticatedUser?.displayName} has invited you to a new board: ${currentBoard?.name}`,
     };
@@ -137,15 +140,17 @@ function index({
           >
             {editTitle}
           </Text>
-          <Text
-            color="mediun_Grey"
-            cursor={"pointer"}
-            fontWeight={"medium"}
-            fontSize="13px"
-            onClick={onOpen}
-          >
-            Add collaborator
-          </Text>
+          {addColaborator && (
+            <Text
+              color="mediun_Grey"
+              cursor={"pointer"}
+              fontWeight={"medium"}
+              fontSize="13px"
+              onClick={onOpen}
+            >
+              Add collaborator
+            </Text>
+          )}
           <Text
             color="red"
             cursor={"pointer"}
@@ -209,13 +214,11 @@ function index({
                             h="40px"
                           />
                         ) : (
-                          <Avatar name={user.name} />
+                          <Avatar name={user.name} size="md" />
                         )}
                         <Flex flexDir={"column"}>
-                          <Text color="white">
-                            {user.name ? user.name : "YOUR USERNAME"}
-                          </Text>
-                          <Text color="white">{user.email}</Text>
+                          <Text>{user.name ? user.name : "YOUR USERNAME"}</Text>
+                          <Text>{user.email}</Text>
                         </Flex>
                       </Flex>
                       {currentBoard?.collaborators?.includes(user.id) && (

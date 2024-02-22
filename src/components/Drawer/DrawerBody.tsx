@@ -1,7 +1,5 @@
 import { Text, VStack, Img, Flex, Box } from "@chakra-ui/react";
 import board from "../../assets/icon-board.svg";
-import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-import useDragEndBoards from "../hooks/useDragEndBoards";
 import { Dispatch } from "react";
 import { BoardInterface } from "../../types";
 
@@ -11,14 +9,12 @@ function DrawerBody({
   currentBoard,
   setCurrentBoard,
   setBoardId,
-  setBoards,
 }: {
   handleNewBoard: () => void;
-  boards: any[];
-  currentBoard: any;
-  setCurrentBoard: any;
+  boards: BoardInterface[];
+  currentBoard: BoardInterface | null;
+  setCurrentBoard: Dispatch<BoardInterface>;
   setBoardId: Dispatch<string>;
-  setBoards: Dispatch<BoardInterface[]>;
 }) {
   return (
     <Box
@@ -38,93 +34,61 @@ function DrawerBody({
       >
         ALL BOARDS ({boards?.length})
       </Text>
-      <VStack>
-        <DragDropContext
-          onDragEnd={(result) => useDragEndBoards(result, boards, setBoards)}
-        >
-          <Droppable droppableId={"BOARDSCOL"}>
-            {(provided) => (
-              <VStack
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-                w="100%"
-              >
-                {boards?.map((item, index) => (
-                  <Draggable
-                    key={item.id}
-                    draggableId={item.name}
-                    index={index}
-                  >
-                    {(provided) => (
-                      <Flex
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        gap="1rem"
-                        bg={
-                          currentBoard?.id === item.id
-                            ? "main_purple"
-                            : "transparent"
-                        }
-                        w="100%"
-                        h="48px"
-                        alignItems={"center"}
-                        borderTopRightRadius={"100px"}
-                        borderBottomRightRadius={"100px"}
-                        pl="2rem"
-                        cursor={"pointer"}
-                        onClick={() => {
-                          setBoardId(item.id);
-                          setCurrentBoard(item);
-                        }}
-                        color={
-                          currentBoard?.id === item.id ? "white" : "medium_Grey"
-                        }
-                        _hover={{
-                          bg: "main_purple",
-                          color: "white",
-                        }}
-                      >
-                        <Img src={board} alt="board" />
-                        <Flex flexDir={"column"}>
-                          <Text fontSize={"ms"}>{item.name}</Text>
-                          <Text fontSize={"xs"}>
-                            {item.createdBy.email
-                              ? item.createdBy.email
-                              : item.createdBy.name}
-                          </Text>
-                        </Flex>
-                      </Flex>
-                    )}
-                  </Draggable>
-                ))}
-                {provided.placeholder}
-              </VStack>
-            )}
-          </Droppable>
-        </DragDropContext>
-        <Flex
-          gap="1rem"
-          w="100%"
-          h="48px"
-          alignItems={"center"}
-          borderTopRightRadius={"100px"}
-          borderBottomRightRadius={"100px"}
-          pl="2rem"
-          cursor={"pointer"}
-          color="main_purple"
-          _hover={{
-            bg: "main_purple",
-            color: "white",
-          }}
-          onClick={handleNewBoard}
-        >
-          <Img src={board} alt="board" />
-          <Text fontWeight={"bold"} fontSize={"md"}>
-            + Create New Board
-          </Text>
-        </Flex>
+      <VStack w="100%">
+        {boards?.map((item) => (
+          <Flex
+            gap="1rem"
+            bg={currentBoard?.id === item.id ? "main_purple" : "transparent"}
+            w="100%"
+            h="48px"
+            alignItems={"center"}
+            borderTopRightRadius={"100px"}
+            borderBottomRightRadius={"100px"}
+            pl="2rem"
+            cursor={"pointer"}
+            onClick={() => {
+              setBoardId(item.id);
+              setCurrentBoard(item);
+            }}
+            color={currentBoard?.id === item.id ? "white" : "medium_Grey"}
+            _hover={{
+              bg: "main_purple",
+              color: "white",
+            }}
+          >
+            <Img src={board} alt="board" />
+            <Flex flexDir={"column"}>
+              <Text fontSize={"ms"}>{item.name}</Text>
+              <Text fontSize={"xs"}>
+                {item.createdBy.email
+                  ? item.createdBy.email
+                  : item.createdBy.name}
+              </Text>
+            </Flex>
+          </Flex>
+        ))}
       </VStack>
+      <Flex
+        gap="1rem"
+        w="100%"
+        h="48px"
+        alignItems={"center"}
+        borderTopRightRadius={"100px"}
+        borderBottomRightRadius={"100px"}
+        pl="2rem"
+        cursor={"pointer"}
+        color="main_purple"
+        _hover={{
+          bg: "main_purple",
+          color: "white",
+        }}
+        onClick={handleNewBoard}
+      >
+        <Img src={board} alt="board" />
+        <Text fontWeight={"bold"} fontSize={"md"}>
+          + Create New Board
+        </Text>
+      </Flex>
     </Box>
   );
 }

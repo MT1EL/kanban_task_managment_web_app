@@ -1,4 +1,4 @@
-import { background, extendTheme } from "@chakra-ui/react";
+import { extendTheme } from "@chakra-ui/react";
 import myfont from "./assets/font/PlusJakartaSans-Regular.ttf";
 const theme = extendTheme({
   config: {

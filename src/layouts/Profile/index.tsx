@@ -7,42 +7,43 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import {
-  AuthError,
-  EmailAuthProvider,
-  User,
-  getAuth,
-  reauthenticateWithCredential,
-} from "firebase/auth";
+import { User, getAuth } from "firebase/auth";
 import ProfileHeader from "../../components/Header/ProfileHeader";
 import { useNavigate } from "react-router-dom";
 import DeleteModal from "../../components/Modals/DeleteModal";
-import { useFormik } from "formik";
-import * as yup from "yup";
+import { FormikProps, useFormik } from "formik";
+import ProfileImageModal from "../../components/Modals/ProfileImageModal";
+import {
+  deleteUserOnSubmit,
+  updateUserOnSubmit,
+} from "../../formik/onSubmit/profile";
+import {
+  passwordValidationSchema,
+  profileValidationSchema,
+} from "../../formik/validationSchemas/Profile";
 function index({ user }: { user: User }) {
-  const formik = useFormik({
-    initialValues: { password: "" },
-    validationSchema: yup.object({ password: yup.string().required() }),
+  const UserFormik = useFormik({
+    initialValues: { name: user.displayName, email: user.email },
+    validationSchema: profileValidationSchema,
     onSubmit: (values) => {
-      console.log(values);
-      const credential = EmailAuthProvider.credential(
-        user.email as string,
-        values.password
-      );
-      reauthenticateWithCredential(user, credential)
-        .then((user) =>
-          user.user.delete().then(() => {
-            toast({
-              status: "success",
-              title: "Account Deleted",
-              description: "Your account has been deleted successfully",
-            });
-          })
-        )
-        .catch((error: AuthError) => console.log(error));
+      updateUserOnSubmit(values, toast);
     },
   });
+  interface FormValues {
+    password: string;
+  }
+  const formik: FormikProps<FormValues> = useFormik<FormValues>({
+    initialValues: { password: "" },
+    validationSchema: passwordValidationSchema,
+    onSubmit: (values) => deleteUserOnSubmit(values, toast, onClose, formik),
+  });
   const { isOpen, onClose, onOpen } = useDisclosure();
+  const {
+    isOpen: isImageModalOpen,
+    onClose: onImageModalClose,
+    onOpen: onImageModaOpen,
+  } = useDisclosure();
+
   const toast = useToast();
   const navigate = useNavigate();
   const handleSignOut = () => {
@@ -66,15 +67,31 @@ function index({ user }: { user: User }) {
         border="1px solid rgba(130, 143, 163, 0.25)"
         borderRadius={"10px"}
       >
-        <ProfileHeader user={user} />
+        <ProfileHeader user={user} onImageModaOpen={onImageModaOpen} />
         <Flex flexDir="column" gap="1rem">
-          <Input placeholder="Name" />
-          <Input placeholder="Email" />
+          {Object.keys(UserFormik.values).map((key) => (
+            <Input
+              placeholder={key.charAt(0).toUpperCase() + key.slice(1)}
+              key={key}
+              name={key}
+              onChange={UserFormik.handleChange}
+              value={
+                UserFormik.values[
+                  key as keyof typeof UserFormik.values
+                ] as string
+              }
+              disabled={key === "email"}
+            />
+          ))}
           <Input placeholder="Password" />
         </Flex>
         <Flex gap="1rem">
-          <Button variant="secondary">Cancel</Button>
-          <Button variant="primary">Save</Button>
+          <Button variant="secondary" onClick={() => UserFormik.resetForm()}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={UserFormik.handleSubmit}>
+            Save
+          </Button>
         </Flex>
       </Flex>
       <Flex
@@ -100,8 +117,18 @@ function index({ user }: { user: User }) {
           placeholder="Enter your password"
           name="password"
           onChange={formik.handleChange}
+          type="password"
         />
-        <Button variant="destructive" size="sm" onClick={onOpen}>
+        {formik.errors.password && (
+          <Text color="red" size="xs">
+            {formik.errors.password}
+          </Text>
+        )}
+        <Button
+          variant="destructive"
+          size="sm"
+          onClick={formik.values.password && onOpen}
+        >
           Delete Account
         </Button>
       </Flex>
@@ -110,6 +137,10 @@ function index({ user }: { user: User }) {
         onClose={onClose}
         onDeleteClick={formik.handleSubmit}
         title={"Delete Account"}
+      />
+      <ProfileImageModal
+        isOpen={isImageModalOpen}
+        onClose={onImageModalClose}
       />
     </Flex>
   );

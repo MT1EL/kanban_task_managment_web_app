@@ -30,7 +30,6 @@ function App() {
     });
     return unsubscribe;
   }, []);
-
   if (loading) {
     return <Spinner />;
   }
@@ -63,10 +62,7 @@ function App() {
                   path="/profile/boards"
                   element={<Boards user={user} />}
                 />
-                <Route
-                  path="/profile/security"
-                  element={<Security user={user} />}
-                />
+                <Route path="/profile/security" element={<Security />} />
                 <Route
                   path="/profile/notifications"
                   element={<Notifications user={user} />}

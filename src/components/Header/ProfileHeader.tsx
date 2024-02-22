@@ -1,8 +1,14 @@
-import { Flex, Spinner, Text, Img, Avatar, Button } from "@chakra-ui/react";
+import { Flex, Text, Avatar, Button } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import { User } from "firebase/auth";
 
-function ProfileHeader({ user }: { user: User }) {
+function ProfileHeader({
+  user,
+  onImageModaOpen,
+}: {
+  user: User;
+  onImageModaOpen: () => void;
+}) {
   return (
     <Flex justifyContent={"space-between"} alignItems={"center"}>
       <Flex gap="0.5rem">
@@ -19,12 +25,13 @@ function ProfileHeader({ user }: { user: User }) {
             _groupHover={{ opacity: "1" }}
             cursor={"pointer"}
             transition={"300ms ease"}
+            onClick={onImageModaOpen}
           >
             <AddIcon />
           </Flex>
           <Avatar
             size="md"
-            name={user.displayName as string}
+            name={user?.displayName as string}
             src={user?.photoURL as string}
           />
         </Flex>
@@ -34,7 +41,7 @@ function ProfileHeader({ user }: { user: User }) {
           <Text color="medium_Grey">{user?.email}</Text>
         </Flex>
       </Flex>
-      <Button variant="secondary" size="sm">
+      <Button variant="secondary" size="sm" onClick={onImageModaOpen}>
         Upload profile Image
       </Button>
     </Flex>

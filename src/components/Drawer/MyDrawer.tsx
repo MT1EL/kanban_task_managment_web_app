@@ -3,7 +3,7 @@ import ShowDrawer from "./ShowDrawer";
 import DrawerFooter from "./DrawerFooter";
 import DrawerBody from "./DrawerBody";
 import EditBoard from "../Modals/EditBoard";
-import { useEffect, useState } from "react";
+import { Dispatch, useEffect, useState } from "react";
 import { BoardInterface } from "../../types";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { database } from "../../../firebase";
@@ -17,7 +17,16 @@ function MyDrawer({
   onOpen,
   onClose,
   setBoardId,
-}: any) {
+}: {
+  currentBoard: BoardInterface;
+  setCurrentBoard: Dispatch<BoardInterface>;
+  setIsOpen: Dispatch<boolean>;
+  isOpen: boolean;
+  isBoardOpen: boolean;
+  onOpen: () => void;
+  onClose: () => void;
+  setBoardId: Dispatch<string>;
+}) {
   const [loading, setLoading] = useState(true);
   const [boards, setBoards] = useState<BoardInterface[]>([]);
   const { colorMode } = useColorMode();
@@ -63,6 +72,7 @@ function MyDrawer({
       position={"fixed"}
       top="90px"
       left="0"
+      zIndex={2}
     >
       {loading ? (
         <Spinner />
@@ -73,7 +83,6 @@ function MyDrawer({
           currentBoard={currentBoard}
           setCurrentBoard={setCurrentBoard}
           setBoardId={setBoardId}
-          setBoards={setBoards}
         />
       )}
       <DrawerFooter closeDrawer={() => setIsOpen(false)} />
