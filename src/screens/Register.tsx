@@ -25,12 +25,10 @@ function Register() {
     },
     validationSchema: registerValdiationSchema,
     onSubmit: (values) => {
-      const user = getAuth().currentUser;
-      if (!user) return;
       setLoading(true);
       createUserWithEmailAndPassword(auth, values.email, values.password)
         .then((res) => {
-          updateProfile(user, { displayName: values.username })
+          return updateProfile(res.user, { displayName: values.username })
             .then(() => {
               signInWithEmailAndPassword(
                 auth,
