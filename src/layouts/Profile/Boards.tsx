@@ -117,9 +117,9 @@ function Boards({ user }: { user: User }) {
                 borderInline={"1px solid"}
                 borderColor={"medium_Grey"}
               >
-                {board.collaborators.map((collaborator, index) => (
-                  <Box key={collaborator + index} px=".5rem">
-                    <Text>NAME</Text>
+                {board.collaboratorsData.map((collaborator, index) => (
+                  <Box key={collaborator.ownerId + index} px=".5rem">
+                    <Text>{collaborator.name}</Text>
                   </Box>
                 ))}
               </Box>

@@ -83,6 +83,7 @@ function index({
         id: authenticatedUser?.uid,
         avatar: authenticatedUser?.photoURL,
       },
+      collaboratorsData: currentBoard.collaboratorsData,
       title: "New Board",
       description: `${authenticatedUser?.displayName} has invited you to a new board: ${currentBoard?.name}`,
     };

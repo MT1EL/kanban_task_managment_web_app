@@ -10,6 +10,12 @@ interface BoardInterface {
   };
   ownerId: string;
   collaborators: string[];
+  collaboratorsData: {
+    ownerId: string;
+    email: string;
+    name: string;
+    photoURL: string;
+  }[];
 }
 type columnType = {
   name: string;

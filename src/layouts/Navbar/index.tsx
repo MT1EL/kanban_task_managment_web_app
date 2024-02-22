@@ -105,7 +105,6 @@ function index({
         onDeleteClick={() => {
           const user = getAuth().currentUser;
           if (user?.uid === currentBoard?.ownerId) {
-            console.log(currentBoard);
             const boardRef = doc(database, "boards", currentBoard.id);
             deleteDoc(boardRef)
               .then(() => {

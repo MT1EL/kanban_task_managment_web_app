@@ -25,7 +25,9 @@ function index({ user }: { user: User }) {
   const UserFormik = useFormik({
     initialValues: { name: user.displayName, email: user.email },
     validationSchema: profileValidationSchema,
-    onSubmit: (values) => updateUserOnSubmit(values, toast),
+    onSubmit: (values) => {
+      updateUserOnSubmit(values, toast);
+    },
   });
   interface FormValues {
     password: string;

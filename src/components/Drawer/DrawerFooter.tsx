@@ -82,7 +82,12 @@ function DrawerFooter({ closeDrawer }: { closeDrawer: () => void }) {
             >
               <BellIcon
                 color="medium_Grey"
-                _groupHover={{ color: "red" }}
+                _groupHover={{
+                  color:
+                    colorMode === "dark"
+                      ? "light_grey_light_bg"
+                      : "very_dark_grey_dark_bg",
+                }}
                 w="20px"
                 h="20px"
               />
@@ -94,11 +99,24 @@ function DrawerFooter({ closeDrawer }: { closeDrawer: () => void }) {
                 right={"-4px"}
                 borderRadius={"full"}
                 p="1px"
-                bg="red"
                 h="12px"
                 w="12px"
+                bg={"medium_Grey"}
+                _groupHover={{
+                  bg:
+                    colorMode === "dark"
+                      ? "light_grey_light_bg"
+                      : "very_dark_grey_dark_bg",
+                }}
               >
-                <Text fontSize={"sm"} lineHeight={"12px"} textAlign={"center"}>
+                <Text
+                  fontSize={"sm"}
+                  lineHeight={"12px"}
+                  textAlign={"center"}
+                  _groupHover={{
+                    color: colorMode === "dark" ? "black" : "white",
+                  }}
+                >
                   {notifications.length}
                 </Text>
               </Flex>

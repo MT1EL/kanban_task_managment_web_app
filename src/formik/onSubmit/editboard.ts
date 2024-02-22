@@ -53,22 +53,25 @@ const editBoardSubmit = (
         id: currentBoard.id,
         createdBy: currentBoard.createdBy,
         collaborators: currentBoard.collaborators,
+        collaboratorsData: currentBoard.collaboratorsData,
         ownerId: currentBoard.ownerId,
       },
       currentBoard.id
     );
   } else {
     const user = getAuth().currentUser;
+    const userObject = {
+      id: user?.uid ?? null,
+      email: user?.email ?? null,
+      name: user?.displayName ?? null,
+      photoURL: user?.photoURL ?? null,
+    };
     addBoard({
       name: values["Board Name"],
-      createdBy: {
-        ownerId: user?.uid ?? null,
-        email: user?.email ?? null,
-        name: user?.displayName ?? null,
-        photoURL: user?.photoURL ?? null,
-      },
+      createdBy: userObject,
       ownerId: user?.uid ?? null,
       collaborators: [user?.uid],
+      collaboratorsData: [userObject],
       columns: columns as columnType[],
     });
   }

@@ -13,15 +13,14 @@ export const deleteUserOnSubmit = (
   values: { password: string },
   toast: any,
   onClose: () => void,
-  fromik: any
+  formik: any
 ) => {
   const user = getAuth().currentUser;
-  console.log(values);
   const credential = EmailAuthProvider.credential(
-    user.email as string,
+    user?.email as string,
     values.password
   );
-  reauthenticateWithCredential(user, credential)
+  return reauthenticateWithCredential(user, credential)
     .then((user) =>
       user.user.delete().then(() => {
         toast({
@@ -81,10 +80,7 @@ export const updatePassowrdOnSubmit = (
         formik.resetForm();
       })
     )
-    .catch(
-      (error: AuthError) => (
-        console.log(error),
-        formik.setFieldError("Current password", error.message)
-      )
+    .catch((error: AuthError) =>
+      formik.setFieldError("Current password", error.message)
     );
 };

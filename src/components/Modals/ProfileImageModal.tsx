@@ -49,9 +49,7 @@ function ProfileImageModal({
         async () => {
           return await getDownloadURL(uploadTask.snapshot.ref).then(
             (downloadUrl) => {
-              console.log("downlaodUrl", downloadUrl);
               const user = getAuth().currentUser;
-              console.log(downloadURL);
               updateProfile(user, { photoURL: downloadUrl }).then(() => {
                 setDownloadURL(downloadUrl);
                 const userRef = doc(database, "users", user.uid);
@@ -89,10 +87,7 @@ function ProfileImageModal({
           </Text>
         </ModalHeader>
         <ModalBody gap="1.5rem" display={"flex"} flexDir={"column"} p="0">
-          <Dropzone
-            onDragEnter={() => console.log("drag enter")}
-            onDrop={(file) => handleUpload(file)}
-          >
+          <Dropzone onDrop={(file) => handleUpload(file)}>
             {({ getRootProps, getInputProps }) => (
               <Flex
                 minH="150px"

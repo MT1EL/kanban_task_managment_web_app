@@ -10,10 +10,16 @@ function Notifications({ user }: { user: User }) {
   const handleInvitationAccept = (notification: any) => {
     const ref = doc(database, "boards", notification.boardId);
     getDoc(ref).then((doc) => {
-      console.log(doc.exists());
       if (doc.exists()) {
+        const userData = {
+          id: user.uid,
+          email: user.email,
+          name: user.displayName,
+          photoURL: user.photoURL,
+        };
         updateDoc(ref, {
           collaborators: [...notification.collaborators, user.uid],
+          collaboratorsData: [...notification.collaboratorsData, userData],
         })
           .then(() => {
             handleInvitationReject(notification, false);
@@ -27,7 +33,6 @@ function Notifications({ user }: { user: User }) {
             })
           );
       } else {
-        console.log("doing");
         toast({
           status: "warning",
           title: "Board not found",
@@ -74,7 +79,6 @@ function Notifications({ user }: { user: User }) {
       <Text>Notifications</Text>
       {notifications.length > 0 ? (
         notifications.map((notification) => {
-          console.log(notification);
           let timeAgo;
           const fetchedTime = notification.time.seconds * 1000;
           const currentTime = new Date().getTime();
