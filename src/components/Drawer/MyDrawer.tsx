@@ -60,7 +60,6 @@ function MyDrawer({
       minW={["260px", "260px", "301px"]}
       borderRight={"1px solid"}
       borderColor={colorMode === "dark" ? "lines_dark" : "lines_light"}
-      height={"calc(100% - 90px)"}
       boxShadow={"none"}
       flexDir={"column"}
       justifyContent={"space-between"}
@@ -71,6 +70,7 @@ function MyDrawer({
       position={"fixed"}
       top="90px"
       left="0"
+      height={"calc(100% - 90px)"}
       zIndex={2}
     >
       {loading ? (

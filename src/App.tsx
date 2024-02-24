@@ -34,7 +34,7 @@ function App() {
     return <Spinner />;
   }
   return (
-    <Box height={"100vh"}>
+    <Box maxH={"100vh"} maxW="100vw" overflow={["scroll", "scroll", "unset"]}>
       <Navbar
         currentBoard={currentBoard as BoardInterface}
         setCurrentBoard={setCurrentBoard}

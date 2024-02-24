@@ -7,7 +7,7 @@ function Home({ setCurrentBoard, currentBoard, setBoardId, boardId }: any) {
   const [isOpen, setIsOpen] = useState(true);
   return (
     <Flex
-      pl={["unset", isOpen ? "300px" : "unset"]}
+      pl={[isOpen ? "260px" : "unset", isOpen ? "300px" : "unset"]}
       gap="1rem"
       maxW="100vw"
       mt="90px"
@@ -36,6 +36,7 @@ function Home({ setCurrentBoard, currentBoard, setBoardId, boardId }: any) {
           flexDir={"column"}
           alignItems={"center"}
           w="100%"
+          h="calc(100vh - 90px)"
           gap=".5rem"
         >
           <Text
