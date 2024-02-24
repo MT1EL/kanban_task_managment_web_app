@@ -18,7 +18,6 @@ function index({
   const profileLinks = ["Profile", "Boards", "Security", "Notifications"];
   return (
     <Flex
-      display={["none", "flex"]}
       minW={["260px", "260px", "301px"]}
       borderRight={"1px solid"}
       borderColor={colorMode === "dark" ? "lines_dark" : "lines_light"}
@@ -33,6 +32,7 @@ function index({
       position={"fixed"}
       top="90px"
       left="0"
+      zIndex={"20"}
     >
       <Flex flexDir={"column"} gap="0.5rem" mt="2rem">
         {profileLinks.map((link, index) => (

@@ -1,4 +1,4 @@
-import { useColorMode, Box, Spinner } from "@chakra-ui/react";
+import { useColorMode, Spinner, Flex } from "@chakra-ui/react";
 import ShowDrawer from "./ShowDrawer";
 import DrawerFooter from "./DrawerFooter";
 import DrawerBody from "./DrawerBody";
@@ -56,8 +56,7 @@ function MyDrawer({
     }
   }, []);
   return (
-    <Box
-      display={["none", "flex"]}
+    <Flex
       minW={["260px", "260px", "301px"]}
       borderRight={"1px solid"}
       borderColor={colorMode === "dark" ? "lines_dark" : "lines_light"}
@@ -88,7 +87,7 @@ function MyDrawer({
       <DrawerFooter closeDrawer={() => setIsOpen(false)} />
       <ShowDrawer isOpen={isOpen} setOpen={() => setIsOpen(true)} />
       <EditBoard isOpen={isBoardOpen} onClose={onClose} />
-    </Box>
+    </Flex>
   );
 }
 

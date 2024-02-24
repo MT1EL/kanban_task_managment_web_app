@@ -38,7 +38,12 @@ function Home({ setCurrentBoard, currentBoard, setBoardId, boardId }: any) {
           w="100%"
           gap=".5rem"
         >
-          <Text color="medium_Grey" fontSize={"18px"} fontWeight={"bold"}>
+          <Text
+            color="medium_Grey"
+            fontSize={"18px"}
+            fontWeight={"bold"}
+            textAlign={"center"}
+          >
             This workflow is empty. Create a new Board to get started.
           </Text>
           <Button maxW="300px" onClick={onOpen}>

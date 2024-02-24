@@ -18,7 +18,13 @@ function index({
 }) {
   const { colorMode } = useColorMode();
   return (
-    <Flex h="100%" alignItems={"center"} justifyContent={"center"} as="form">
+    <Flex
+      h="100%"
+      alignItems={"center"}
+      justifyContent={"center"}
+      as="form"
+      mx="20px"
+    >
       <Flex
         flexDir={"column"}
         gap="1.5rem"

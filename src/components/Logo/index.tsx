@@ -19,7 +19,12 @@ function Logo() {
         alt="logo"
         mr="2rem"
       />
-      <Img display={["block", "none"]} src={mobileLogo} alt="mobile logo" />
+      <Img
+        display={["block", "none"]}
+        src={mobileLogo}
+        alt="mobile logo"
+        mr="1rem"
+      />
     </Flex>
   );
 }
